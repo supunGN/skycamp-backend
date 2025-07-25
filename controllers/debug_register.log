@@ -1,0 +1,306 @@
+POST: Array
+(
+    [firstName] => Supun
+    [lastName] => Gunathilake
+    [dateOfBirth] => 2001-10-08
+    [phone] => 0774005021
+    [email] => supungunathilaka123@gmail.com
+    [address] => "SISILASA" 45 Canal, Weragama, Weraganthota
+    [gender] => Male
+    [password] => Supun@2001
+    [userRole] => customer
+    [travelBuddy] => no
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Supun
+    [lastName] => Gunathilake
+    [dateOfBirth] => 2001-10-08
+    [phone] => +94774005021
+    [email] => supungunathilaka123@gmail.com
+    [address] => "SISILASA" 45 Canal, Weragama, Weraganthota
+    [gender] => Male
+    [password] => Supun@2001
+    [userRole] => customer
+    [travelBuddy] => no
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Supun
+    [lastName] => Gunathilake
+    [dateOfBirth] => 2001-10-08
+    [phone] => +94774005021
+    [email] => supungunathilaka123@gmail.com
+    [address] => "SISILASA" 45 Canal, Weragama, Weraganthota
+    [gender] => Male
+    [password] => Supun@2001
+    [userRole] => customer
+    [travelBuddyOption] => no
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Chamandi
+    [lastName] => Sanjula
+    [dateOfBirth] => 
+    [phone] => 0776389505
+    [email] => chamandi@gmail.com
+    [address] => Bombuwala, Kaluthara
+    [gender] => Female
+    [password] => 
+    [userRole] => service_provider
+    [serviceRole] => Local Guide
+    [campingLocations] => 
+    [stargazingLocations] => 
+    [districts] => 
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Chamandi
+    [lastName] => Sanjula
+    [dateOfBirth] => 2001-10-31
+    [phone] => 0776389505
+    [email] => chamandi@gmail.com
+    [address] => Bombuwala, Kaluthara
+    [gender] => Female
+    [password] => 
+    [userRole] => service_provider
+    [serviceRole] => Local Guide
+    [campingLocations] => 
+    [stargazingLocations] => 
+    [districts] => 
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Isini
+    [lastName] => Kularathna
+    [dateOfBirth] => 2001-04-08
+    [phone] => 0774429711
+    [email] => isini@gmail.com
+    [address] => Osmeewaththa, Mirigama.
+    [gender] => Female
+    [password] => Isini@2001
+    [userRole] => service_provider
+    [serviceRole] => Local Guide
+    [campingLocations] => 
+    [stargazingLocations] => 
+    [districts] => 
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Isini
+    [lastName] => Kularathna
+    [dateOfBirth] => 2001-04-08
+    [phone] => 0774429711
+    [email] => isini@gmail.com
+    [address] => Osmeewaththa, Mirigama.
+    [gender] => Female
+    [password] => Isini@2001
+    [userRole] => service_provider
+    [serviceRole] => Local Guide
+    [campingLocations] => 
+    [stargazingLocations] => 
+    [districts] => 
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Isini
+    [lastName] => Kularathna
+    [dateOfBirth] => 2001-04-08
+    [phone] => 0774429711
+    [email] => isini@gmail.com
+    [address] => Osmeewaththa, Mirigama.
+    [gender] => Female
+    [password] => Isini@2001
+    [userRole] => service_provider
+    [serviceRole] => Local Guide
+    [campingLocations] => 
+    [stargazingLocations] => 
+    [districts] => 
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Samantha
+    [lastName] => Rajapaksha
+    [dateOfBirth] => 1999-10-04
+    [phone] => 0784562545
+    [email] => samantha@gmail.com
+    [address] => mahiyanganaya
+    [gender] => Male
+    [password] => QWer!@34
+    [userRole] => service_provider
+    [serviceRole] => Local Guide
+    [campingLocations] => 
+    [stargazingLocations] => 
+    [districts] => 
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Samantha
+    [lastName] => Rajapaksha
+    [dateOfBirth] => 1999-10-04
+    [phone] => 0784562545
+    [email] => samantha@gmail.com
+    [address] => mahiyanganaya
+    [gender] => Male
+    [password] => QWer!@34
+    [userRole] => service_provider
+    [serviceRole] => Local Guide
+    [campingLocations] => N/A
+    [stargazingLocations] => N/A
+    [districts] => N/A
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Samantha
+    [lastName] => Rajapaksha
+    [dateOfBirth] => 1999-10-04
+    [phone] => 0784562545
+    [email] => samantha@gmail.com
+    [address] => mahiyanganaya
+    [gender] => Male
+    [password] => QWer!@34
+    [userRole] => service_provider
+    [serviceRole] => Local Guide
+    [campingLocations] => N/A
+    [stargazingLocations] => N/A
+    [districts] => N/A
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Samantha
+    [lastName] => Rajapaksha
+    [dateOfBirth] => 1999-10-04
+    [phone] => 0784562545
+    [email] => samantha@gmail.com
+    [address] => mahiyanganaya
+    [gender] => Male
+    [password] => QWer!@34
+    [userRole] => service_provider
+    [serviceRole] => Local Guide
+    [campingLocations] => Namunukula Range,Gal Oya Vicinity
+    [stargazingLocations] => Knuckles Peak,Nuwara Eliya Hills
+    [districts] => Colombo,Matara
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Samantha
+    [lastName] => Rajapaksha
+    [dateOfBirth] => 1999-10-04
+    [phone] => 0784562545
+    [email] => samantha@gmail.com
+    [address] => mahiyanganaya
+    [gender] => Male
+    [password] => QWer!@34
+    [userRole] => service_provider
+    [serviceRole] => Local Guide
+    [campingLocations] => Namunukula Range,Gal Oya Vicinity
+    [stargazingLocations] => Knuckles Peak,Nuwara Eliya Hills
+    [districts] => Colombo,Matara
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Samantha
+    [lastName] => Rajapaksha
+    [dateOfBirth] => 1999-10-04
+    [phone] => 0784562545
+    [email] => samantha@gmail.com
+    [address] => mahiyanganaya
+    [gender] => Male
+    [password] => QWer!@34
+    [userRole] => service_provider
+    [serviceRole] => Local Guide
+    [campingLocations] => Namunukula Range,Gal Oya Vicinity
+    [stargazingLocations] => Knuckles Peak,Nuwara Eliya Hills
+    [districts] => Colombo,Matara
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Banuka
+    [lastName] => Pannipitiya
+    [dateOfBirth] => 2001-07-06
+    [phone] => 0771234569
+    [email] => banuka@email.com
+    [address] => Baththaramulla
+    [gender] => Male
+    [password] => Banuka@123
+    [userRole] => service_provider
+    [serviceRole] => Equipment Renter
+    [campingLocations] => Namunukula Range,Gal Oya Vicinity
+    [stargazingLocations] => Nilgala Reserve,Knuckles Peak,Anuradhapura Plains
+    [districts] => Colombo
+)
+
+FILES: Array
+(
+)
+

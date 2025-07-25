@@ -1,0 +1,294 @@
+POST: Array
+(
+    [firstName] => Banuka
+    [lastName] => Pannipitiya
+    [dateOfBirth] => 2001-07-06
+    [phone] => 0771234569
+    [email] => banuka@email.com
+    [address] => Baththaramulla
+    [gender] => Male
+    [password] => Banuka@123
+    [userRole] => service_provider
+    [serviceRole] => Equipment Renter
+    [campingLocations] => Namunukula Range,Gal Oya Vicinity
+    [stargazingLocations] => Nilgala Reserve,Knuckles Peak,Anuradhapura Plains
+    [districts] => Colombo
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Banuka
+    [lastName] => Pannipitiya
+    [dateOfBirth] => 2001-07-06
+    [phone] => 0771234569
+    [email] => banuka@email.com
+    [address] => Baththaramulla
+    [gender] => Male
+    [password] => Banuka@123
+    [userRole] => service_provider
+    [serviceRole] => Equipment Renter
+    [campingLocations] => Namunukula Range,Gal Oya Vicinity
+    [stargazingLocations] => Nilgala Reserve,Knuckles Peak,Anuradhapura Plains
+    [districts] => Colombo
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Chamandi
+    [lastName] => San
+    [dateOfBirth] => 2001-10-31
+    [phone] => 0776389505
+    [email] => chamandi@gmail.com
+    [address] => kaluthara
+    [gender] => Female
+    [password] => Chamandi@1234
+    [userRole] => customer
+    [travelBuddyOption] => no
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Sameesha
+    [lastName] => Pasanya
+    [dateOfBirth] => 2002-12-04
+    [phone] => 0751235566
+    [email] => Sameesha@email.com
+    [address] => Badulla
+    [gender] => Female
+    [password] => Sam@123@
+    [userRole] => service_provider
+    [serviceRole] => Local Guide
+    [campingLocations] => Namunukula Range
+    [stargazingLocations] => Nuwara Eliya Hills
+    [districts] => Badulla
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => abc
+    [lastName] => efg
+    [dateOfBirth] => 2001-04-04
+    [phone] => 01234656789
+    [email] => abc@gmail.com
+    [address] => abc town
+    [gender] => Male
+    [password] => abc@123ABC
+    [userRole] => customer
+    [travelBuddyOption] => no
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Sameesha
+    [lastName] => Pasanya
+    [dateOfBirth] => 2002-03-07
+    [phone] => 0771234569
+    [email] => sameesha@gmail.com
+    [address] => badulla
+    [gender] => Female
+    [password] => Sameesha@2002
+    [userRole] => customer
+    [travelBuddyOption] => no
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => qwe
+    [lastName] => rty
+    [dateOfBirth] => 2001-11-11
+    [phone] => 1234567890
+    [email] => qwert@email.com
+    [address] => qwert
+    [gender] => Male
+    [password] => qweRTY@123
+    [userRole] => service_provider
+    [serviceRole] => Equipment Renter
+    [campingLocations] => Namunukula Range
+    [stargazingLocations] => Knuckles Peak
+    [districts] => Colombo
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => sasasas
+    [lastName] => sasasas
+    [dateOfBirth] => 2001-04-04
+    [phone] => 0789456123
+    [email] => abc@abc
+    [address] => abc@abc
+    [gender] => Male
+    [password] => abc@ABC123
+    [userRole] => customer
+    [travelBuddyOption] => no
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => sasasas
+    [lastName] => sasasas
+    [dateOfBirth] => 2001-04-04
+    [phone] => 0789456123
+    [email] => abc@email.com
+    [address] => abc@abc
+    [gender] => Male
+    [password] => abc@ABC123
+    [userRole] => customer
+    [travelBuddyOption] => no
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Supun
+    [lastName] => Gunathilake
+    [dateOfBirth] => 2001-10-08
+    [phone] => 0774005021
+    [email] => supungunathilaka123@gmail.com
+    [address] => Sisilasa 45 canal weragama, weraganthota.
+    [gender] => Male
+    [password] => Supun@2001
+    [userRole] => customer
+    [travelBuddyOption] => no
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Isini
+    [lastName] => Kularathna
+    [dateOfBirth] => 2001-04-08
+    [phone] => 0774005021
+    [email] => isini@gmail.com
+    [address] => Meerigama
+    [gender] => Female
+    [password] => Isini@123
+    [userRole] => service_provider
+    [serviceRole] => Equipment Renter
+    [campingLocations] => Namunukula Range
+    [stargazingLocations] => Nuwara Eliya Hills
+    [districts] => Gampaha
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Supun
+    [lastName] => Gunathilake
+    [dateOfBirth] => 2001-10-08
+    [phone] => 0774005021
+    [email] => supungunathilaka123@gmail.com
+    [address] => Hasalaka
+    [gender] => Male
+    [password] => Supun@2001
+    [userRole] => service_provider
+    [serviceRole] => Equipment Renter
+    [campingLocations] => Namunukula Range
+    [stargazingLocations] => Knuckles Peak
+    [districts] => Kandy
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Isini
+    [lastName] => Kularathna
+    [dateOfBirth] => 2001-04-08
+    [phone] => 0774005021
+    [email] => isini@gmail.com
+    [address] => Meerigama
+    [gender] => Female
+    [password] => Isini@2001
+    [userRole] => service_provider
+    [serviceRole] => Local Guide
+    [campingLocations] => Ritigala Reserve
+    [stargazingLocations] => Anuradhapura Plains
+    [districts] => Gampaha
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Supun
+    [lastName] => Gunathilake
+    [dateOfBirth] => 2001-10-08
+    [phone] => 0774005021
+    [email] => customer@gmail.com
+    [address] => badulla
+    [gender] => Male
+    [password] => Customer@123
+    [userRole] => customer
+    [travelBuddyOption] => no
+)
+
+FILES: Array
+(
+)
+
+POST: Array
+(
+    [firstName] => Chamandi
+    [lastName] => Sanjula
+    [dateOfBirth] => 2001-10-31
+    [phone] => 0776389515
+    [email] => chamandisanjulachandrasiri@gmail.com
+    [address] => 141/1, School Lane, Bombuwala, Kalutara
+    [gender] => Female
+    [password] => urmomgaE@2
+    [userRole] => service_provider
+    [serviceRole] => Local Guide
+    [campingLocations] => Udugampola Forest
+    [stargazingLocations] => Sigiriya View Point
+    [districts] => Kandy
+)
+
+FILES: Array
+(
+)
+
