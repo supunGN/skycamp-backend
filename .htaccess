@@ -1,0 +1,23 @@
+# Handle preflight OPTIONS requests
+
+RewriteEngine On
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.\*)$ $1 [R=200,L]
+
+# Security headers
+
+Header always set X-Content-Type-Options nosniff
+Header always set X-Frame-Options DENY
+Header always set X-XSS-Protection "1; mode=block"
+
+# Block direct access to sensitive files
+
+<FilesMatch "^(Config|Database|\.env)">
+Require all denied
+</FilesMatch>
+
+# Block access to .git, .sql, and backup files
+
+<FilesMatch "\.(git|sql|bak|backup|log)$">
+Require all denied
+</FilesMatch>

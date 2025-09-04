@@ -1,0 +1,50 @@
+# Security configuration for uploads directory
+
+# Prevent execution of scripts and directory browsing
+
+# Disable directory browsing
+
+Options -Indexes
+
+# Disable script execution
+
+Options -ExecCGI
+
+# Prevent execution of PHP and other script files
+
+<FilesMatch "\.(php|phtml|php3|php4|php5|pl|py|jsp|asp|sh|cgi)$">
+Require all denied
+</FilesMatch>
+
+# Allow only image files
+
+<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+Require all granted
+</FilesMatch>
+
+# Set proper MIME types for images
+
+<IfModule mod_mime.c>
+    AddType image/jpeg .jpg .jpeg
+    AddType image/png .png
+    AddType image/gif .gif
+    AddType image/webp .webp
+</IfModule>
+
+# Add security headers
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options nosniff
+    Header set X-Frame-Options DENY
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Set cache control for images
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+</IfModule>

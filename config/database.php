@@ -1,63 +1,87 @@
 <?php
+
 /**
- * Database Configuration Class
- * Handles database connection using Singleton pattern
+ * Database Configuration and Connection Class
+ * Implements PDO for secure database operations
+ * Following OOP principles from Lecture 3 and enhanced with configuration management
  */
-class Database {
-    private static $instance = null;
-    private $connection;
-    
-    // Database configuration
-    private $host = 'localhost';
-    private $database = 'skycamp_db';
-    private $username = 'root';
-    private $password = '';
-    
+
+require_once __DIR__ . '/Config.php';
+
+class Database
+{
+    // Database configuration - Encapsulation principle
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
+    private $conn;
+    private $options;
+
     /**
-     * Private constructor to prevent direct instantiation
+     * Constructor - Load configuration
      */
-    private function __construct() {
+    public function __construct()
+    {
+        $dbConfig = Config::getDatabaseConfig();
+        $this->host = $dbConfig['host'];
+        $this->db_name = $dbConfig['name'];
+        $this->username = $dbConfig['username'];
+        $this->password = $dbConfig['password'];
+        $this->options = $dbConfig['options'];
+    }
+
+    /**
+     * Get database connection using PDO
+     * Implements proper error handling and security
+     * 
+     * @return PDO Database connection object
+     */
+    public function getConnection()
+    {
+        $this->conn = null;
+
         try {
-            $this->connection = new PDO(
-                "mysql:host={$this->host};dbname={$this->database};charset=utf8mb4",
-                $this->username,
-                $this->password,
-                [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false
-                ]
-            );
-        } catch (PDOException $e) {
-            die("Database connection failed: " . $e->getMessage());
+            // PDO connection with security options from configuration
+            $dsn = "mysql:host={$this->host};dbname={$this->db_name};charset=utf8mb4";
+            $this->conn = new PDO($dsn, $this->username, $this->password, $this->options);
+        } catch (PDOException $exception) {
+            error_log("Connection error: " . $exception->getMessage());
+            throw new Exception("Database connection failed");
         }
+
+        return $this->conn;
     }
-    
+
     /**
-     * Get database instance (Singleton pattern)
+     * Close database connection
      */
-    public static function getInstance() {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
+    public function closeConnection()
+    {
+        $this->conn = null;
     }
-    
+
     /**
-     * Get database connection
+     * Begin transaction
      */
-    public function getConnection() {
-        return $this->connection;
+    public function beginTransaction()
+    {
+        return $this->conn->beginTransaction();
     }
-    
+
     /**
-     * Prevent cloning
+     * Commit transaction
      */
-    private function __clone() {}
-    
+    public function commit()
+    {
+        return $this->conn->commit();
+    }
+
     /**
-     * Prevent unserialization
+     * Rollback transaction
      */
-    public function __wakeup() {}
+    public function rollback()
+    {
+        return $this->conn->rollBack();
+    }
 }
-?>
