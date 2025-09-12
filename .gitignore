@@ -1,0 +1,28 @@
+# Environment files
+app/Config/env.php
+
+# Logs
+logs/*.log
+*.log
+
+# Uploads
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Backup files
+*.bak
+*.backup
