@@ -127,4 +127,32 @@ class AuthController extends Controller
             $response->serverError('Failed to get user');
         }
     }
+
+    /**
+     * Update user profile
+     * PUT /api/auth/profile
+     */
+    public function updateProfile(Request $request, Response $response): void
+    {
+        try {
+            $result = $this->authService->updateProfile($request);
+
+            if ($result['success']) {
+                $response->json([
+                    'success' => true,
+                    'user' => $result['user'],
+                    'message' => 'Profile updated successfully'
+                ], 200);
+            } else {
+                if (isset($result['errors'])) {
+                    $response->validationError($result['errors']);
+                } else {
+                    $response->error($result['message'], 400);
+                }
+            }
+        } catch (Exception $e) {
+            $this->log("Profile update error: " . $e->getMessage(), 'ERROR');
+            $response->serverError('Profile update failed');
+        }
+    }
 }

@@ -27,6 +27,14 @@ class Router
     }
 
     /**
+     * Add PUT route
+     */
+    public function put(string $path, callable|array $handler): void
+    {
+        $this->addRoute('PUT', $path, $handler);
+    }
+
+    /**
      * Add OPTIONS route
      */
     public function options(string $path, callable|array $handler): void
@@ -64,6 +72,8 @@ class Router
         // Find matching route
         foreach ($this->routes as $route) {
             if ($route['method'] === $method && $this->matchPath($route['path'], $path)) {
+                // Extract URL parameters
+                $this->extractUrlParameters($route['path'], $path, $request);
                 $this->executeHandler($route['handler'], $request, $response);
                 return;
             }
@@ -88,8 +98,50 @@ class Router
             return str_starts_with($requestPath, $prefix);
         }
 
+        // Handle parameterized routes (e.g., /api/locations/:id)
+        if (strpos($routePath, ':') !== false) {
+            $routeParts = explode('/', trim($routePath, '/'));
+            $requestParts = explode('/', trim($requestPath, '/'));
+
+            if (count($routeParts) !== count($requestParts)) {
+                return false;
+            }
+
+            for ($i = 0; $i < count($routeParts); $i++) {
+                if (strpos($routeParts[$i], ':') === 0) {
+                    // This is a parameter, skip validation
+                    continue;
+                }
+                if ($routeParts[$i] !== $requestParts[$i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         // Simple exact match
         return $routePath === $requestPath;
+    }
+
+    /**
+     * Extract URL parameters from route and request path
+     */
+    private function extractUrlParameters(string $routePath, string $requestPath, Request $request): void
+    {
+        if (strpos($routePath, ':') === false) {
+            return; // No parameters to extract
+        }
+
+        $routeParts = explode('/', trim($routePath, '/'));
+        $requestParts = explode('/', trim($requestPath, '/'));
+
+        for ($i = 0; $i < count($routeParts); $i++) {
+            if (strpos($routeParts[$i], ':') === 0) {
+                $paramName = substr($routeParts[$i], 1); // Remove the ':'
+                $paramValue = $requestParts[$i] ?? null;
+                $request->setParam($paramName, $paramValue);
+            }
+        }
     }
 
     /**

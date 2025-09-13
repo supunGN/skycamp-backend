@@ -39,6 +39,7 @@ require_once __DIR__ . '/../app/Repositories/UserRepository.php';
 require_once __DIR__ . '/../app/Repositories/CustomerRepository.php';
 require_once __DIR__ . '/../app/Repositories/RenterRepository.php';
 require_once __DIR__ . '/../app/Repositories/GuideRepository.php';
+require_once __DIR__ . '/../app/Repositories/LocationRepository.php';
 
 // Include services
 require_once __DIR__ . '/../app/Services/AuthService.php';
@@ -69,6 +70,7 @@ try {
     $router->post('/api/auth/register', [AuthController::class, 'register']);
     $router->post('/api/auth/login', [AuthController::class, 'login']);
     $router->post('/api/auth/logout', [AuthController::class, 'logout']);
+    $router->post('/api/auth/profile', [AuthController::class, 'updateProfile']);
 
     // Admin routes
     $router->post('/api/admin/login', [AdminController::class, 'login']);
@@ -78,6 +80,48 @@ try {
     // Location proxy endpoints
     $router->get('/api/location/search', [LocationController::class, 'search']);
     $router->get('/api/location/reverse', [LocationController::class, 'reverse']);
+
+    // Location data endpoints
+    $router->get('/api/locations/camping', [LocationController::class, 'getCampingDestinations']);
+    $router->get('/api/locations/stargazing', [LocationController::class, 'getStargazingSpots']);
+    $router->get('/api/locations/all', [LocationController::class, 'getAllLocations']);
+    $router->get('/api/locations/by-type', [LocationController::class, 'getLocationsByType']);
+
+    // Location display endpoints with images
+    $router->get('/api/locations/camping/display', [LocationController::class, 'getCampingDestinationsWithImages']);
+    $router->get('/api/locations/stargazing/display', [LocationController::class, 'getStargazingSpotsWithImages']);
+
+    // Home page endpoints (top 3 for each type)
+    $router->get('/api/locations/camping/top', [LocationController::class, 'getTopCampingDestinationsWithImages']);
+    $router->get('/api/locations/stargazing/top', [LocationController::class, 'getTopStargazingSpotsWithImages']);
+
+    // District filtering endpoints (must be before :id route)
+    $router->get('/api/locations/camping/by-district', [LocationController::class, 'getCampingDestinationsWithImagesByDistrict']);
+    $router->get('/api/locations/stargazing/by-district', [LocationController::class, 'getStargazingSpotsWithImagesByDistrict']);
+    $router->get('/api/locations/districts', [LocationController::class, 'getAllDistricts']);
+
+    // Individual location endpoint (must be after specific routes)
+    $router->get('/api/locations/:id', [LocationController::class, 'getLocationWithImages']);
+
+    // File serving endpoint for uploaded images
+    $router->get('/api/files/*', function (Request $request, Response $response) {
+        $fileService = new FileService();
+        $requestUri = $_SERVER['REQUEST_URI'];
+        $filePath = str_replace('/api/files/', '', $requestUri);
+
+        // Security: prevent directory traversal
+        $filePath = str_replace('../', '', $filePath);
+
+        $fullPath = $fileService->getStoragePath() . '/' . $filePath;
+
+        if (file_exists($fullPath)) {
+            $fileService->serveFile($fullPath);
+        } else {
+            http_response_code(404);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'File not found']);
+        }
+    });
 
     // Handle OPTIONS requests for CORS preflight
     $router->options('/api/*', function (Request $request, Response $response) {

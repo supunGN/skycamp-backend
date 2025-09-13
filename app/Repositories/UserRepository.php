@@ -20,15 +20,21 @@ class UserRepository
     public function create(array $data): string
     {
         $sql = "INSERT INTO users (
-            user_id, email, password_hash, role, is_active, created_at
+            email, password_hash, role, is_active, created_at
         ) VALUES (
-            :user_id, :email, :password_hash, :role, :is_active, :created_at
+            :email, :password_hash, :role, :is_active, :created_at
         )";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($data);
+        $stmt->execute([
+            'email' => $data['email'],
+            'password_hash' => $data['password_hash'],
+            'role' => $data['role'],
+            'is_active' => $data['is_active'],
+            'created_at' => $data['created_at']
+        ]);
 
-        return $data['user_id'];
+        return $this->pdo->lastInsertId();
     }
 
     /**

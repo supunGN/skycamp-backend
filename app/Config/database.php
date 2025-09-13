@@ -97,3 +97,6 @@ class Database
         }
     }
 }
+
+// Create global PDO instance for backward compatibility
+$pdo = Database::getConnection();

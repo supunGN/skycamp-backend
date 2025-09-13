@@ -14,6 +14,9 @@ class Customer
     public ?string $dob;
     public string $phoneNumber;
     public ?string $homeAddress;
+    public ?string $location;
+    public ?float $latitude;
+    public ?float $longitude;
     public string $gender;
     public ?string $profilePicture;
     public string $nicNumber;
@@ -31,6 +34,9 @@ class Customer
         $this->dob = $data['dob'] ?? null;
         $this->phoneNumber = $data['phone_number'] ?? '';
         $this->homeAddress = $data['home_address'] ?? null;
+        $this->location = $data['location'] ?? null;
+        $this->latitude = !empty($data['latitude']) ? (float) $data['latitude'] : null;
+        $this->longitude = !empty($data['longitude']) ? (float) $data['longitude'] : null;
         $this->gender = $data['gender'] ?? 'Male';
         $this->profilePicture = $data['profile_picture'] ?? null;
         $this->nicNumber = $data['nic_number'] ?? '';
@@ -53,6 +59,9 @@ class Customer
             'dob' => $this->dob,
             'phone_number' => $this->phoneNumber,
             'home_address' => $this->homeAddress,
+            'location' => $this->location,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
             'gender' => $this->gender,
             'profile_picture' => $this->profilePicture,
             'nic_number' => $this->nicNumber,

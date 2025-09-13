@@ -17,22 +17,43 @@ class RenterRepository
     /**
      * Create a new renter
      */
-    public function create(array $data): void
+    public function create(array $data): string
     {
         $sql = "INSERT INTO renters (
-            renter_id, user_id, first_name, last_name, dob, phone_number,
+            user_id, first_name, last_name, dob, phone_number,
             home_address, gender, profile_picture, nic_number, nic_front_image, nic_back_image,
             camping_destinations, stargazing_spots, district, verification_status,
             latitude, longitude, created_at
         ) VALUES (
-            :renter_id, :user_id, :first_name, :last_name, :dob, :phone_number,
+            :user_id, :first_name, :last_name, :dob, :phone_number,
             :home_address, :gender, :profile_picture, :nic_number, :nic_front_image, :nic_back_image,
             :camping_destinations, :stargazing_spots, :district, :verification_status,
             :latitude, :longitude, :created_at
         )";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($data);
+        $stmt->execute([
+            'user_id' => $data['user_id'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'dob' => $data['dob'],
+            'phone_number' => $data['phone_number'],
+            'home_address' => $data['home_address'],
+            'gender' => $data['gender'],
+            'profile_picture' => $data['profile_picture'],
+            'nic_number' => $data['nic_number'],
+            'nic_front_image' => $data['nic_front_image'],
+            'nic_back_image' => $data['nic_back_image'],
+            'camping_destinations' => $data['camping_destinations'],
+            'stargazing_spots' => $data['stargazing_spots'],
+            'district' => $data['district'],
+            'verification_status' => $data['verification_status'],
+            'latitude' => $data['latitude'],
+            'longitude' => $data['longitude'],
+            'created_at' => $data['created_at']
+        ]);
+
+        return $this->pdo->lastInsertId();
     }
 
     /**

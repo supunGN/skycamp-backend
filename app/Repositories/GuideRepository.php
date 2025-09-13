@@ -17,16 +17,16 @@ class GuideRepository
     /**
      * Create a new guide
      */
-    public function create(array $data): void
+    public function create(array $data): string
     {
         $sql = "INSERT INTO guides (
-            guide_id, user_id, first_name, last_name, dob, phone_number,
+            user_id, first_name, last_name, dob, phone_number,
             home_address, gender, profile_picture, nic_number, nic_front_image, nic_back_image,
             camping_destinations, stargazing_spots, district, description,
             special_note, currency, languages, price_per_day, verification_status,
             created_at
         ) VALUES (
-            :guide_id, :user_id, :first_name, :last_name, :dob, :phone_number,
+            :user_id, :first_name, :last_name, :dob, :phone_number,
             :home_address, :gender, :profile_picture, :nic_number, :nic_front_image, :nic_back_image,
             :camping_destinations, :stargazing_spots, :district, :description,
             :special_note, :currency, :languages, :price_per_day, :verification_status,
@@ -34,7 +34,31 @@ class GuideRepository
         )";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($data);
+        $stmt->execute([
+            'user_id' => $data['user_id'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'dob' => $data['dob'],
+            'phone_number' => $data['phone_number'],
+            'home_address' => $data['home_address'],
+            'gender' => $data['gender'],
+            'profile_picture' => $data['profile_picture'],
+            'nic_number' => $data['nic_number'],
+            'nic_front_image' => $data['nic_front_image'],
+            'nic_back_image' => $data['nic_back_image'],
+            'camping_destinations' => $data['camping_destinations'],
+            'stargazing_spots' => $data['stargazing_spots'],
+            'district' => $data['district'],
+            'description' => $data['description'],
+            'special_note' => $data['special_note'],
+            'currency' => $data['currency'],
+            'languages' => $data['languages'],
+            'price_per_day' => $data['price_per_day'],
+            'verification_status' => $data['verification_status'],
+            'created_at' => $data['created_at']
+        ]);
+
+        return $this->pdo->lastInsertId();
     }
 
     /**

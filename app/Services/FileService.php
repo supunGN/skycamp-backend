@@ -59,19 +59,29 @@ class FileService
             return null;
         }
 
-        // Ensure directory exists
+        // Ensure directory exists in both locations
         $storagePath = $this->getStoragePath();
+        $publicPath = __DIR__ . '/../../public/storage/uploads';
+
         $userDir = $storagePath . '/users/' . $userId;
+        $publicUserDir = $publicPath . '/users/' . $userId;
+
         if (!is_dir($userDir)) {
             mkdir($userDir, 0755, true);
+        }
+        if (!is_dir($publicUserDir)) {
+            mkdir($publicUserDir, 0755, true);
         }
 
         // Generate safe filename
         $filename = $logicalName . '.' . $extension;
         $fullPath = $userDir . '/' . $filename;
+        $publicFullPath = $publicUserDir . '/' . $filename;
 
-        // Move uploaded file
+        // Move uploaded file to both locations
         if (move_uploaded_file($file['tmp_name'], $fullPath)) {
+            // Copy to public directory as well
+            copy($fullPath, $publicFullPath);
             // Return relative path for database storage
             return "users/{$userId}/{$filename}";
         }

@@ -17,22 +17,42 @@ class CustomerRepository
     /**
      * Create a new customer
      */
-    public function create(array $data): void
+    public function create(array $data): string
     {
         $sql = "INSERT INTO customers (
-            customer_id, user_id, first_name, last_name, dob, phone_number,
+            user_id, first_name, last_name, dob, phone_number,
             home_address, location, latitude, longitude, gender, profile_picture, 
             nic_number, nic_front_image, nic_back_image, travel_buddy_status, 
             verification_status, created_at
         ) VALUES (
-            :customer_id, :user_id, :first_name, :last_name, :dob, :phone_number,
+            :user_id, :first_name, :last_name, :dob, :phone_number,
             :home_address, :location, :latitude, :longitude, :gender, :profile_picture, 
             :nic_number, :nic_front_image, :nic_back_image, :travel_buddy_status, 
             :verification_status, :created_at
         )";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($data);
+        $stmt->execute([
+            'user_id' => $data['user_id'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'dob' => $data['dob'],
+            'phone_number' => $data['phone_number'],
+            'home_address' => $data['home_address'],
+            'location' => $data['location'],
+            'latitude' => $data['latitude'],
+            'longitude' => $data['longitude'],
+            'gender' => $data['gender'],
+            'profile_picture' => $data['profile_picture'],
+            'nic_number' => $data['nic_number'],
+            'nic_front_image' => $data['nic_front_image'],
+            'nic_back_image' => $data['nic_back_image'],
+            'travel_buddy_status' => $data['travel_buddy_status'],
+            'verification_status' => $data['verification_status'],
+            'created_at' => $data['created_at']
+        ]);
+
+        return $this->pdo->lastInsertId();
     }
 
     /**

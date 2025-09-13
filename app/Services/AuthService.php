@@ -56,13 +56,11 @@ class AuthService
                 return ['success' => false, 'message' => 'NIC number already in use'];
             }
 
-            // Generate UUIDs
-            $userId = Uuid::generate();
+            // Generate UUID for role-specific profile
             $roleId = Uuid::generate();
 
             // Create user
             $userData = [
-                'user_id' => $userId,
                 'email' => $data['email'],
                 'password_hash' => Password::hash($data['password']),
                 'role' => ucfirst($data['userRole']), // Capitalize first letter
@@ -70,7 +68,7 @@ class AuthService
                 'created_at' => date('Y-m-d H:i:s')
             ];
 
-            $this->userRepository->create($userData);
+            $userId = $this->userRepository->create($userData);
 
             // Handle file uploads using the new FileService method
             $profilePicturePath = null;
@@ -425,7 +423,6 @@ class AuthService
         switch ($data['userRole']) {
             case 'customer':
                 $customerData = array_merge($commonData, [
-                    'customer_id' => $roleId,
                     'location' => $data['location'] ?? null,
                     'latitude' => !empty($data['latitude']) ? (float) $data['latitude'] : null,
                     'longitude' => !empty($data['longitude']) ? (float) $data['longitude'] : null,
@@ -437,7 +434,6 @@ class AuthService
 
             case 'renter':
                 $renterData = array_merge($commonData, [
-                    'renter_id' => $roleId,
                     'camping_destinations' => $data['campingDestinations'] ?? null,
                     'stargazing_spots' => $data['stargazingSpots'] ?? null,
                     'district' => $data['district'] ?? null,
@@ -450,7 +446,6 @@ class AuthService
 
             case 'guide':
                 $guideData = array_merge($commonData, [
-                    'guide_id' => $roleId,
                     'camping_destinations' => $data['campingDestinations'] ?? null,
                     'stargazing_spots' => $data['stargazingSpots'] ?? null,
                     'district' => $data['district'] ?? null,
@@ -521,7 +516,8 @@ class AuthService
                 'phone_number' => $roleRow['phone_number'] ?? '',
                 'dob' => $roleRow['dob'] ?? '',
                 'gender' => $roleRow['gender'] ?? '',
-                'home_address' => $roleRow['home_address'] ?? ''
+                'home_address' => $roleRow['home_address'] ?? '',
+                'profile_picture' => $roleRow['profile_picture'] ?? null
             ]);
         }
 
@@ -542,6 +538,217 @@ class AuthService
                 return '/dashboard/guide/overview';
             default:
                 return '/profile';
+        }
+    }
+
+    /**
+     * Update user profile
+     */
+    public function updateProfile(Request $request): array
+    {
+        try {
+            // Check if user is authenticated
+            if (!$this->session->isAuthenticated()) {
+                return ['success' => false, 'message' => 'Not authenticated'];
+            }
+
+            $userData = $this->session->getUser();
+            $user = $this->userRepository->findById($userData['user_id']);
+
+            if (!$user) {
+                return ['success' => false, 'message' => 'User not found'];
+            }
+
+            // Get form data (FormData is sent as POST data)
+            $data = $request->getFormData();
+
+            // Validate required fields
+            $errors = $this->validateProfileUpdateData($data);
+            if (!empty($errors)) {
+                return ['success' => false, 'errors' => $errors];
+            }
+
+            // Handle profile picture upload
+            $profilePicturePath = null;
+            if ($request->file('profilePicture')) {
+                $profilePicturePath = $this->fileService->saveUserImage($user->userId, $request->file('profilePicture'), 'profile');
+                if (!$profilePicturePath) {
+                    return ['success' => false, 'message' => 'Failed to upload profile picture'];
+                }
+            }
+
+            // Update role-specific profile
+            $updateResult = $this->updateRoleProfile($user->userId, $data, $profilePicturePath);
+
+            if (!$updateResult['success']) {
+                return $updateResult;
+            }
+
+            // Get updated user data
+            $updatedUser = $this->getCurrentUser();
+
+            return [
+                'success' => true,
+                'user' => $updatedUser,
+                'message' => 'Profile updated successfully'
+            ];
+        } catch (Exception $e) {
+            return ['success' => false, 'message' => 'Profile update failed: ' . $e->getMessage()];
+        }
+    }
+
+    /**
+     * Validate profile update data
+     */
+    private function validateProfileUpdateData(array $data): array
+    {
+        $errors = [];
+
+        if (empty($data['firstName'])) {
+            $errors['firstName'] = 'First name is required';
+        }
+
+        if (empty($data['lastName'])) {
+            $errors['lastName'] = 'Last name is required';
+        }
+
+        if (empty($data['phoneNumber'])) {
+            $errors['phoneNumber'] = 'Phone number is required';
+        } elseif (!preg_match('/^0[1-9][0-9]{8}$/', trim($data['phoneNumber']))) {
+            $errors['phoneNumber'] = 'Invalid phone number format: ' . trim($data['phoneNumber']) . ' (expected format: 0771234567)';
+        }
+
+        if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'Invalid email format';
+        }
+
+        if (!empty($data['gender']) && !in_array($data['gender'], ['Male', 'Female', 'Other'])) {
+            $errors['gender'] = 'Invalid gender';
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Update role-specific profile
+     */
+    private function updateRoleProfile(string $userId, array $data, ?string $profilePicturePath): array
+    {
+        try {
+            $user = $this->userRepository->findById($userId);
+            if (!$user) {
+                return ['success' => false, 'message' => 'User not found'];
+            }
+
+            switch ($user->role) {
+                case 'Customer':
+                    $customer = $this->customerRepository->findByUserId($userId);
+                    if ($customer) {
+                        $updateData = [
+                            'customer_id' => $customer->customerId,
+                            'first_name' => $data['firstName'],
+                            'last_name' => $data['lastName'],
+                            'phone_number' => $data['phoneNumber'],
+                            'home_address' => $data['homeAddress'] ?? '',
+                            'gender' => $data['gender'] ?? 'Male',
+                            'dob' => $data['dob'] ?? $customer->dob,
+                            'location' => $customer->location ?? '',
+                            'latitude' => $customer->latitude ?? null,
+                            'longitude' => $customer->longitude ?? null,
+                            'nic_number' => $customer->nicNumber ?? '',
+                            'nic_front_image' => $customer->nicImage ?? '',
+                            'nic_back_image' => $customer->nicImage ?? '',
+                            'travel_buddy_status' => $customer->travelBuddyStatus ?? 'Inactive',
+                            'verification_status' => $customer->verificationStatus ?? 'No'
+                        ];
+
+                        // Add profile picture (use existing if not provided)
+                        $updateData['profile_picture'] = $profilePicturePath ?? $customer->profilePicture;
+
+                        // Debug logging
+                        error_log("Customer update data: " . json_encode($updateData));
+
+                        $result = $this->customerRepository->update($updateData);
+                        if (!$result) {
+                            error_log("Failed to update customer profile for user: " . $userId);
+                            return ['success' => false, 'message' => 'Failed to update profile in database'];
+                        }
+                    }
+                    break;
+
+                case 'Renter':
+                    $renter = $this->renterRepository->findByUserId($userId);
+                    if ($renter) {
+                        $updateData = [
+                            'renter_id' => $renter->renterId,
+                            'first_name' => $data['firstName'],
+                            'last_name' => $data['lastName'],
+                            'phone_number' => $data['phoneNumber'],
+                            'home_address' => $data['homeAddress'] ?? '',
+                            'gender' => $data['gender'] ?? 'Male',
+                            'dob' => $data['dob'] ?? $renter->dob,
+                            'camping_destinations' => $renter->campingDestinations ?? '',
+                            'stargazing_spots' => $renter->stargazingSpots ?? '',
+                            'district' => $renter->district ?? '',
+                            'verification_status' => $renter->verificationStatus ?? 'No',
+                            'latitude' => $renter->latitude ?? null,
+                            'longitude' => $renter->longitude ?? null,
+                            'nic_number' => $renter->nicNumber ?? '',
+                            'nic_front_image' => $renter->nicImage ?? '',
+                            'nic_back_image' => $renter->nicImage ?? ''
+                        ];
+
+                        // Add profile picture (use existing if not provided)
+                        $updateData['profile_picture'] = $profilePicturePath ?? $renter->profilePicture;
+
+                        $result = $this->renterRepository->update($updateData);
+                        if (!$result) {
+                            error_log("Failed to update renter profile for user: " . $userId);
+                            return ['success' => false, 'message' => 'Failed to update profile in database'];
+                        }
+                    }
+                    break;
+
+                case 'Guide':
+                    $guide = $this->guideRepository->findByUserId($userId);
+                    if ($guide) {
+                        $updateData = [
+                            'guide_id' => $guide->guideId,
+                            'first_name' => $data['firstName'],
+                            'last_name' => $data['lastName'],
+                            'phone_number' => $data['phoneNumber'],
+                            'home_address' => $data['homeAddress'] ?? '',
+                            'gender' => $data['gender'] ?? 'Male',
+                            'dob' => $data['dob'] ?? $guide->dob,
+                            'camping_destinations' => $guide->campingDestinations ?? '',
+                            'stargazing_spots' => $guide->stargazingSpots ?? '',
+                            'district' => $guide->district ?? '',
+                            'verification_status' => $guide->verificationStatus ?? 'No',
+                            'latitude' => $guide->latitude ?? null,
+                            'longitude' => $guide->longitude ?? null,
+                            'nic_number' => $guide->nicNumber ?? '',
+                            'nic_front_image' => $guide->nicImage ?? '',
+                            'nic_back_image' => $guide->nicImage ?? ''
+                        ];
+
+                        // Add profile picture (use existing if not provided)
+                        $updateData['profile_picture'] = $profilePicturePath ?? $guide->profilePicture;
+
+                        $result = $this->guideRepository->update($updateData);
+                        if (!$result) {
+                            error_log("Failed to update guide profile for user: " . $userId);
+                            return ['success' => false, 'message' => 'Failed to update profile in database'];
+                        }
+                    }
+                    break;
+
+                default:
+                    return ['success' => false, 'message' => 'Invalid user role'];
+            }
+
+            return ['success' => true];
+        } catch (Exception $e) {
+            return ['success' => false, 'message' => 'Failed to update profile: ' . $e->getMessage()];
         }
     }
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 08, 2025 at 09:56 PM
+-- Generation Time: Sep 12, 2025 at 07:52 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `admins` (
-  `admin_id` varchar(36) NOT NULL,
+  `admin_id` int(11) NOT NULL,
   `email` varchar(150) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
   `status` enum('Active','Suspended','Deleted') DEFAULT 'Active',
@@ -43,10 +43,10 @@ CREATE TABLE `admins` (
 --
 
 CREATE TABLE `admin_deletions` (
-  `deletion_id` varchar(36) NOT NULL,
-  `admin_id` varchar(36) NOT NULL,
+  `deletion_id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
   `deleted_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `deleted_by` varchar(36) DEFAULT NULL
+  `deleted_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -56,11 +56,11 @@ CREATE TABLE `admin_deletions` (
 --
 
 CREATE TABLE `admin_suspensions` (
-  `suspension_id` varchar(36) NOT NULL,
-  `admin_id` varchar(36) NOT NULL,
+  `suspension_id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
   `reason` text DEFAULT 'Replaced by a new admin',
   `suspended_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `suspended_by` varchar(36) DEFAULT NULL
+  `suspended_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -70,9 +70,9 @@ CREATE TABLE `admin_suspensions` (
 --
 
 CREATE TABLE `bookingitems` (
-  `booking_item_id` varchar(36) NOT NULL,
-  `booking_id` varchar(36) NOT NULL,
-  `renter_equipment_id` varchar(36) NOT NULL,
+  `booking_item_id` int(11) NOT NULL,
+  `booking_id` int(11) NOT NULL,
+  `renter_equipment_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
   `price_per_day` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -84,11 +84,11 @@ CREATE TABLE `bookingitems` (
 --
 
 CREATE TABLE `bookings` (
-  `booking_id` varchar(36) NOT NULL,
-  `cart_id` varchar(36) NOT NULL,
-  `customer_id` varchar(36) NOT NULL,
-  `renter_id` varchar(36) DEFAULT NULL,
-  `guide_id` varchar(36) DEFAULT NULL,
+  `booking_id` int(11) NOT NULL,
+  `cart_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `renter_id` int(11) DEFAULT NULL,
+  `guide_id` int(11) DEFAULT NULL,
   `booking_type` enum('Equipment','Guide') NOT NULL,
   `booking_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `start_date` date NOT NULL,
@@ -108,9 +108,9 @@ CREATE TABLE `bookings` (
 --
 
 CREATE TABLE `cartitems` (
-  `cart_item_id` varchar(36) NOT NULL,
-  `cart_id` varchar(36) NOT NULL,
-  `renter_equipment_id` varchar(36) NOT NULL,
+  `cart_item_id` int(11) NOT NULL,
+  `cart_id` int(11) NOT NULL,
+  `renter_equipment_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
   `price_per_day` decimal(10,2) NOT NULL,
   `is_reserved` tinyint(1) DEFAULT 1
@@ -123,14 +123,14 @@ CREATE TABLE `cartitems` (
 --
 
 CREATE TABLE `carts` (
-  `cart_id` varchar(36) NOT NULL,
-  `customer_id` varchar(36) NOT NULL,
+  `cart_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `expires_at` timestamp NULL DEFAULT NULL,
   `status` enum('Active','CheckedOut','Abandoned','Expired') DEFAULT 'Active',
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -148,7 +148,7 @@ CREATE TABLE `contact_messages` (
   `status` enum('Pending','Replied') DEFAULT 'Pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `replied_at` timestamp NULL DEFAULT NULL,
-  `replied_by` varchar(36) DEFAULT NULL
+  `replied_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -159,7 +159,7 @@ CREATE TABLE `contact_messages` (
 
 CREATE TABLE `content_logs` (
   `log_id` int(11) NOT NULL,
-  `admin_id` varchar(36) NOT NULL,
+  `admin_id` int(11) NOT NULL,
   `content_type` enum('Page','FAQ') NOT NULL,
   `content_id` int(11) NOT NULL,
   `action` enum('Created','Updated','Deleted') NOT NULL,
@@ -173,8 +173,8 @@ CREATE TABLE `content_logs` (
 --
 
 CREATE TABLE `customers` (
-  `customer_id` varchar(36) NOT NULL,
-  `user_id` varchar(36) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `first_name` varchar(100) NOT NULL,
   `last_name` varchar(100) NOT NULL,
   `dob` date DEFAULT NULL,
@@ -198,7 +198,7 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`customer_id`, `user_id`, `first_name`, `last_name`, `dob`, `phone_number`, `home_address`, `location`, `latitude`, `longitude`, `gender`, `profile_picture`, `nic_number`, `nic_front_image`, `nic_back_image`, `travel_buddy_status`, `verification_status`, `created_at`) VALUES
-('ecedd337-a12f-40d8-b180-596e98e8a7ff', '27f49d3f-73c5-499e-8b25-4919aec1f338', 'Supun', 'Gunathilaka', '2001-10-08', '0774005021', '\"SISILASA\" 45 Canal, Weragama, Weraganthota', NULL, NULL, NULL, 'Male', NULL, '111111111V', NULL, NULL, 'Inactive', 'No', '2025-09-08 14:07:00');
+(1, 1, 'Supun', 'Gunathilaka', '2001-10-08', '0774005021', 'hasalaka', 'Hasalaka, Kandy District', 7.35160590, 80.95009700, 'Male', 'users/1/profile.jpg', '123456789V', 'users/1/nic_front.jpg', 'users/1/nic_back.jpg', 'Active', 'No', '2025-09-12 11:34:55');
 
 -- --------------------------------------------------------
 
@@ -207,8 +207,8 @@ INSERT INTO `customers` (`customer_id`, `user_id`, `first_name`, `last_name`, `d
 --
 
 CREATE TABLE `equipment` (
-  `equipment_id` varchar(36) NOT NULL,
-  `category_id` varchar(36) NOT NULL,
+  `equipment_id` int(11) NOT NULL,
+  `category_id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `description` text DEFAULT NULL,
   `status` enum('Active','Deleted') DEFAULT 'Active',
@@ -223,7 +223,7 @@ CREATE TABLE `equipment` (
 --
 
 CREATE TABLE `equipment_categories` (
-  `category_id` varchar(36) NOT NULL,
+  `category_id` int(11) NOT NULL,
   `type` enum('Camping','Stargazing') NOT NULL,
   `name` varchar(100) NOT NULL,
   `description` text DEFAULT NULL,
@@ -237,10 +237,10 @@ CREATE TABLE `equipment_categories` (
 --
 
 CREATE TABLE `equipment_log` (
-  `log_id` varchar(36) NOT NULL,
-  `equipment_id` varchar(36) NOT NULL,
+  `log_id` int(11) NOT NULL,
+  `equipment_id` int(11) NOT NULL,
   `action` enum('Added','Updated','Deleted') NOT NULL,
-  `admin_id` varchar(36) NOT NULL,
+  `admin_id` int(11) NOT NULL,
   `details` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -252,18 +252,18 @@ CREATE TABLE `equipment_log` (
 --
 
 CREATE TABLE `equipment_reservations` (
-  `reservation_id` varchar(36) NOT NULL,
-  `renter_equipment_id` varchar(36) NOT NULL,
-  `customer_id` varchar(36) NOT NULL,
-  `cart_id` varchar(36) DEFAULT NULL,
-  `booking_id` varchar(36) DEFAULT NULL,
+  `reservation_id` int(11) NOT NULL,
+  `renter_equipment_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `cart_id` int(11) DEFAULT NULL,
+  `booking_id` int(11) DEFAULT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
   `quantity` int(11) NOT NULL DEFAULT 1,
   `status` enum('Held','Booked','Released','Cancelled','Expired') NOT NULL DEFAULT 'Held',
   `expires_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -289,8 +289,8 @@ CREATE TABLE `faqs` (
 --
 
 CREATE TABLE `guideavailability` (
-  `availability_id` varchar(36) NOT NULL,
-  `guide_id` varchar(36) NOT NULL,
+  `availability_id` int(11) NOT NULL,
+  `guide_id` int(11) NOT NULL,
   `day_of_week` enum('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday') NOT NULL,
   `start_time` time NOT NULL,
   `end_time` time NOT NULL
@@ -303,8 +303,8 @@ CREATE TABLE `guideavailability` (
 --
 
 CREATE TABLE `guideimages` (
-  `image_id` varchar(36) NOT NULL,
-  `guide_id` varchar(36) NOT NULL,
+  `image_id` int(11) NOT NULL,
+  `guide_id` int(11) NOT NULL,
   `image_path` varchar(255) NOT NULL,
   `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -316,8 +316,8 @@ CREATE TABLE `guideimages` (
 --
 
 CREATE TABLE `guides` (
-  `guide_id` varchar(36) NOT NULL,
-  `user_id` varchar(36) NOT NULL,
+  `guide_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `first_name` varchar(100) NOT NULL,
   `last_name` varchar(100) NOT NULL,
   `dob` date DEFAULT NULL,
@@ -340,13 +340,6 @@ CREATE TABLE `guides` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `guides`
---
-
-INSERT INTO `guides` (`guide_id`, `user_id`, `first_name`, `last_name`, `dob`, `phone_number`, `home_address`, `gender`, `profile_picture`, `nic_number`, `nic_front_image`, `nic_back_image`, `camping_destinations`, `stargazing_spots`, `district`, `description`, `special_note`, `currency`, `languages`, `price_per_day`, `verification_status`, `created_at`) VALUES
-('3cf2c890-bb5b-4e96-bc20-f0b8b186041c', '1e04acbf-4bf4-443e-9c87-b1b840c185a5', 'Local', 'Guide', '2002-02-22', '0772222222', 'Kandy', 'Male', NULL, '333333333V', NULL, NULL, 'Ritigala Reserve,Gal Oya Vicinity', 'Nilgala Reserve,Knuckles Peak', 'Kandy', 'Iam avalable at every Monday!', 'Bring Your Map', 'LKR', 'Sinhala', 2500.00, 'No', '2025-09-08 14:24:17');
-
 -- --------------------------------------------------------
 
 --
@@ -354,13 +347,13 @@ INSERT INTO `guides` (`guide_id`, `user_id`, `first_name`, `last_name`, `dob`, `
 --
 
 CREATE TABLE `inactive_users` (
-  `inactive_id` varchar(36) NOT NULL,
-  `user_id` varchar(36) NOT NULL,
+  `inactive_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `role` enum('Customer','Renter','Guide') NOT NULL,
   `email` varchar(150) NOT NULL,
   `reason` text DEFAULT NULL,
   `deleted_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `deleted_by` varchar(36) NOT NULL
+  `deleted_by` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -385,6 +378,72 @@ CREATE TABLE `locations` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `locations`
+--
+
+INSERT INTO `locations` (`location_id`, `name`, `type`, `district`, `description`, `climate`, `wildlife`, `water_resources`, `safety_tips`, `important_details`, `latitude`, `longitude`, `created_at`) VALUES
+(11, 'Diyasaru Park', 'Camping', 'Colombo', 'A unique urban wetland close to Colombo, ideal for campers who want to experience nature without leaving the city. The park features birdwatching towers, walking trails, and lakeside views, making it a calm retreat.', 'Tropical climate with warm temperatures (27–32°C). Afternoon rain showers are common during monsoon seasons (May–July, Oct–Dec).', 'Home to over 100 bird species, including kingfishers and herons. Monkeys, water monitors, and butterflies are also frequently spotted.', 'The wetlands feature a calm lake and marshes, but water is not safe for drinking. Carry bottled or filtered water.', 'Stay on designated trails and boardwalks. Watch out for snakes near marshy areas. Mosquito repellent is strongly advised.', 'Located near Sri Jayewardenepura Kotte.\n\n\nEntry may have small fees.\n\n\nBest for day camping and eco-awareness programs.\n\n\nLimited camping allowed; contact park management for permissions.', 6.87956900, 79.92938000, '2025-09-10 01:46:49'),
+(12, 'Muthurajawela Marsh', 'Camping', 'Gampaha', 'One of Sri Lanka’s largest coastal marshlands, famous for boat rides through mangroves and birdwatching. Offers peaceful camping for nature enthusiasts.', 'Warm and humid with year-round tropical weather. Best time: December–April when rainfall is lower.', 'Rich ecosystem with over 200 flora species, birds like cormorants and kingfishers, plus crocodiles and fish in waterways.', 'Lagoons and waterways are brackish; not suitable for drinking. Bring bottled water.', 'Avoid swimming due to crocodiles. Always use guided tours or local rangers for safe access.', 'Managed by the Urban Development Authority and conservation groups.\n\n\nCamping is limited; eco-lodges nearby provide safe alternatives.\n\n\nIdeal for birdwatching, photography, and educational trips.', 7.19758000, 79.83243000, '2025-09-10 01:46:49'),
+(13, 'Thudugala Waterfall', 'Camping', 'Kalutara', 'A scenic waterfall surrounded by rainforest and rock pools, perfect for refreshing dips and nature camping.', 'Tropical wet climate. Warm year-round (26–30°C), with heavy rainfall during monsoons (May–July, Oct–Nov).', 'Surrounding rainforest is home to monkeys, lizards, and diverse birds.', 'Natural waterfall and pools. Water can be used for washing but not safe for direct drinking.', 'Rocks around falls can be slippery. Avoid camping too close to the waterline during rainy season.', 'Easy access from Kalutara town.\n\n\nPopular with locals, so weekdays are less crowded.\n\n\nNo formal campsite facilities—bring own gear.', 6.57111530, 80.06087530, '2025-09-10 01:46:49'),
+(14, 'Wewathenna Mountain', 'Camping', 'Kandy', 'A highland camping spot offering panoramic views of misty valleys, rolling clouds, and surrounding peaks.', 'Cool mountain climate. Daytime ~18–24°C, nights much colder (~10°C). Best visited Nov–April.', 'Occasional sightings of monkeys, wild boar, and mountain bird species.', 'Limited streams; carry sufficient drinking water.', 'Weather changes quickly—bring warm clothes and rain gear. Ensure proper guidance as trails are rugged.', 'Located about 20 km from Kandy.\n\n\nBest suited for experienced campers.\n\n\nNo permanent facilities—pack essentials.', 7.02990000, 81.07880000, '2025-09-10 01:46:49'),
+(15, 'Riverston Peak', 'Camping', 'Matale', 'Known as “Mini World’s End,” Riverston Peak offers dramatic cliffs, misty plains, and cold breezes, making it a favorite for adventure campers.', 'Cool and misty climate. Average 15–22°C, with strong winds and frequent fog. Best visited Dec–March.', 'Birdlife, lizards, and occasional deer. Flora includes montane grasslands and pygmy forests.', 'Streams available, but purify before drinking.', 'Be careful near cliffs and slippery trails. Strong winds make it unsafe to pitch tents on exposed ridges.', 'About 30 km from Matale town.\n\n\nParking available at trailhead.\n\n\nLimited facilities—carry your own camping gear and food.', 7.53039000, 80.73306000, '2025-09-10 01:46:49'),
+(16, 'Horton Plains', 'Camping', 'Nuwara Eliya', 'A UNESCO World Heritage site with highland grasslands, cloud forests, and iconic spots like World’s End and Baker’s Falls. A must-visit for hikers and nature lovers.', 'Cool and misty year-round. Daytime ~12–18°C, nights drop below 5°C. Best from Jan–Mar; carry warm layers.', 'Home to sambar deer, purple-faced langurs, wild boar, and rare leopards. Excellent for birdwatching with endemic species.', 'Streams and waterfalls present, but not safe for direct drinking. Carry filtered water.', 'Stay on marked trails (e.g., 9.5 km loop). Fog can reduce visibility suddenly. Mobile coverage is weak. Camping is not allowed inside—nearest options in Ohiya and Pattipola.', 'Open 6 AM–4 PM only.\n\n\nEntry tickets required.\n\n\nEco-friendly travel encouraged; avoid plastics.\n\n\nPublic washrooms at entrance.', 6.80209700, 80.80740500, '2025-09-10 01:46:49'),
+(17, 'Koggala Lake', 'Camping', 'Galle', 'A beautiful coastal lake dotted with islands, mangroves, and calm waters. Perfect for lakeside camping and water activities.', 'Warm and humid (28–32°C). Afternoon showers common during monsoon (May–July, Oct–Dec).', 'Mangrove habitats shelter water birds, monitor lizards, and small fish species.', 'Lake water not suitable for drinking. Carry bottled water.', 'Use lifejackets when kayaking. Beware of strong sun; bring sun protection.', 'About 20 km from Galle town.\n\n\nBoat rides available to small islands.\n\n\nIdeal for eco-tourism and kayaking groups.', 5.99149100, 80.32553100, '2025-09-10 01:46:49'),
+(18, 'Madiha Beach', 'Camping', 'Matara', 'A serene beachfront spot with palm trees, reefs, and strong surfer culture. Known for relaxed seaside camping.', 'Tropical climate, 27–31°C. Monsoon rains May–July, Oct–Nov.', 'Marine life includes reef fish, turtles, and reef corals. Onshore, expect birds and crabs.', 'Sea water only; bring drinking supplies.', 'Strong reef currents—only swim in safe areas. Keep food secure from stray dogs and monkeys.', 'Surfing hotspot with rentals nearby.\n\n\nSafe, calm vibe for campers.\n\n\nRestaurants within walking distance.', 5.93754000, 80.50767000, '2025-09-10 01:46:49'),
+(19, 'Yala Buffer Zone', 'Camping', 'Hambantota', 'Wild camping near Sri Lanka’s most famous national park, with chances to hear elephants and leopards at night.', 'Dry zone, hot climate (28–34°C). Best time Feb–July.', 'Close encounters with elephants, deer, peacocks, and sometimes leopards.', 'Streams and waterholes nearby, not safe for drinking. Always carry own supply.', 'Do not camp without authorized guides. Keep food sealed. Avoid late-night wandering.', 'Camping only allowed in guided safari camps.\n\n\nPermits required for Yala buffer camps.\n\n\nExcellent for wildlife photography.', 6.37278000, 81.51694000, '2025-09-10 01:46:49'),
+(20, 'Casuarina Beach', 'Camping', 'Jaffna', 'A peaceful white-sand beach with shallow, safe waters, ideal for family-friendly camping.', 'Hot and dry climate (28–34°C). Best months Dec–Apr.', 'Marine life includes reef fish and occasional turtles. Seabirds common.', 'Sea water only; bring drinking water.', 'Sun can be intense—use shade or tents. Respect local cultural norms.', 'About 20 km from Jaffna town.\n\n\nPopular with locals but less crowded than other northern beaches.\n\n\nCalm waters, safe for swimming and kayaking.', 9.66509300, 80.00930300, '2025-09-10 01:46:49'),
+(21, 'Iranamadu Tank', 'Camping', 'Kilinochchi', 'A vast reservoir surrounded by open skies and quiet landscapes, offering peaceful lakeside camping.', 'Hot and dry, 28–34°C most of the year. Best months: Dec–Apr, when skies are clear.', 'Attracts many water birds like pelicans, storks, and herons. Occasional sightings of freshwater fish and reptiles.', 'Tank water is not recommended for drinking. Bring bottled water.', 'Avoid swimming in deep areas. Sun exposure is high—carry shade and hydration.', 'Accessible via A9 road.\n\n\nPopular for birdwatching and stargazing.\n\n\nNo facilities—true wild camping experience.', 9.30038000, 80.45131000, '2025-09-10 01:47:09'),
+(22, 'Adam’s Bridge (Rama’s Bridge)', 'Camping', 'Mannar', 'A chain of sandbanks and shallow seas linked to mythology, with stunning views of lagoons and salt flats.', 'Arid and sunny, 28–35°C. Winds can be strong. Best from Dec–Mar.', 'Migratory birds like flamingos and pelicans are major highlights. Shallow waters hold marine life.', 'Only brackish seawater around. Carry your own drinking water.', 'Stay cautious of strong tides and heat. Avoid exploring salt flats without a guide.', 'Historically significant and culturally rich site.\n\n\nCamping spots near coastal stretches.\n\n\nBest combined with birdwatching tours.', 0.00000000, 0.00000000, '2025-09-10 01:47:09'),
+(23, 'Madukanda Forest Edge', 'Camping', 'Vavuniya', 'A peaceful camping location at the edge of lush forest and historic Madukanda temple grounds.', 'Dry-zone climate, 27–33°C. Nights are cooler with occasional breezes.', 'Forest birds, monkeys, and reptiles. Occasional wild elephants nearby.', 'Local wells and streams exist, but always purify before drinking.', 'Stay within designated camping zones. Respect cultural sites.', 'Close to Madukanda Raja Maha Viharaya.\n\n\nOffers a blend of culture and nature.\n\n\nIdeal for meditation and peaceful camping.', 8.75980000, 80.54410000, '2025-09-10 01:47:09'),
+(24, 'Nayaru Lagoon', 'Camping', 'Mullaitivu', 'A tranquil lagoon surrounded by mangroves, great for kayaking and marine-life exploration.', 'Warm and coastal, 28–32°C. Monsoon rains Oct–Dec.', 'Mangrove habitats support crabs, prawns, and birds like egrets and herons.', 'Lagoon water is saline; not suitable for drinking. Carry own supplies.', 'Be careful with tidal changes. Mosquito repellent is a must.', 'Scenic for kayaking and boating.\n\n\nRemote—minimal tourist activity.\n\n\nPeaceful spot for eco-camping.', 9.13330000, 80.81670000, '2025-09-10 01:47:09'),
+(25, 'Marble Beach', 'Camping', 'Trincomalee', 'A pristine white-sand beach with turquoise water, perfect for snorkeling, swimming, and beachfront camping.', 'Hot and sunny, 28–34°C. Best from May–Sep when seas are calmer.', 'Marine species include tropical fish, corals, and occasional turtles.', 'Sea water only; drinking water must be carried.', 'Respect Navy-managed zones. Only swim in safe flagged areas.', 'Maintained by Sri Lanka Air Force.\n\n\nWell-kept, clean environment.\n\n\nIdeal for family-friendly camping.', 8.51228000, 81.21117000, '2025-09-10 01:47:09'),
+(26, 'Pasikudah Beach', 'Camping', 'Batticaloa', 'A famous bay with shallow waters stretching hundreds of meters, perfect for safe beachside camping and swimming.', 'Hot and humid, 28–34°C. Best months: May–Sep, when seas are calm.', 'Marine life includes reef fish and corals. Seabirds often seen along the coastline.', 'Sea water only; drinking water must be brought.', 'Shallow water is safe, but avoid venturing far during monsoon. Sun protection is essential.', 'Popular with families and beginner campers.\n\n\nClose to resorts and restaurants.\n\n\nGreat for snorkeling and swimming.', 7.92940000, 81.56900000, '2025-09-10 01:47:09'),
+(27, 'Gal Oya National Park', 'Camping', 'Ampara', 'A unique park known for its boat safaris across Senanayake Samudraya, where elephants swim between islands.', 'Dry zone with 27–33°C temperatures. Best months: Mar–Sep.', 'Elephants, crocodiles, deer, and over 150 bird species.', 'Plenty of water from the reservoir, but unsafe to drink untreated.', 'Always camp with ranger support. Be cautious of elephants and crocodiles near water.', 'Entry tickets required.\n\n\nGuided safaris recommended.\n\n\nOne of the best spots for eco-camping.', 7.16667000, 81.41667000, '2025-09-10 01:47:09'),
+(28, 'Dolukanda Sacred Rock', 'Camping', 'Kurunegala', 'A legendary site tied to herbal plants of King Ravana, with panoramic views and spiritual vibes.', 'Warm climate, 26–32°C. Cooler breezes at the summit.', 'Birds, lizards, and herbal flora with historic significance.', 'Small seasonal streams; best to carry water.', 'Climb can be steep—wear proper shoes. Avoid during heavy rain.', 'Sacred site with ruins and cultural value.\n\n\nExcellent sunrise and sunset viewpoints.\n\n\nIdeal for history lovers and hikers.', 7.61172000, 80.41130000, '2025-09-10 01:47:09'),
+(29, 'Kalpitiya Beach', 'Camping', 'Puttalam', 'A coastal hotspot for kite-surfing, dolphin watching, and beach camping.', 'Dry zone with strong coastal winds. Hot climate (28–35°C).', 'Marine dolphins, reef fish, and sea turtles.', 'Only salty sea water nearby. Drinking water must be carried.', 'High winds—secure tents well. Use certified guides for kite-surfing and dolphin tours.', 'Famous worldwide for kite-surfing.\n\n\nBest season: May–Sep.\n\n\nResorts and eco-lodges nearby for backup.', 8.22953000, 79.75961000, '2025-09-10 01:47:09'),
+(30, 'Wilpattu Camping', 'Camping', 'Anuradhapura', 'Sri Lanka’s largest national park, with natural lakes (“villus”), jungle tracks, and historic ruins nearby.', 'Dry zone, hot (27–34°C). Best from Feb–Oct.', 'Leopards, elephants, sloth bears, and deer. Rich birdlife around lakes.', 'Natural villus and tanks, but not safe for drinking.', 'Camping only with park permits and guides. Avoid nighttime walks due to wildlife.', 'Entry tickets required.\n\n\nGuided safaris available.\n\n\nExcellent for wildlife photographers and researchers.', 8.41667000, 80.00000000, '2025-09-10 01:47:09'),
+(31, 'Habarana Jungle', 'Camping', 'Polonnaruwa', 'A camping spot within the elephant corridors of Sri Lanka, offering wild nights under starlit skies near historic ruins.', 'Dry zone with hot weather, 28–34°C. Best months: Apr–Sep.', 'Wild elephants are the main highlight. Also deer, monkeys, peacocks, and many birds.', 'Small lakes and waterholes nearby, not suitable for drinking. Bring purified water.', 'Avoid camping alone; elephants may roam at night. Always camp with trained guides.', 'Located close to Sigiriya and Minneriya.\n\n\nBest for safari-style camping.\n\n\nPark permits and ranger supervision required.', 8.03300000, 80.75000000, '2025-09-10 01:47:26'),
+(32, 'Madolsima', 'Camping', 'Badulla', 'A breathtaking mountain ridge campsite with dramatic cliff edges and sunrise views above swirling clouds.', 'Cool and breezy, 15–25°C. Mist and rain common during evenings.', 'Birds, butterflies, and small mammals typical of highland ecosystems.', 'Small seasonal streams nearby. Carry sufficient drinking water.', 'Cliffs are dangerous—avoid camping too close to edges. Nights are cold—carry warm clothes.', 'Popular for “Mini World’s End” viewpoint.\n\n\nRemote; no shops or facilities.\n\n\nIdeal for sunrise trekkers.', 7.04670000, 81.15820000, '2025-09-10 01:47:26'),
+(33, 'Narangala Peak', 'Camping', 'Badulla', 'One of the most scenic peaks in Uva, offering 360° mountain views and starry night skies for campers.', 'Cool and windy. Day ~18–24°C, nights 8–12°C. Best during dry season (Dec–Apr).', 'Highland birds, lizards, and wild boar occasionally seen.', 'Few water sources; bring enough supplies.', 'Steep trails; only for fit hikers. Nights can be freezing.', 'Trail starts from Keenakele village.\n\n\nPopular among youth hikers.\n\n\nNo facilities—carry camping essentials.', 7.03551000, 81.01039000, '2025-09-10 01:47:26'),
+(34, 'Namunukula Range', 'Camping', 'Badulla', 'A mountain range with multiple peaks, hidden trails, and dense forest cover, offering untouched camping experiences.', 'Cool mountain weather, 15–22°C. Frequent mist and occasional rain.', 'Bird species, small reptiles, and wild rabbits.', 'Streams flow in the valleys but must be purified before drinking.', 'Remote area—trek with locals or guides. Weather changes rapidly.', 'Highest peak in Uva Province (~2,035m).\n\n\nCultural significance in local legends.\n\n\nGreat for multi-day hikes.', 6.93265000, 81.11412000, '2025-09-10 01:47:26'),
+(35, 'Bogahakumbura Forest', 'Camping', 'Badulla', 'A hidden forest camping site popular with birdwatchers and eco-tourists.', 'Mild highland climate, 18–25°C. Mist common in early mornings.', 'Diverse birdlife, butterflies, and small mammals.', 'Natural springs and streams in the area.', 'Avoid venturing deep alone—dense forest paths can be confusing.', 'Known for eco-friendly experiences.\n\n\nLocal community sometimes offers homestays.\n\n\nPerfect for nature photography.', 6.86194000, 80.87639000, '2025-09-10 01:47:26'),
+(36, 'Haputale Ridge', 'Camping', 'Badulla', 'A misty ridge offering spectacular tea plantation views, with iconic spots like Lipton’s Seat nearby.', 'Cool and foggy. Daytime ~15–22°C, nights can drop to ~8°C. Best months: Dec–Apr.', 'Bird species, monkeys, and butterflies are common. Tea estates also shelter small reptiles.', 'Streams flow through the hills, but not always reliable. Carry drinking water.', 'Weather shifts quickly—fog can limit visibility. Avoid camping too close to steep drops.', 'Accessible from Haputale town.\n\n\nFamous for Lipton’s Seat viewpoint.\n\n\nPopular among both hikers and photographers.', 6.76566000, 80.95104000, '2025-09-10 01:47:26'),
+(37, 'Mahiyanganaya Riverbank', 'Camping', 'Badulla', 'A calm riverside camping spot with cultural and spiritual surroundings, blending nature with history.', 'Warm and tropical, 26–32°C. Nights cooler by the river.', 'River fish, birds, and occasional monkeys.', 'River provides water, but purification needed.', 'Be cautious of slippery riverbanks. Avoid swimming in strong currents.', 'Close to Mahiyanganaya town and temple.\n\n\nPeaceful setting for cultural and eco-camping.\n\n\nGreat for meditation and riverside relaxation.', 7.33161000, 81.00368000, '2025-09-10 01:47:26'),
+(38, 'Udawalawe Border', 'Camping', 'Monaragala', 'Wild camping at the edge of Udawalawe National Park, famous for elephants and scenic landscapes.', 'Hot and dry, 28–35°C. Best months: Dec–May.', 'Elephants, deer, crocodiles, and many bird species.', 'Nearby tanks and rivers; not suitable for drinking untreated.', 'Only camp with rangers or licensed guides. Never leave food outside tents.', 'Entry permits may be required for border zones.\n\n\nGuided safari camping available.\n\n\nExcellent for elephant photography.', 6.47400000, 80.89870000, '2025-09-10 01:47:26'),
+(39, 'Belihuloya', 'Camping', 'Ratnapura', 'A forested riverside destination famous for cool streams, natural pools, and biodiversity.', 'Mild and pleasant, 22–28°C. Rain showers possible year-round.', 'Birdlife, butterflies, and freshwater fish. Surrounded by lush greenery.', 'Streams and natural pools available; filter before drinking.', 'Beware of leeches in rainy season. Rocks near streams can be slippery.', 'Popular for adventure sports like rafting.\n\n\nExcellent for eco-camping and short hikes.\n\n\nClose to Sabaragamuwa University area.', 6.71810000, 80.76710000, '2025-09-10 01:47:26'),
+(40, 'Knuckles Foothills', 'Camping', 'Kegalle', 'A remote camping spot near the Knuckles Mountain Range, with waterfalls, rare species, and fresh mountain air.', 'Cool and misty, 16–22°C. Frequent rains, especially May–Nov.', 'Endemic species like purple-faced langurs, deer, and rare birds.', 'Many streams and waterfalls, but purification required.', 'Remote location—travel with experienced guides. Trails can be slippery and leech-prone.', 'UNESCO World Heritage region.\n\n\nExcellent for multi-day treks.\n\n\nIdeal for eco-tourism and biodiversity studies.', 7.45000000, 80.80000000, '2025-09-10 01:47:26'),
+(46, 'Horton Plains', 'Stargazing', 'Nuwara Eliya', 'Horton Plains offers one of Sri Lanka’s most breathtaking stargazing experiences thanks to its elevation above 2,000m. The open plateau provides wide horizons and crisp, clear skies, making constellations, the Milky Way, and even faint nebulae visible on moonless nights.', 'Cold and misty at night, often dropping below 5°C. Best skies between January–March with dry, clear air.', 'Sambar deer and nocturnal bird calls can be heard. Occasionally leopards, so caution is advised.', 'Streams and waterfalls exist but not potable. Carry your own drinking water.', 'Park entry closes at 4 PM, so stargazing is only possible at nearby camping lodges in Ohiya or Pattipola. Dress warmly.', 'Restricted entry at night.\nBest experience from nearby eco-lodges or viewpoints.\nIdeal for astrophotography with wide horizons.', 6.80209750, 80.80740460, '2025-09-10 02:46:26'),
+(47, 'Namunukula Range', 'Stargazing', 'Badulla', 'The Namunukula Range offers 360° panoramic views, making it a dream location for stargazers. Its dark skies reveal both dazzling sunsets and the Milky Way in a single night, creating unforgettable astro-landscapes for photographers.', 'Cool mountain weather, ~12–20°C at night. Mist common in rainy months; best Mar–Apr and Aug–Sep.', 'Owls, nightjars, and small mammals are often heard at night.', 'Valley streams present but purify before drinking.', 'Steep trails; hike with locals. Nights can be very cold and windy—carry layers.', 'Highest peak in Uva Province.\nRemote, dark-sky location—ideal for astrophotography.\nNo shops—self-sufficient camping required.', 6.93333300, 81.11666700, '2025-09-10 02:46:26'),
+(48, 'Ritigala Reserve', 'Stargazing', 'Anuradhapura', 'Ritigala Reserve combines ancient ruins with dark, starlit skies for a mystical stargazing experience. The quiet forest setting provides minimal light pollution, making it perfect for night photography with cultural and natural backdrops.', 'Dry-zone climate, 25–30°C evenings. Best skies May–Sep.', 'Cicadas, owls, and occasional deer.', 'Small forest tanks but not drinkable. Carry bottled water.', 'Reserve access is restricted after dark—best to stargaze from surrounding eco-lodges or village edges.', 'Ancient monastery ruins add unique silhouettes.\nQuiet location with minimal light pollution.\nBest for cultural-astro photography mix.', 8.10920000, 80.65460000, '2025-09-10 02:46:26'),
+(49, 'Yala Buffer Zone', 'Stargazing', 'Hambantota', 'The Yala Buffer Zone offers one of the most primal stargazing experiences, with wild sounds echoing under star-filled skies. The absence of city lights makes this one of the darkest skies in southern Sri Lanka, perfect for deep-sky views.', 'Hot and dry (28–32°C evenings). Clear skies from Feb–Jul.', 'Elephants, peacocks, and occasional leopard calls at night.', 'Waterholes exist but unsafe to drink. Always bring your own supply.', 'Only stargaze from secure safari camps. Avoid wandering outside after dark due to wild animals.', 'Guided eco-camps provide safe night experiences.\nOne of the darkest skies in southern Sri Lanka.\nIdeal for star trails and soundscapes.', 6.37277778, 81.51694450, '2025-09-10 02:46:26'),
+(50, 'Knuckles Mountains', 'Stargazing', 'Kandy', 'The Knuckles Mountains provide a panoramic natural observatory with minimal light pollution. On clear nights, the Milky Way glows brightly above rolling ridges and misty valleys, creating surreal stargazing conditions.', 'Cool mountain nights, ~15°C. Best Nov–Apr when skies are clearest.', 'Night frogs, owls, and endemic highland species audible in the dark.', 'Streams and small waterfalls present but require filtering.', 'Trails are rugged—hike with guides. Mist can cover paths quickly.', 'UNESCO World Heritage site.\nIdeal for multi-day treks with stargazing camps.\nGreat for astro-landscape shots with mountain silhouettes.', 7.40077100, 80.81061600, '2025-09-10 02:46:26'),
+(51, 'Minneriya Area', 'Stargazing', 'Polonnaruwa', 'The Minneriya area offers expansive skies above ancient reservoirs, where stars reflect beautifully on still waters. With little light pollution in the dry season, stargazers can enjoy uninterrupted views of constellations and the Milky Way stretching across the horizon.', 'Dry-zone weather, warm evenings (25–30°C). Best clear skies June–Sep during the dry season.', 'Elephants may roam at dusk. Owls and night birds often heard near the tanks.', 'Large reservoirs present, but not safe for drinking. Bring your own water.', 'Avoid camping directly near water due to elephants. Stargaze from eco-camps or village edges.', 'Very low light pollution compared to urban Sri Lanka.\nWater reflections create excellent foregrounds for astrophotography.\nNew moon nights provide the clearest skies.', 7.97889000, 80.84889000, '2025-09-10 02:46:26'),
+(52, 'Koggala Lake', 'Stargazing', 'Galle', 'Koggala Lake transforms into a mirror for the night sky, where constellations ripple gently on its surface. With mangrove islands creating natural silhouettes, the lake becomes a peaceful setting for both stargazing and astrophotography.', 'Humid tropical nights, 27–30°C. Best skies Jan–Apr when monsoons recede.', 'Nighttime calls of herons, owls, and water birds.', 'Lake water unsuitable for drinking—carry bottled supplies.', 'Use safe boat operators if stargazing from the lake. Mosquito protection is a must.', 'Reflections add creative astro-compositions.\nNearby urban lights may slightly reduce sky quality—choose secluded lake edges.\nPlan for long-exposure shots to capture stars mirrored in the water.', 6.00000000, 80.33333300, '2025-09-10 02:46:26'),
+(53, 'Riverston', 'Stargazing', 'Matale', 'At Riverston, highland cliffs rise above rolling valleys, providing sweeping night skies free from city glow. The strong winds and crisp mountain air make it a dramatic location for star trails and timelapse astrophotography.', 'Cool mountain climate, ~15–20°C at night. Frequent winds—best Dec–Mar.', 'Night birds and insects dominate the soundscape.', 'Streams flow nearby but treat before drinking.', 'Cliffs are steep—never set up gear too close to edges. Strong winds can topple tripods.', 'Known for dramatic astro-landscapes with mountain silhouettes.\nOne of the darkest sky regions in the central highlands.\nIdeal for capturing Milky Way arcs in early morning hours.', 7.52375000, 80.73708000, '2025-09-10 02:46:26'),
+(54, 'Casuarina Beach', 'Stargazing', 'Jaffna', 'Casuarina Beach offers wide-open horizons where the ocean meets the night sky. With minimal artificial lighting, it’s an ideal location to witness meteor showers, star clusters, and bright planetary alignments over the water.', 'Dry coastal nights, 26–30°C. Best skies Dec–Apr when humidity is low.', 'Shore crabs and seabirds active at night.', 'No fresh water nearby; bring sufficient supplies.', 'Avoid camping too close to the shoreline during high tide. Respect cultural norms in the area.', 'Minimal light pollution compared to southern beaches.\nExcellent for long meteor exposures with open skies.\nGreat for observing constellations rising over the horizon.', 9.76308000, 79.88661000, '2025-09-10 02:46:26'),
+(55, 'Nilaveli Beach', 'Stargazing', 'Trincomalee', 'Nilaveli Beach is a stargazer’s paradise on Sri Lanka’s east coast, offering wide sandy shores with minimal light intrusion. During dry-season nights, the constellations shine brilliantly, and the Milky Way can be seen stretching across the ocean.', 'Dry-zone coastal climate, ~27–31°C nights. Best skies Apr–Sep.', 'Occasional sea turtles, night crabs, and seabirds.', 'Sea water only; carry fresh water.', 'Stay clear of strong currents and avoid isolated areas alone.', 'Open eastern horizon makes it perfect for capturing moonrises and planetary alignments.\nBest dark-sky conditions during new moon periods.\nPopular among astrophotographers for Milky Way visibility over the ocean.', 8.69273300, 81.18853000, '2025-09-10 02:46:26'),
+(56, 'Ella Rock', 'Stargazing', 'Badulla', 'Ella Rock provides one of the most dramatic stargazing backdrops in Sri Lanka, with its high cliff edges overlooking lush valleys. On clear nights, the Milky Way arcs across the sky, creating a breathtaking sight for both campers and astrophotographers. The elevated position ensures minimal light interference for capturing night-sky panoramas.', 'Cool and breezy nights, ~15–20°C. Best stargazing conditions Dec–Apr.', 'Night insects, owls, and occasional small mammals can be heard.', 'No reliable streams at the summit—carry all drinking water.', 'The hike is steep and risky in the dark. Best to camp before sunset and set up gear early.', 'High vantage point gives sweeping horizon views.\nPopular astrophotography site for capturing the Milky Way core.\nAvoid full-moon nights for the clearest skies.', 6.85790000, 81.04680000, '2025-09-10 02:51:01'),
+(57, 'Sinharaja Edge', 'Stargazing', 'Ratnapura', 'The edges of the Sinharaja rainforest offer an enchanting combination of dark skies and glowing jungle silhouettes. Mist often drifts through the treetops, making starlit scenes look mystical and dreamlike. For photographers, the mix of forest and star fields creates rare and atmospheric compositions.', 'Humid tropical forest climate, ~22–27°C at night. Clear skies possible Jan–Mar.', 'Nocturnal frogs, insects, and rare owls echo through the forest.', 'Streams available but require filtration.', 'Leeches and snakes may be present at night—use boots and repellent.', 'Dense jungle adds mysterious foregrounds to astro-shots.\nCloud inversions often glow with moonlight, creating surreal scenes.\nBest with guided eco-lodges near forest borders.', 6.41670000, 80.50000000, '2025-09-10 02:51:01'),
+(58, 'Wilpattu Vicinity', 'Stargazing', 'Kurunegala', 'The wilderness near Wilpattu is famous for its pristine dark skies and iconic baobab tree silhouettes. With almost no artificial lighting, the stars blaze brightly, making this one of the best spots for long-exposure astrophotography. The silence of the forest adds to the immersive night-sky experience.', 'Dry-zone climate, ~25–30°C evenings. Best skies Feb–Sep.', 'Elephants and deer roam nearby; owls and jackals may be heard.', 'Nearby lakes exist but are unsafe to drink.', 'Do not venture into wild areas without local guides. Stay within secure zones.', 'Very low light pollution, perfect for deep-sky photography.\nUnique baobab tree silhouettes against the Milky Way.\nRemote location ensures minimal disturbance for long exposures.', 8.35000000, 80.10000000, '2025-09-10 02:51:01'),
+(59, 'Kalametiya Beach', 'Stargazing', 'Matara', 'Kalametiya Beach combines the sound of waves with expansive starlit skies, creating a tranquil coastal stargazing experience. Its lagoons reflect starlight, offering photographers a chance to capture both celestial and water landscapes in a single frame. Nights here feel untouched and serene, perfect for quiet observation.', 'Warm tropical climate, ~26–30°C nights. Clear skies Jan–Apr.', 'Wetland birds and coastal crabs active at night.', 'Lagoon and sea present, but not drinkable. Carry water.', 'Be mindful of tides and avoid isolated zones at night.', 'Open horizon offers wide Milky Way views.\nLagoon reflections add creative astrophotography options.\nBest during new moon phases for darker skies.', 6.05760000, 80.93370000, '2025-09-10 02:51:01'),
+(60, 'Udawalawe Vicinity', 'Stargazing', 'Monaragala', 'The grasslands around Udawalawe open up to vast, unobstructed night skies that seem endless. Star trails and the Milky Way shine vividly here, making it a prime destination for astrophotography. The combination of wilderness and silence creates an unforgettable night under the stars.', 'Hot and dry evenings, ~28–32°C. Best skies Dec–May.', 'Elephants, deer, and night birds often visible from a distance.', 'Nearby rivers and tanks, not safe for drinking untreated.', 'Stay in ranger-approved areas—wildlife is active at night.', 'Wide open grasslands ensure minimal obstructions for astrophotography.\nExcellent for shooting ISS passes and satellite trails.\nLow light pollution makes it one of the best southern dark-sky areas.', 6.42676000, 80.87234000, '2025-09-10 02:51:01'),
+(61, 'Kalpitiya', 'Stargazing', 'Puttalam', 'Kalpitiya is one of Sri Lanka’s best coastal dark-sky spots, where meteors, satellites, and even the ISS can be seen cutting across the night sky. The dry winds and wide-open beaches make it ideal for astrophotographers who want clear horizons over the ocean. Its mix of stargazing and adventure, with kite-surf silhouettes by day and Milky Way trails by night, creates a unique experience.', 'Hot and breezy coastal climate, ~27–32°C at night. Best skies May–Sep.', 'Dolphins offshore during day; seabirds and crabs active at night.', 'Sea water only; carry bottled supplies.', 'Strong winds can affect telescopes and cameras—secure your gear.', 'Low light pollution compared to other west-coast beaches.\nExcellent for satellite trails, ISS spotting, and meteor showers.\nCombine stargazing with daytime kite-surfing for a unique experience.', 8.22940000, 79.75960000, '2025-09-10 02:51:01'),
+(62, 'Mahiyanganaya Fields', 'Stargazing', 'Badulla', 'Mahiyanganaya’s wide paddy fields open to starry skies unobstructed by trees or city lights. Fireflies often glow among the fields, creating a magical contrast against the Milky Way above. With nearby temples casting a soft glow, the mix of culture and nature enhances the stargazing experience.', 'Warm tropical climate, ~24–28°C evenings. Best skies Dec–Apr.', 'Fireflies glow in fields; owls and bats frequent at night.', 'Nearby rivers available but not safe to drink untreated.', 'Avoid entering fields during growing seasons. Carry mosquito protection.', 'Unique combination of natural fireflies and starry skies.\nGreat for wide-angle astrophotography.\nVillage temples often make striking illuminated foregrounds.', 7.32700000, 81.01600000, '2025-09-10 02:51:01'),
+(63, 'Pinnawala Foothills', 'Stargazing', 'Kegalle', 'The Pinnawala foothills are a hidden gem for stargazing, offering crisp mountain air and tea-field backdrops. The relatively low light pollution makes it easy to observe constellations and capture clear astro-landscapes. It’s an accessible dark-sky location close to Colombo yet still immersed in natural beauty.', 'Mild foothill climate, ~18–22°C at night. Clear skies common Dec–Mar.', 'Bats, owls, and night insects fill the soundscape.', 'Small tea streams exist; treat before use.', 'Trails can be slippery—set up gear on stable ground.', 'Great balance of accessibility and dark skies near central hills.\nTea plantations add layered textures for astro compositions.\nExcellent spot for stargazers who want easy access from Kandy/Colombo.', 7.30040000, 80.38510000, '2025-09-10 02:51:01'),
+(64, 'Forest Reserve', 'Stargazing', 'Vavuniya', 'The remote forests around Vavuniya provide some of the darkest skies in northern Sri Lanka. With no nearby city glow, the Milky Way appears sharp and bright, ideal for long-exposure photography. The silence of the jungle at night adds to the awe of stargazing in complete wilderness.', 'Dry zone climate, ~25–30°C nights. Best stargazing Jan–Jul.', 'Owls, nightjars, and occasional elephants.', 'Local wells and streams; not potable without purification.', 'Remote area—always visit with guides. Wild animals roam freely.', 'Minimal artificial light, making it a top dark-sky zone.\nGreat for Milky Way panoramas and long star trails.\nIdeal for professional astrophotographers seeking pristine skies.', 8.75000000, 80.50000000, '2025-09-10 02:51:01'),
+(65, 'Gal Oya Vicinity', 'Stargazing', 'Ampara', 'The Gal Oya area offers starry skies reflected in calm reservoir waters, surrounded by jungle wilderness. On new moon nights, the Milky Way appears mirrored in the still water, making for dramatic astro-compositions. The combination of stars, reflections, and wildlife sounds makes it one of the most atmospheric stargazing sites in the east.', 'Dry zone, ~26–30°C evenings. Best skies Feb–Jul.', 'Elephants and crocodiles near the reservoir; frogs and birds active at night.', 'Reservoir water not safe for drinking—carry purified water.', 'Never stargaze close to reservoir banks due to wildlife. Stay in designated eco-camps.', 'Excellent for reflection shots of stars over calm waters.\nClear horizons make it suitable for Milky Way core photography.\nLow light pollution enhances deep-sky visibility.', 7.22380000, 81.45910000, '2025-09-10 02:51:01'),
+(66, 'Kalametiya Sanctuary', 'Stargazing', 'Hambantota', 'Kalametiya Sanctuary is a lagoon-side paradise where the stars shine undisturbed by city lights. The still waters reflect constellations, while the soft sounds of wetland birds and waves create a peaceful night atmosphere. It’s an excellent choice for stargazers who love nature-based astro experiences.', 'Dry coastal climate, ~27–32°C nights. Best clear skies Feb–Jul.', 'Night herons, crabs, and lagoon fish are active. Fireflies can sometimes be seen.', 'Lagoon water is saline—carry bottled water.', 'Avoid staying too close to water’s edge at night due to crocodiles and tides.', 'Excellent for photographing star reflections over lagoon surfaces.\nVery low light pollution in this southern coastal area.\nBest during new moon nights for astrophotography.', 6.07530000, 80.93080000, '2025-09-10 02:51:27'),
+(67, 'Diyatha Uyana', 'Stargazing', 'Colombo', 'Diyatha Uyana is one of the few urban spots in Colombo where stargazing is possible. While deep-sky views are limited, it’s a great place to observe planets, lunar phases, and special celestial events with minimal setup. Families and beginner astrophotographers often use this site for practice.', 'Hot and humid nights, ~28–30°C. Visibility better Dec–Apr with less rain.', 'Urban birds, bats, and fish in the artificial lake.', 'Artificial lake present, not suitable for drinking.', 'Stay in well-lit areas; urban stargazing may attract crowds.', 'Light pollution limits deep-sky viewing, but bright planets are visible.\nGood for beginner astrophotographers practicing alignment shots.\nSpecial events like eclipses or conjunctions are easier to observe here.', 6.91820000, 79.95860000, '2025-09-10 02:51:27'),
+(68, 'Udugampola Forest', 'Stargazing', 'Gampaha', 'Just outside Colombo, the Udugampola Forest provides a surprisingly dark sky environment. Its proximity to the city makes it convenient for quick night sessions while still giving clear views of constellations. The natural forest setting adds a peaceful backdrop for stargazing.', 'Warm tropical climate, ~27–30°C. Best skies Jan–Apr.', 'Night birds, owls, and bats commonly found.', 'Small forest streams; not reliable for drinking.', 'Remote after dark—go in groups. Use mosquito protection.', 'Provides dark-sky conditions without long travel from Colombo.\nExcellent for short astrophotography trips.\nSuitable for capturing constellations and star clusters.', 7.12900000, 79.97000000, '2025-09-10 02:51:27'),
+(69, 'Bentota Beach', 'Stargazing', 'Kalutara', 'Bentota Beach offers stargazers a mix of gentle ocean breezes and wide-open skies. After sunset, stars begin to sparkle above the western horizon, creating dreamy views with the waves below. Its accessibility makes it popular for casual observers as well as night photographers.', 'Warm coastal climate, ~27–31°C evenings. Best skies Dec–Apr.', 'Crabs and seabirds active at night.', 'Sea water only; bring fresh supplies.', 'Beware of tides and currents. Stay in safe, known beach zones.', 'Wide horizons make it ideal for sunset-to-starlight transitions.\nWest-facing beach is great for twilight and early-night astro shots.\nSlight light pollution from resorts—choose less crowded spots.', 6.42270000, 79.99730000, '2025-09-10 02:51:27'),
+(70, 'Hakgala Edge', 'Stargazing', 'Nuwara Eliya', 'Hakgala Edge is a high-altitude stargazing point with crisp, clear air that reveals countless stars. The elevation reduces haze, giving sharper views of constellations, nebulae, and even faint star clusters. This location is a favorite among serious astrophotographers who want deep-sky clarity.', 'Cold nights, ~8–15°C. Best clear skies Jan–Apr.', 'Mountain owls, night insects, and occasional sambar deer nearby.', 'Streams and springs in lower valleys; carry treated water.', 'Nights are freezing—carry thermal clothing. Mist can reduce visibility suddenly.', 'High elevation reduces haze, improving star clarity.\nExcellent for deep-sky astrophotography.\nAmong the darkest skies in Nuwara Eliya district.', 6.93890000, 80.81860000, '2025-09-10 02:51:27'),
+(71, 'Belihuloya Valley', 'Stargazing', 'Ratnapura', 'Belihuloya Valley offers wide-open skies framed by river valleys and misty ridges. The combination of flowing water and star-filled skies creates a calm, immersive environment for stargazing. Long-exposure photography captures spectacular star arcs over the valley landscape.', 'Mild and cool, ~20–25°C at night. Best skies Jan–Apr.', 'Night birds, frogs, and river fish add natural ambience.', 'Streams and river water available—filter before drinking.', 'Be mindful of slippery rocks near rivers. Leeches may be present in damp months.', 'Excellent valley perspective for capturing long star trails.\nGreat balance of dark skies and accessibility.\nIdeal for astrophotographers seeking river-reflection compositions.', 6.71670000, 80.78330000, '2025-09-10 02:51:27'),
+(72, 'Dambulla Cave Area', 'Stargazing', 'Matale', 'The Dambulla cave area combines cultural heritage with celestial wonders. At night, the dark skies above the cave temples form dramatic silhouettes, creating a unique foreground for astro-photography. It’s a location where history, spirituality, and astronomy beautifully intersect.', 'Warm tropical climate, ~25–28°C at night. Clear skies Mar–Sep.', 'Bats from nearby caves, plus owls and insects.', 'Small tanks nearby but not potable.', 'Respect the sacred area—avoid entering temple grounds at night.', 'Stunning contrasts of temple outlines against the Milky Way.\nVery little artificial lighting near forested edges.\nGreat for astro–cultural landscape photography.', 7.85610000, 80.64920000, '2025-09-10 02:51:27'),
+(73, 'Kaudulla Vicinity', 'Stargazing', 'Polonnaruwa', 'The Kaudulla vicinity provides a quiet escape for stargazers, with its reservoirs mirroring the stars. On clear nights, the Milky Way arches above elephant pathways, adding a wilderness touch to the experience. The tranquil setting ensures minimal distractions, perfect for long observation sessions.', 'Dry zone, ~26–30°C nights. Best clear skies May–Sep.', 'Elephants often cross at dusk; owls and nightjars audible.', 'Reservoir water nearby—unsafe for drinking.', 'Stay a safe distance from elephant corridors. Use ranger-approved zones.', 'Reservoir reflections enhance astro-compositions.\nRemote location ensures dark-sky quality.\nPerfect for Milky Way photography during new moon.', 8.10000000, 80.93330000, '2025-09-10 02:51:27'),
+(74, 'Marble Beach', 'Stargazing', 'Trincomalee', 'Marble Beach offers a pristine shoreline where stargazing is paired with the gentle rhythm of waves. The white sand enhances the brightness of the scene, creating a serene setting for barefoot observation. With little light pollution, it’s perfect for relaxed skywatching or astrophotography.', 'Hot coastal nights, ~27–31°C. Best skies Apr–Sep.', 'Crabs and seabirds active on the shoreline.', 'Sea water only; bring fresh water.', 'Stay in Navy-approved visitor zones. Watch for tides.', 'Clean, open beach with minimal light pollution.\nIdeal for combining stargazing with camping.\nPerfect site for capturing constellations over the Indian Ocean.', 8.51230000, 81.21060000, '2025-09-10 02:51:27'),
+(75, 'Kallady Beach', 'Stargazing', 'Batticaloa', 'Kallady Beach is a serene eastern coast location where moonrises and planets shine vividly above the horizon. The gentle sound of waves adds tranquility while stargazers enjoy uninterrupted views of the night sky. It’s an excellent place for spotting planetary alignments and shooting coastal astro-scenes.', 'Warm coastal climate, ~27–30°C evenings. Best skies Apr–Sep.', 'Night crabs, sea turtles, and seabirds occasionally spotted.', 'Sea water only; bring own supply.', 'Stay mindful of currents and avoid isolated sections alone.', 'Excellent for photographing moonrises and planetary conjunctions.\nWide eastern horizon ideal for astrophotography.\nRemote beaches provide naturally dark-sky conditions.', 7.71680000, 81.71600000, '2025-09-10 02:51:27');
+
 -- --------------------------------------------------------
 
 --
@@ -398,6 +457,192 @@ CREATE TABLE `location_images` (
   `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `location_images`
+--
+
+INSERT INTO `location_images` (`image_id`, `location_id`, `image_path`, `uploaded_at`) VALUES
+(1, 11, '/skycamp-backend/storage/uploads/locations/camping_destinations/diyasaru_park1.jpg', '2025-09-12 17:46:39'),
+(2, 11, '/skycamp-backend/storage/uploads/locations/camping_destinations/diyasaru_park2.jpg', '2025-09-12 17:46:39'),
+(3, 11, '/skycamp-backend/storage/uploads/locations/camping_destinations/diyasaru_park3.jpg', '2025-09-12 17:46:39'),
+(4, 12, '/skycamp-backend/storage/uploads/locations/camping_destinations/muthurajawela_marsh1.jpg', '2025-09-12 17:46:39'),
+(5, 12, '/skycamp-backend/storage/uploads/locations/camping_destinations/muthurajawela_marsh2.jpg', '2025-09-12 17:46:39'),
+(6, 12, '/skycamp-backend/storage/uploads/locations/camping_destinations/muthurajawela_marsh3.jpg', '2025-09-12 17:46:39'),
+(7, 13, '/skycamp-backend/storage/uploads/locations/camping_destinations/thudugala_waterfall1.jpg', '2025-09-12 17:46:39'),
+(8, 13, '/skycamp-backend/storage/uploads/locations/camping_destinations/thudugala_waterfall2.jpg', '2025-09-12 17:46:39'),
+(9, 13, '/skycamp-backend/storage/uploads/locations/camping_destinations/thudugala_waterfall3.jpg', '2025-09-12 17:46:39'),
+(10, 14, '/skycamp-backend/storage/uploads/locations/camping_destinations/wewathenna_mountain1.jpg', '2025-09-12 17:46:39'),
+(11, 14, '/skycamp-backend/storage/uploads/locations/camping_destinations/wewathenna_mountain2.jpg', '2025-09-12 17:46:39'),
+(12, 14, '/skycamp-backend/storage/uploads/locations/camping_destinations/wewathenna_mountain3.jpg', '2025-09-12 17:46:39'),
+(13, 15, '/skycamp-backend/storage/uploads/locations/camping_destinations/riverston_peak1.jpg', '2025-09-12 17:46:39'),
+(14, 15, '/skycamp-backend/storage/uploads/locations/camping_destinations/riverston_peak2.jpg', '2025-09-12 17:46:39'),
+(15, 15, '/skycamp-backend/storage/uploads/locations/camping_destinations/riverston_peak3.jpg', '2025-09-12 17:46:39'),
+(16, 16, '/skycamp-backend/storage/uploads/locations/camping_destinations/horton_plains1.jpg', '2025-09-12 17:46:39'),
+(17, 16, '/skycamp-backend/storage/uploads/locations/camping_destinations/horton_plains2.jpg', '2025-09-12 17:46:39'),
+(18, 16, '/skycamp-backend/storage/uploads/locations/camping_destinations/horton_plains3.jpg', '2025-09-12 17:46:39'),
+(19, 17, '/skycamp-backend/storage/uploads/locations/camping_destinations/koggala_lake1.jpg', '2025-09-12 17:46:39'),
+(20, 17, '/skycamp-backend/storage/uploads/locations/camping_destinations/koggala_lake2.jpg', '2025-09-12 17:46:39'),
+(21, 17, '/skycamp-backend/storage/uploads/locations/camping_destinations/koggala_lake3.jpg', '2025-09-12 17:46:39'),
+(22, 18, '/skycamp-backend/storage/uploads/locations/camping_destinations/madiha_beach1.jpg', '2025-09-12 17:46:39'),
+(23, 18, '/skycamp-backend/storage/uploads/locations/camping_destinations/madiha_beach2.jpg', '2025-09-12 17:46:39'),
+(24, 18, '/skycamp-backend/storage/uploads/locations/camping_destinations/madiha_beach3.jpg', '2025-09-12 17:46:39'),
+(25, 19, '/skycamp-backend/storage/uploads/locations/camping_destinations/yala_buffer_zone1.jpg', '2025-09-12 17:46:39'),
+(26, 19, '/skycamp-backend/storage/uploads/locations/camping_destinations/yala_buffer_zone2.jpg', '2025-09-12 17:46:39'),
+(27, 19, '/skycamp-backend/storage/uploads/locations/camping_destinations/yala_buffer_zone3.jpg', '2025-09-12 17:46:39'),
+(28, 20, '/skycamp-backend/storage/uploads/locations/camping_destinations/casuarina_beach1.jpg', '2025-09-12 17:46:39'),
+(29, 20, '/skycamp-backend/storage/uploads/locations/camping_destinations/casuarina_beach2.jpg', '2025-09-12 17:46:39'),
+(30, 20, '/skycamp-backend/storage/uploads/locations/camping_destinations/casuarina_beach3.jpg', '2025-09-12 17:46:39'),
+(31, 21, '/skycamp-backend/storage/uploads/locations/camping_destinations/iranamadu_tank1.jpg', '2025-09-12 17:46:39'),
+(32, 21, '/skycamp-backend/storage/uploads/locations/camping_destinations/iranamadu_tank2.jpg', '2025-09-12 17:46:39'),
+(33, 21, '/skycamp-backend/storage/uploads/locations/camping_destinations/iranamadu_tank3.jpg', '2025-09-12 17:46:39'),
+(34, 22, '/skycamp-backend/storage/uploads/locations/camping_destinations/adams_bridge_ramas_bridge1.jpg', '2025-09-12 17:46:39'),
+(35, 22, '/skycamp-backend/storage/uploads/locations/camping_destinations/adams_bridge_ramas_bridge2.jpg', '2025-09-12 17:46:39'),
+(36, 22, '/skycamp-backend/storage/uploads/locations/camping_destinations/adams_bridge_ramas_bridge3.jpg', '2025-09-12 17:46:39'),
+(37, 23, '/skycamp-backend/storage/uploads/locations/camping_destinations/madukanda_forest_edge1.jpg', '2025-09-12 17:46:39'),
+(38, 23, '/skycamp-backend/storage/uploads/locations/camping_destinations/madukanda_forest_edge2.jpg', '2025-09-12 17:46:39'),
+(39, 23, '/skycamp-backend/storage/uploads/locations/camping_destinations/madukanda_forest_edge3.jpg', '2025-09-12 17:46:39'),
+(40, 24, '/skycamp-backend/storage/uploads/locations/camping_destinations/nayaru_lagoon1.jpg', '2025-09-12 17:46:39'),
+(41, 24, '/skycamp-backend/storage/uploads/locations/camping_destinations/nayaru_lagoon2.jpg', '2025-09-12 17:46:39'),
+(42, 24, '/skycamp-backend/storage/uploads/locations/camping_destinations/nayaru_lagoon3.jpg', '2025-09-12 17:46:39'),
+(43, 25, '/skycamp-backend/storage/uploads/locations/camping_destinations/marble_beach1.jpg', '2025-09-12 17:46:39'),
+(44, 25, '/skycamp-backend/storage/uploads/locations/camping_destinations/marble_beach2.jpg', '2025-09-12 17:46:39'),
+(45, 25, '/skycamp-backend/storage/uploads/locations/camping_destinations/marble_beach3.jpg', '2025-09-12 17:46:39'),
+(46, 26, '/skycamp-backend/storage/uploads/locations/camping_destinations/pasikudah_beach1.jpg', '2025-09-12 17:46:39'),
+(47, 26, '/skycamp-backend/storage/uploads/locations/camping_destinations/pasikudah_beach2.jpg', '2025-09-12 17:46:39'),
+(48, 26, '/skycamp-backend/storage/uploads/locations/camping_destinations/pasikudah_beach3.jpg', '2025-09-12 17:46:39'),
+(49, 27, '/skycamp-backend/storage/uploads/locations/camping_destinations/gal_oya_national_park1.jpg', '2025-09-12 17:46:39'),
+(50, 27, '/skycamp-backend/storage/uploads/locations/camping_destinations/gal_oya_national_park2.jpg', '2025-09-12 17:46:39'),
+(51, 27, '/skycamp-backend/storage/uploads/locations/camping_destinations/gal_oya_national_park3.jpg', '2025-09-12 17:46:39'),
+(52, 28, '/skycamp-backend/storage/uploads/locations/camping_destinations/dolukanda_sacred_rock1.jpg', '2025-09-12 17:46:39'),
+(53, 28, '/skycamp-backend/storage/uploads/locations/camping_destinations/dolukanda_sacred_rock2.jpg', '2025-09-12 17:46:39'),
+(54, 28, '/skycamp-backend/storage/uploads/locations/camping_destinations/dolukanda_sacred_rock3.jpg', '2025-09-12 17:46:39'),
+(55, 29, '/skycamp-backend/storage/uploads/locations/camping_destinations/kalpitiya_beach1.jpg', '2025-09-12 17:46:39'),
+(56, 29, '/skycamp-backend/storage/uploads/locations/camping_destinations/kalpitiya_beach2.jpg', '2025-09-12 17:46:39'),
+(57, 29, '/skycamp-backend/storage/uploads/locations/camping_destinations/kalpitiya_beach3.jpg', '2025-09-12 17:46:39'),
+(58, 30, '/skycamp-backend/storage/uploads/locations/camping_destinations/wilpattu_camping1.jpg', '2025-09-12 17:46:39'),
+(59, 30, '/skycamp-backend/storage/uploads/locations/camping_destinations/wilpattu_camping2.jpg', '2025-09-12 17:46:39'),
+(60, 30, '/skycamp-backend/storage/uploads/locations/camping_destinations/wilpattu_camping3.jpg', '2025-09-12 17:46:39'),
+(61, 31, '/skycamp-backend/storage/uploads/locations/camping_destinations/habarana_jungle1.jpg', '2025-09-12 17:46:39'),
+(62, 31, '/skycamp-backend/storage/uploads/locations/camping_destinations/habarana_jungle2.jpg', '2025-09-12 17:46:39'),
+(63, 31, '/skycamp-backend/storage/uploads/locations/camping_destinations/habarana_jungle3.jpg', '2025-09-12 17:46:39'),
+(64, 32, '/skycamp-backend/storage/uploads/locations/camping_destinations/madolsima1.jpg', '2025-09-12 17:46:39'),
+(65, 32, '/skycamp-backend/storage/uploads/locations/camping_destinations/madolsima2.jpg', '2025-09-12 17:46:39'),
+(66, 32, '/skycamp-backend/storage/uploads/locations/camping_destinations/madolsima3.jpg', '2025-09-12 17:46:39'),
+(67, 33, '/skycamp-backend/storage/uploads/locations/camping_destinations/narangala_peak1.jpg', '2025-09-12 17:46:39'),
+(68, 33, '/skycamp-backend/storage/uploads/locations/camping_destinations/narangala_peak2.jpg', '2025-09-12 17:46:39'),
+(69, 33, '/skycamp-backend/storage/uploads/locations/camping_destinations/narangala_peak3.jpg', '2025-09-12 17:46:39'),
+(70, 34, '/skycamp-backend/storage/uploads/locations/camping_destinations/namunukula_range1.jpg', '2025-09-12 17:46:39'),
+(71, 34, '/skycamp-backend/storage/uploads/locations/camping_destinations/namunukula_range2.jpg', '2025-09-12 17:46:39'),
+(72, 34, '/skycamp-backend/storage/uploads/locations/camping_destinations/namunukula_range3.jpg', '2025-09-12 17:46:39'),
+(73, 35, '/skycamp-backend/storage/uploads/locations/camping_destinations/bogahakumbura_forest1.jpg', '2025-09-12 17:46:39'),
+(74, 35, '/skycamp-backend/storage/uploads/locations/camping_destinations/bogahakumbura_forest2.jpg', '2025-09-12 17:46:39'),
+(75, 35, '/skycamp-backend/storage/uploads/locations/camping_destinations/bogahakumbura_forest3.jpg', '2025-09-12 17:46:39'),
+(76, 36, '/skycamp-backend/storage/uploads/locations/camping_destinations/haputale_ridge1.jpg', '2025-09-12 17:46:39'),
+(77, 36, '/skycamp-backend/storage/uploads/locations/camping_destinations/haputale_ridge2.jpg', '2025-09-12 17:46:39'),
+(78, 36, '/skycamp-backend/storage/uploads/locations/camping_destinations/haputale_ridge3.jpg', '2025-09-12 17:46:39'),
+(79, 37, '/skycamp-backend/storage/uploads/locations/camping_destinations/mahiyanganaya_riverbank1.jpg', '2025-09-12 17:46:39'),
+(80, 37, '/skycamp-backend/storage/uploads/locations/camping_destinations/mahiyanganaya_riverbank2.jpg', '2025-09-12 17:46:39'),
+(81, 37, '/skycamp-backend/storage/uploads/locations/camping_destinations/mahiyanganaya_riverbank3.jpg', '2025-09-12 17:46:39'),
+(82, 38, '/skycamp-backend/storage/uploads/locations/camping_destinations/udawalawe_border1.jpg', '2025-09-12 17:46:39'),
+(83, 38, '/skycamp-backend/storage/uploads/locations/camping_destinations/udawalawe_border2.jpg', '2025-09-12 17:46:39'),
+(84, 38, '/skycamp-backend/storage/uploads/locations/camping_destinations/udawalawe_border3.jpg', '2025-09-12 17:46:39'),
+(85, 39, '/skycamp-backend/storage/uploads/locations/camping_destinations/belihuloya1.jpg', '2025-09-12 17:46:39'),
+(86, 39, '/skycamp-backend/storage/uploads/locations/camping_destinations/belihuloya2.jpg', '2025-09-12 17:46:39'),
+(87, 39, '/skycamp-backend/storage/uploads/locations/camping_destinations/belihuloya3.jpg', '2025-09-12 17:46:39'),
+(88, 40, '/skycamp-backend/storage/uploads/locations/camping_destinations/knuckles_foothills1.jpg', '2025-09-12 17:46:39'),
+(89, 40, '/skycamp-backend/storage/uploads/locations/camping_destinations/knuckles_foothills2.jpg', '2025-09-12 17:46:39'),
+(90, 40, '/skycamp-backend/storage/uploads/locations/camping_destinations/knuckles_foothills3.jpg', '2025-09-12 17:46:39'),
+(91, 46, '/skycamp-backend/storage/uploads/locations/stargazing_spots/horton_plains1.jpg', '2025-09-12 17:46:39'),
+(92, 46, '/skycamp-backend/storage/uploads/locations/stargazing_spots/horton_plains2.jpg', '2025-09-12 17:46:39'),
+(93, 46, '/skycamp-backend/storage/uploads/locations/stargazing_spots/horton_plains3.jpg', '2025-09-12 17:46:39'),
+(94, 47, '/skycamp-backend/storage/uploads/locations/stargazing_spots/namunukula_range1.jpg', '2025-09-12 17:46:39'),
+(95, 47, '/skycamp-backend/storage/uploads/locations/stargazing_spots/namunukula_range2.jpg', '2025-09-12 17:46:39'),
+(96, 47, '/skycamp-backend/storage/uploads/locations/stargazing_spots/namunukula_range3.jpg', '2025-09-12 17:46:39'),
+(97, 48, '/skycamp-backend/storage/uploads/locations/stargazing_spots/ritigala_reserve1.jpg', '2025-09-12 17:46:39'),
+(98, 48, '/skycamp-backend/storage/uploads/locations/stargazing_spots/ritigala_reserve2.jpg', '2025-09-12 17:46:39'),
+(99, 48, '/skycamp-backend/storage/uploads/locations/stargazing_spots/ritigala_reserve3.jpg', '2025-09-12 17:46:39'),
+(100, 49, '/skycamp-backend/storage/uploads/locations/stargazing_spots/yala_buffer_zone1.jpg', '2025-09-12 17:46:39'),
+(101, 49, '/skycamp-backend/storage/uploads/locations/stargazing_spots/yala_buffer_zone2.jpg', '2025-09-12 17:46:39'),
+(102, 49, '/skycamp-backend/storage/uploads/locations/stargazing_spots/yala_buffer_zone3.jpg', '2025-09-12 17:46:39'),
+(103, 50, '/skycamp-backend/storage/uploads/locations/stargazing_spots/knuckles_mountains1.jpg', '2025-09-12 17:46:39'),
+(104, 50, '/skycamp-backend/storage/uploads/locations/stargazing_spots/knuckles_mountains2.jpg', '2025-09-12 17:46:39'),
+(105, 50, '/skycamp-backend/storage/uploads/locations/stargazing_spots/knuckles_mountains3.jpg', '2025-09-12 17:46:39'),
+(106, 51, '/skycamp-backend/storage/uploads/locations/stargazing_spots/minneriya_area1.jpg', '2025-09-12 17:46:39'),
+(107, 51, '/skycamp-backend/storage/uploads/locations/stargazing_spots/minneriya_area2.jpg', '2025-09-12 17:46:39'),
+(108, 51, '/skycamp-backend/storage/uploads/locations/stargazing_spots/minneriya_area3.jpg', '2025-09-12 17:46:39'),
+(109, 52, '/skycamp-backend/storage/uploads/locations/stargazing_spots/koggala_lake1.jpg', '2025-09-12 17:46:39'),
+(110, 52, '/skycamp-backend/storage/uploads/locations/stargazing_spots/koggala_lake2.jpg', '2025-09-12 17:46:39'),
+(111, 52, '/skycamp-backend/storage/uploads/locations/stargazing_spots/koggala_lake3.jpg', '2025-09-12 17:46:39'),
+(112, 53, '/skycamp-backend/storage/uploads/locations/stargazing_spots/riverston1.jpg', '2025-09-12 17:46:39'),
+(113, 53, '/skycamp-backend/storage/uploads/locations/stargazing_spots/riverston2.jpg', '2025-09-12 17:46:39'),
+(114, 53, '/skycamp-backend/storage/uploads/locations/stargazing_spots/riverston3.jpg', '2025-09-12 17:46:39'),
+(115, 54, '/skycamp-backend/storage/uploads/locations/stargazing_spots/casuarina_beach1.jpg', '2025-09-12 17:46:39'),
+(116, 54, '/skycamp-backend/storage/uploads/locations/stargazing_spots/casuarina_beach2.jpg', '2025-09-12 17:46:39'),
+(117, 54, '/skycamp-backend/storage/uploads/locations/stargazing_spots/casuarina_beach3.jpg', '2025-09-12 17:46:39'),
+(118, 55, '/skycamp-backend/storage/uploads/locations/stargazing_spots/nilaveli_beach1.jpg', '2025-09-12 17:46:39'),
+(119, 55, '/skycamp-backend/storage/uploads/locations/stargazing_spots/nilaveli_beach2.jpg', '2025-09-12 17:46:39'),
+(120, 55, '/skycamp-backend/storage/uploads/locations/stargazing_spots/nilaveli_beach3.jpg', '2025-09-12 17:46:39'),
+(121, 56, '/skycamp-backend/storage/uploads/locations/stargazing_spots/ella_rock1.jpg', '2025-09-12 17:46:39'),
+(122, 56, '/skycamp-backend/storage/uploads/locations/stargazing_spots/ella_rock2.jpg', '2025-09-12 17:46:39'),
+(123, 56, '/skycamp-backend/storage/uploads/locations/stargazing_spots/ella_rock3.jpg', '2025-09-12 17:46:39'),
+(124, 57, '/skycamp-backend/storage/uploads/locations/stargazing_spots/sinharaja_edge1.jpg', '2025-09-12 17:46:39'),
+(125, 57, '/skycamp-backend/storage/uploads/locations/stargazing_spots/sinharaja_edge2.jpg', '2025-09-12 17:46:39'),
+(126, 57, '/skycamp-backend/storage/uploads/locations/stargazing_spots/sinharaja_edge3.jpg', '2025-09-12 17:46:39'),
+(127, 58, '/skycamp-backend/storage/uploads/locations/stargazing_spots/wilpattu_vicinity1.jpg', '2025-09-12 17:46:39'),
+(128, 58, '/skycamp-backend/storage/uploads/locations/stargazing_spots/wilpattu_vicinity2.jpg', '2025-09-12 17:46:39'),
+(129, 58, '/skycamp-backend/storage/uploads/locations/stargazing_spots/wilpattu_vicinity3.jpg', '2025-09-12 17:46:39'),
+(130, 59, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kalametiya_beach1.jpg', '2025-09-12 17:46:39'),
+(131, 59, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kalametiya_beach2.jpg', '2025-09-12 17:46:39'),
+(132, 59, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kalametiya_beach3.jpg', '2025-09-12 17:46:39'),
+(133, 60, '/skycamp-backend/storage/uploads/locations/stargazing_spots/udawalawe_vicinity1.jpg', '2025-09-12 17:46:39'),
+(134, 60, '/skycamp-backend/storage/uploads/locations/stargazing_spots/udawalawe_vicinity2.jpg', '2025-09-12 17:46:39'),
+(135, 60, '/skycamp-backend/storage/uploads/locations/stargazing_spots/udawalawe_vicinity3.jpg', '2025-09-12 17:46:39'),
+(136, 61, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kalpitiya1.jpg', '2025-09-12 17:46:39'),
+(137, 61, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kalpitiya2.jpg', '2025-09-12 17:46:39'),
+(138, 61, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kalpitiya3.jpg', '2025-09-12 17:46:39'),
+(139, 62, '/skycamp-backend/storage/uploads/locations/stargazing_spots/mahiyanganaya_fields1.jpg', '2025-09-12 17:46:39'),
+(140, 62, '/skycamp-backend/storage/uploads/locations/stargazing_spots/mahiyanganaya_fields2.jpg', '2025-09-12 17:46:39'),
+(141, 62, '/skycamp-backend/storage/uploads/locations/stargazing_spots/mahiyanganaya_fields3.jpg', '2025-09-12 17:46:39'),
+(142, 63, '/skycamp-backend/storage/uploads/locations/stargazing_spots/pinnawala_foothills1.jpg', '2025-09-12 17:46:39'),
+(143, 63, '/skycamp-backend/storage/uploads/locations/stargazing_spots/pinnawala_foothills2.jpg', '2025-09-12 17:46:39'),
+(144, 63, '/skycamp-backend/storage/uploads/locations/stargazing_spots/pinnawala_foothills3.jpg', '2025-09-12 17:46:39'),
+(145, 64, '/skycamp-backend/storage/uploads/locations/stargazing_spots/forest_reserve1.jpg', '2025-09-12 17:46:39'),
+(146, 64, '/skycamp-backend/storage/uploads/locations/stargazing_spots/forest_reserve2.jpg', '2025-09-12 17:46:39'),
+(147, 64, '/skycamp-backend/storage/uploads/locations/stargazing_spots/forest_reserve3.jpg', '2025-09-12 17:46:39'),
+(148, 65, '/skycamp-backend/storage/uploads/locations/stargazing_spots/gal_oya_vicinity1.jpg', '2025-09-12 17:46:39'),
+(149, 65, '/skycamp-backend/storage/uploads/locations/stargazing_spots/gal_oya_vicinity2.jpg', '2025-09-12 17:46:39'),
+(150, 65, '/skycamp-backend/storage/uploads/locations/stargazing_spots/gal_oya_vicinity3.jpg', '2025-09-12 17:46:39'),
+(151, 66, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kalametiya_sanctuary1.jpg', '2025-09-12 17:46:39'),
+(152, 66, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kalametiya_sanctuary2.jpg', '2025-09-12 17:46:39'),
+(153, 66, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kalametiya_sanctuary3.jpg', '2025-09-12 17:46:39'),
+(154, 67, '/skycamp-backend/storage/uploads/locations/stargazing_spots/diyatha_uyana1.jpg', '2025-09-12 17:46:39'),
+(155, 67, '/skycamp-backend/storage/uploads/locations/stargazing_spots/diyatha_uyana2.jpg', '2025-09-12 17:46:39'),
+(156, 67, '/skycamp-backend/storage/uploads/locations/stargazing_spots/diyatha_uyana3.jpg', '2025-09-12 17:46:39'),
+(157, 68, '/skycamp-backend/storage/uploads/locations/stargazing_spots/udugampola_forest1.jpg', '2025-09-12 17:46:39'),
+(158, 68, '/skycamp-backend/storage/uploads/locations/stargazing_spots/udugampola_forest2.jpg', '2025-09-12 17:46:39'),
+(159, 68, '/skycamp-backend/storage/uploads/locations/stargazing_spots/udugampola_forest3.jpg', '2025-09-12 17:46:39'),
+(160, 69, '/skycamp-backend/storage/uploads/locations/stargazing_spots/bentota_beach1.jpg', '2025-09-12 17:46:39'),
+(161, 69, '/skycamp-backend/storage/uploads/locations/stargazing_spots/bentota_beach2.jpg', '2025-09-12 17:46:39'),
+(162, 69, '/skycamp-backend/storage/uploads/locations/stargazing_spots/bentota_beach3.jpg', '2025-09-12 17:46:39'),
+(163, 70, '/skycamp-backend/storage/uploads/locations/stargazing_spots/hakgala_edge1.jpg', '2025-09-12 17:46:39'),
+(164, 70, '/skycamp-backend/storage/uploads/locations/stargazing_spots/hakgala_edge2.jpg', '2025-09-12 17:46:39'),
+(165, 70, '/skycamp-backend/storage/uploads/locations/stargazing_spots/hakgala_edge3.jpg', '2025-09-12 17:46:39'),
+(166, 71, '/skycamp-backend/storage/uploads/locations/stargazing_spots/belihuloya_valley1.jpg', '2025-09-12 17:46:39'),
+(167, 71, '/skycamp-backend/storage/uploads/locations/stargazing_spots/belihuloya_valley2.jpg', '2025-09-12 17:46:39'),
+(168, 71, '/skycamp-backend/storage/uploads/locations/stargazing_spots/belihuloya_valley3.jpg', '2025-09-12 17:46:39'),
+(169, 72, '/skycamp-backend/storage/uploads/locations/stargazing_spots/dambulla_cave_area1.jpg', '2025-09-12 17:46:39'),
+(170, 72, '/skycamp-backend/storage/uploads/locations/stargazing_spots/dambulla_cave_area2.jpg', '2025-09-12 17:46:39'),
+(171, 72, '/skycamp-backend/storage/uploads/locations/stargazing_spots/dambulla_cave_area3.jpg', '2025-09-12 17:46:39'),
+(172, 73, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kaudulla_vicinity1.jpg', '2025-09-12 17:46:39'),
+(173, 73, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kaudulla_vicinity2.jpg', '2025-09-12 17:46:39'),
+(174, 73, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kaudulla_vicinity3.jpg', '2025-09-12 17:46:39'),
+(175, 74, '/skycamp-backend/storage/uploads/locations/stargazing_spots/marble_beach1.jpg', '2025-09-12 17:46:39'),
+(176, 74, '/skycamp-backend/storage/uploads/locations/stargazing_spots/marble_beach2.jpg', '2025-09-12 17:46:39'),
+(177, 74, '/skycamp-backend/storage/uploads/locations/stargazing_spots/marble_beach3.jpg', '2025-09-12 17:46:39'),
+(178, 75, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kallady_beach1.jpg', '2025-09-12 17:46:39'),
+(179, 75, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kallady_beach2.jpg', '2025-09-12 17:46:39'),
+(180, 75, '/skycamp-backend/storage/uploads/locations/stargazing_spots/kallady_beach3.jpg', '2025-09-12 17:46:39');
+
 -- --------------------------------------------------------
 
 --
@@ -405,8 +650,8 @@ CREATE TABLE `location_images` (
 --
 
 CREATE TABLE `notifications` (
-  `notification_id` varchar(36) NOT NULL,
-  `user_id` varchar(36) NOT NULL,
+  `notification_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `type` enum('LowRatingWarning','PolicyViolation','CartUpdate','PaymentSuccess','Verification','TravelBuddyRequest','TravelBuddyResponse') NOT NULL,
   `message` text NOT NULL,
   `is_read` tinyint(1) DEFAULT 0,
@@ -436,8 +681,8 @@ CREATE TABLE `pages` (
 --
 
 CREATE TABLE `payments` (
-  `payment_id` varchar(36) NOT NULL,
-  `booking_id` varchar(36) NOT NULL,
+  `payment_id` int(11) NOT NULL,
+  `booking_id` int(11) NOT NULL,
   `gateway_txn_id` varchar(100) DEFAULT NULL,
   `amount` decimal(10,2) NOT NULL,
   `payment_status` enum('Successful','RefundPending','Refunded') NOT NULL DEFAULT 'Successful',
@@ -454,10 +699,10 @@ CREATE TABLE `payments` (
 --
 
 CREATE TABLE `ratings` (
-  `rating_id` varchar(36) NOT NULL,
-  `user_id` varchar(36) NOT NULL,
+  `rating_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `entity_type` enum('Renter','Guide','Location','Customer') NOT NULL,
-  `entity_id` varchar(36) NOT NULL,
+  `entity_id` int(11) NOT NULL,
   `rating` tinyint(4) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -469,8 +714,8 @@ CREATE TABLE `ratings` (
 --
 
 CREATE TABLE `reminders` (
-  `reminder_id` varchar(36) NOT NULL,
-  `user_id` varchar(36) NOT NULL,
+  `reminder_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `reason` text NOT NULL,
   `severity` enum('Info','Warning','Critical') DEFAULT 'Info',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -483,9 +728,9 @@ CREATE TABLE `reminders` (
 --
 
 CREATE TABLE `renterequipment` (
-  `renter_equipment_id` varchar(36) NOT NULL,
-  `renter_id` varchar(36) NOT NULL,
-  `equipment_id` varchar(36) NOT NULL,
+  `renter_equipment_id` int(11) NOT NULL,
+  `renter_id` int(11) NOT NULL,
+  `equipment_id` int(11) NOT NULL,
   `item_condition` varchar(100) DEFAULT NULL,
   `price_per_day` decimal(10,2) NOT NULL,
   `stock_quantity` int(11) DEFAULT 1,
@@ -499,8 +744,8 @@ CREATE TABLE `renterequipment` (
 --
 
 CREATE TABLE `renterequipmentphotos` (
-  `photo_id` varchar(36) NOT NULL,
-  `renter_equipment_id` varchar(36) NOT NULL,
+  `photo_id` int(11) NOT NULL,
+  `renter_equipment_id` int(11) NOT NULL,
   `photo_path` varchar(255) NOT NULL,
   `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -512,8 +757,8 @@ CREATE TABLE `renterequipmentphotos` (
 --
 
 CREATE TABLE `renters` (
-  `renter_id` varchar(36) NOT NULL,
-  `user_id` varchar(36) NOT NULL,
+  `renter_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `first_name` varchar(100) NOT NULL,
   `last_name` varchar(100) NOT NULL,
   `dob` date DEFAULT NULL,
@@ -533,13 +778,6 @@ CREATE TABLE `renters` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `renters`
---
-
-INSERT INTO `renters` (`renter_id`, `user_id`, `first_name`, `last_name`, `dob`, `phone_number`, `home_address`, `gender`, `profile_picture`, `nic_number`, `nic_front_image`, `nic_back_image`, `camping_destinations`, `stargazing_spots`, `district`, `verification_status`, `latitude`, `longitude`, `created_at`) VALUES
-('eae3a564-ccb9-4595-bba6-22f05fea92c9', 'eb85da8e-81b9-4aec-8ccc-22e4b1f17261', 'Equipment', 'Renter', '2001-11-11', '0771111111', 'Colombo', 'Male', NULL, '222222222V', NULL, NULL, 'Namunukula Range,Ritigala Reserve', 'Nilgala Reserve,Knuckles Peak', 'Colombo', 'No', 6.93886140, 79.85420050, '2025-09-08 14:12:47');
-
 -- --------------------------------------------------------
 
 --
@@ -547,10 +785,10 @@ INSERT INTO `renters` (`renter_id`, `user_id`, `first_name`, `last_name`, `dob`,
 --
 
 CREATE TABLE `reviews` (
-  `review_id` varchar(36) NOT NULL,
-  `user_id` varchar(36) NOT NULL,
+  `review_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `entity_type` enum('Renter','Guide','Location','Customer') NOT NULL,
-  `entity_id` varchar(36) NOT NULL,
+  `entity_id` int(11) NOT NULL,
   `review_text` text NOT NULL,
   `status` enum('Active','Flagged') DEFAULT 'Active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -563,9 +801,9 @@ CREATE TABLE `reviews` (
 --
 
 CREATE TABLE `review_flags` (
-  `flag_id` varchar(36) NOT NULL,
-  `review_id` varchar(36) NOT NULL,
-  `flagged_by` varchar(36) NOT NULL,
+  `flag_id` int(11) NOT NULL,
+  `review_id` int(11) NOT NULL,
+  `flagged_by` int(11) NOT NULL,
   `reason` text DEFAULT NULL,
   `flagged_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -577,12 +815,12 @@ CREATE TABLE `review_flags` (
 --
 
 CREATE TABLE `suspended_users` (
-  `suspension_id` varchar(36) NOT NULL,
-  `user_id` varchar(36) NOT NULL,
+  `suspension_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `role` enum('Customer','Renter','Guide') NOT NULL,
   `reason` text DEFAULT NULL,
   `suspended_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `suspended_by` varchar(36) NOT NULL
+  `suspended_by` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -592,8 +830,8 @@ CREATE TABLE `suspended_users` (
 --
 
 CREATE TABLE `travel_chats` (
-  `chat_id` varchar(36) NOT NULL,
-  `plan_id` varchar(36) NOT NULL,
+  `chat_id` int(11) NOT NULL,
+  `plan_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -604,9 +842,9 @@ CREATE TABLE `travel_chats` (
 --
 
 CREATE TABLE `travel_chat_members` (
-  `chat_member_id` varchar(36) NOT NULL,
-  `chat_id` varchar(36) NOT NULL,
-  `customer_id` varchar(36) NOT NULL,
+  `chat_member_id` int(11) NOT NULL,
+  `chat_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
   `status` enum('Active','Left','Removed') DEFAULT 'Active',
   `joined_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `left_at` timestamp NULL DEFAULT NULL
@@ -619,9 +857,9 @@ CREATE TABLE `travel_chat_members` (
 --
 
 CREATE TABLE `travel_messages` (
-  `message_id` varchar(36) NOT NULL,
-  `chat_id` varchar(36) NOT NULL,
-  `sender_id` varchar(36) NOT NULL,
+  `message_id` int(11) NOT NULL,
+  `chat_id` int(11) NOT NULL,
+  `sender_id` int(11) NOT NULL,
   `message` text NOT NULL,
   `sent_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -633,8 +871,8 @@ CREATE TABLE `travel_messages` (
 --
 
 CREATE TABLE `travel_plans` (
-  `plan_id` varchar(36) NOT NULL,
-  `customer_id` varchar(36) NOT NULL,
+  `plan_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
   `destination` varchar(255) NOT NULL,
   `travel_date` date NOT NULL,
   `notes` text DEFAULT NULL,
@@ -650,9 +888,9 @@ CREATE TABLE `travel_plans` (
 --
 
 CREATE TABLE `travel_requests` (
-  `request_id` varchar(36) NOT NULL,
-  `plan_id` varchar(36) NOT NULL,
-  `requester_id` varchar(36) NOT NULL,
+  `request_id` int(11) NOT NULL,
+  `plan_id` int(11) NOT NULL,
+  `requester_id` int(11) NOT NULL,
   `status` enum('Pending','Accepted','Rejected') DEFAULT 'Pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -664,7 +902,7 @@ CREATE TABLE `travel_requests` (
 --
 
 CREATE TABLE `users` (
-  `user_id` varchar(36) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `email` varchar(150) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
   `role` enum('Customer','Guide','Renter','Admin') NOT NULL,
@@ -677,9 +915,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `email`, `password_hash`, `role`, `is_active`, `created_at`) VALUES
-('1e04acbf-4bf4-443e-9c87-b1b840c185a5', 'guide@email.com', '$argon2id$v=19$m=65536,t=4,p=3$U3YyTm44MWxpZkgxVHRObQ$Ty0YxMJjhp18M3BAeiYZcfYM0Ad9CsVVCZiVYj76JMk', 'Guide', 1, '2025-09-08 14:24:17'),
-('27f49d3f-73c5-499e-8b25-4919aec1f338', 'supungunathilaka123@gmail.com', '$argon2id$v=19$m=65536,t=4,p=3$ME9aamRtWGhBSG4yemRhSA$8hPRvNe9NDJrgQjaQ8Iv4aJm0IlunkfTEzINnPDw4eE', 'Customer', 1, '2025-09-08 14:07:00'),
-('eb85da8e-81b9-4aec-8ccc-22e4b1f17261', 'renter@email.com', '$argon2id$v=19$m=65536,t=4,p=3$TGFQLldlMFlXS1h6ZlB1WA$V60aHsGENlk11wB+MU36r/XC0qKRPe7cbGGkzqsmqrw', 'Renter', 1, '2025-09-08 14:12:47');
+(1, 'supungunathilaka123@gmail.com', '$argon2id$v=19$m=65536,t=4,p=3$Z0Q2d1VEaE56MEpFbEQ5YQ$1FUMc/JyyJwGPIseBUwF2qmFdGlJn2HHobtYhBoYpB0', 'Customer', 1, '2025-09-12 11:34:55');
 
 -- --------------------------------------------------------
 
@@ -688,13 +924,11 @@ INSERT INTO `users` (`user_id`, `email`, `password_hash`, `role`, `is_active`, `
 --
 
 CREATE TABLE `user_management_log` (
-  `log_id` varchar(36) NOT NULL,
-  `admin_id` varchar(36) NOT NULL,
-  `action_type` enum('Suspend','Active','Delete') NOT NULL,
-  `target_user_id` varchar(36) NOT NULL,
-  `role` enum('Customer','Renter','Guide') NOT NULL,
-  `reason` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `log_id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
+  `target_user_id` int(11) NOT NULL,
+  `action` enum('Created','Updated','Deleted') NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -704,15 +938,12 @@ CREATE TABLE `user_management_log` (
 --
 
 CREATE TABLE `user_verifications` (
-  `verification_id` varchar(36) NOT NULL,
-  `user_id` varchar(36) NOT NULL,
-  `role` enum('Customer','Renter','Guide') NOT NULL,
-  `nic_number` varchar(20) NOT NULL,
-  `nic_image` varchar(255) NOT NULL,
-  `status` enum('Pending','Verified','Rejected') DEFAULT 'Pending',
-  `reviewed_by` varchar(36) DEFAULT NULL,
-  `reviewed_at` timestamp NULL DEFAULT NULL,
-  `note` text DEFAULT NULL
+  `verification_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `reviewed_by` int(11) DEFAULT NULL,
+  `status` enum('Pending','Approved','Rejected') DEFAULT 'Pending',
+  `note` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -722,13 +953,11 @@ CREATE TABLE `user_verifications` (
 --
 
 CREATE TABLE `verification_management_log` (
-  `log_id` varchar(36) NOT NULL,
-  `admin_id` varchar(36) NOT NULL,
-  `action_type` enum('Verify','RejectVerification') NOT NULL,
-  `target_user_id` varchar(36) NOT NULL,
-  `role` enum('Customer','Renter','Guide') NOT NULL,
-  `note` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `log_id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
+  `target_user_id` int(11) NOT NULL,
+  `action` enum('Created','Updated','Deleted') NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -738,8 +967,8 @@ CREATE TABLE `verification_management_log` (
 --
 
 CREATE TABLE `wishlists` (
-  `wishlist_id` varchar(36) NOT NULL,
-  `customer_id` varchar(36) NOT NULL,
+  `wishlist_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -750,10 +979,9 @@ CREATE TABLE `wishlists` (
 --
 
 CREATE TABLE `wishlist_items` (
-  `wishlist_item_id` varchar(36) NOT NULL,
-  `wishlist_id` varchar(36) NOT NULL,
-  `entity_type` enum('Camping','Stargazing','Guide','Renter') NOT NULL,
-  `entity_id` varchar(36) NOT NULL,
+  `wishlist_item_id` int(11) NOT NULL,
+  `wishlist_id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -773,22 +1001,22 @@ ALTER TABLE `admins`
 --
 ALTER TABLE `admin_deletions`
   ADD PRIMARY KEY (`deletion_id`),
-  ADD KEY `admin_id` (`admin_id`);
+  ADD KEY `admin_deletions_ibfk_1` (`admin_id`);
 
 --
 -- Indexes for table `admin_suspensions`
 --
 ALTER TABLE `admin_suspensions`
   ADD PRIMARY KEY (`suspension_id`),
-  ADD KEY `admin_id` (`admin_id`);
+  ADD KEY `admin_suspensions_ibfk_1` (`admin_id`);
 
 --
 -- Indexes for table `bookingitems`
 --
 ALTER TABLE `bookingitems`
   ADD PRIMARY KEY (`booking_item_id`),
-  ADD KEY `booking_id` (`booking_id`),
-  ADD KEY `renter_equipment_id` (`renter_equipment_id`);
+  ADD KEY `bookingitems_ibfk_1` (`booking_id`),
+  ADD KEY `bookingitems_ibfk_2` (`renter_equipment_id`);
 
 --
 -- Indexes for table `bookings`
@@ -806,29 +1034,29 @@ ALTER TABLE `bookings`
 --
 ALTER TABLE `cartitems`
   ADD PRIMARY KEY (`cart_item_id`),
-  ADD KEY `cart_id` (`cart_id`),
-  ADD KEY `renter_equipment_id` (`renter_equipment_id`);
+  ADD KEY `cartitems_ibfk_1` (`cart_id`),
+  ADD KEY `cartitems_ibfk_2` (`renter_equipment_id`);
 
 --
 -- Indexes for table `carts`
 --
 ALTER TABLE `carts`
   ADD PRIMARY KEY (`cart_id`),
-  ADD KEY `customer_id` (`customer_id`);
+  ADD KEY `carts_ibfk_1` (`customer_id`);
 
 --
 -- Indexes for table `contact_messages`
 --
 ALTER TABLE `contact_messages`
   ADD PRIMARY KEY (`message_id`),
-  ADD KEY `replied_by` (`replied_by`);
+  ADD KEY `contact_messages_ibfk_1` (`replied_by`);
 
 --
 -- Indexes for table `content_logs`
 --
 ALTER TABLE `content_logs`
   ADD PRIMARY KEY (`log_id`),
-  ADD KEY `admin_id` (`admin_id`);
+  ADD KEY `content_logs_ibfk_1` (`admin_id`);
 
 --
 -- Indexes for table `customers`
@@ -843,7 +1071,7 @@ ALTER TABLE `customers`
 --
 ALTER TABLE `equipment`
   ADD PRIMARY KEY (`equipment_id`),
-  ADD KEY `category_id` (`category_id`);
+  ADD KEY `equipment_ibfk_1` (`category_id`);
 
 --
 -- Indexes for table `equipment_categories`
@@ -856,19 +1084,18 @@ ALTER TABLE `equipment_categories`
 --
 ALTER TABLE `equipment_log`
   ADD PRIMARY KEY (`log_id`),
-  ADD KEY `equipment_id` (`equipment_id`),
-  ADD KEY `admin_id` (`admin_id`);
+  ADD KEY `equipment_log_ibfk_1` (`equipment_id`),
+  ADD KEY `equipment_log_ibfk_2` (`admin_id`);
 
 --
 -- Indexes for table `equipment_reservations`
 --
 ALTER TABLE `equipment_reservations`
   ADD PRIMARY KEY (`reservation_id`),
-  ADD KEY `customer_id` (`customer_id`),
-  ADD KEY `cart_id` (`cart_id`),
-  ADD KEY `booking_id` (`booking_id`),
-  ADD KEY `idx_res_equipment_dates` (`renter_equipment_id`,`start_date`,`end_date`,`status`),
-  ADD KEY `idx_res_expires` (`expires_at`);
+  ADD KEY `equipment_reservations_ibfk_1` (`renter_equipment_id`),
+  ADD KEY `equipment_reservations_ibfk_2` (`customer_id`),
+  ADD KEY `equipment_reservations_ibfk_3` (`cart_id`),
+  ADD KEY `equipment_reservations_ibfk_4` (`booking_id`);
 
 --
 -- Indexes for table `faqs`
@@ -881,14 +1108,14 @@ ALTER TABLE `faqs`
 --
 ALTER TABLE `guideavailability`
   ADD PRIMARY KEY (`availability_id`),
-  ADD KEY `guide_id` (`guide_id`);
+  ADD KEY `guideavailability_ibfk_1` (`guide_id`);
 
 --
 -- Indexes for table `guideimages`
 --
 ALTER TABLE `guideimages`
   ADD PRIMARY KEY (`image_id`),
-  ADD KEY `guide_id` (`guide_id`);
+  ADD KEY `guideimages_ibfk_1` (`guide_id`);
 
 --
 -- Indexes for table `guides`
@@ -903,7 +1130,7 @@ ALTER TABLE `guides`
 --
 ALTER TABLE `inactive_users`
   ADD PRIMARY KEY (`inactive_id`),
-  ADD KEY `deleted_by` (`deleted_by`);
+  ADD KEY `inactive_users_ibfk_1` (`deleted_by`);
 
 --
 -- Indexes for table `locations`
@@ -916,14 +1143,14 @@ ALTER TABLE `locations`
 --
 ALTER TABLE `location_images`
   ADD PRIMARY KEY (`image_id`),
-  ADD KEY `location_id` (`location_id`);
+  ADD KEY `location_images_ibfk_1` (`location_id`);
 
 --
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
   ADD PRIMARY KEY (`notification_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `notifications_ibfk_1` (`user_id`);
 
 --
 -- Indexes for table `pages`
@@ -945,30 +1172,30 @@ ALTER TABLE `payments`
 --
 ALTER TABLE `ratings`
   ADD PRIMARY KEY (`rating_id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `idx_ratings_entity` (`entity_type`,`entity_id`);
+  ADD KEY `idx_ratings_entity` (`entity_type`,`entity_id`),
+  ADD KEY `ratings_ibfk_1` (`user_id`);
 
 --
 -- Indexes for table `reminders`
 --
 ALTER TABLE `reminders`
   ADD PRIMARY KEY (`reminder_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `reminders_ibfk_1` (`user_id`);
 
 --
 -- Indexes for table `renterequipment`
 --
 ALTER TABLE `renterequipment`
   ADD PRIMARY KEY (`renter_equipment_id`),
-  ADD KEY `renter_id` (`renter_id`),
-  ADD KEY `equipment_id` (`equipment_id`);
+  ADD KEY `renterequipment_ibfk_1` (`renter_id`),
+  ADD KEY `renterequipment_ibfk_2` (`equipment_id`);
 
 --
 -- Indexes for table `renterequipmentphotos`
 --
 ALTER TABLE `renterequipmentphotos`
   ADD PRIMARY KEY (`photo_id`),
-  ADD KEY `renter_equipment_id` (`renter_equipment_id`);
+  ADD KEY `renterequipmentphotos_ibfk_1` (`renter_equipment_id`);
 
 --
 -- Indexes for table `renters`
@@ -983,29 +1210,29 @@ ALTER TABLE `renters`
 --
 ALTER TABLE `reviews`
   ADD PRIMARY KEY (`review_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `reviews_ibfk_1` (`user_id`);
 
 --
 -- Indexes for table `review_flags`
 --
 ALTER TABLE `review_flags`
   ADD PRIMARY KEY (`flag_id`),
-  ADD KEY `review_id` (`review_id`),
-  ADD KEY `flagged_by` (`flagged_by`);
+  ADD KEY `review_flags_ibfk_1` (`review_id`),
+  ADD KEY `review_flags_ibfk_2` (`flagged_by`);
 
 --
 -- Indexes for table `suspended_users`
 --
 ALTER TABLE `suspended_users`
   ADD PRIMARY KEY (`suspension_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `suspended_users_ibfk_1` (`user_id`);
 
 --
 -- Indexes for table `travel_chats`
 --
 ALTER TABLE `travel_chats`
   ADD PRIMARY KEY (`chat_id`),
-  ADD KEY `plan_id` (`plan_id`);
+  ADD KEY `travel_chats_ibfk_1` (`plan_id`);
 
 --
 -- Indexes for table `travel_chat_members`
@@ -1013,30 +1240,30 @@ ALTER TABLE `travel_chats`
 ALTER TABLE `travel_chat_members`
   ADD PRIMARY KEY (`chat_member_id`),
   ADD UNIQUE KEY `uniq_chat_user` (`chat_id`,`customer_id`),
-  ADD KEY `customer_id` (`customer_id`);
+  ADD KEY `travel_chat_members_ibfk_2` (`customer_id`);
 
 --
 -- Indexes for table `travel_messages`
 --
 ALTER TABLE `travel_messages`
   ADD PRIMARY KEY (`message_id`),
-  ADD KEY `chat_id` (`chat_id`),
-  ADD KEY `sender_id` (`sender_id`);
+  ADD KEY `travel_messages_ibfk_1` (`chat_id`),
+  ADD KEY `travel_messages_ibfk_2` (`sender_id`);
 
 --
 -- Indexes for table `travel_plans`
 --
 ALTER TABLE `travel_plans`
   ADD PRIMARY KEY (`plan_id`),
-  ADD KEY `customer_id` (`customer_id`);
+  ADD KEY `travel_plans_ibfk_1` (`customer_id`);
 
 --
 -- Indexes for table `travel_requests`
 --
 ALTER TABLE `travel_requests`
   ADD PRIMARY KEY (`request_id`),
-  ADD KEY `plan_id` (`plan_id`),
-  ADD KEY `requester_id` (`requester_id`);
+  ADD KEY `travel_requests_ibfk_1` (`plan_id`),
+  ADD KEY `travel_requests_ibfk_2` (`requester_id`);
 
 --
 -- Indexes for table `users`
@@ -1050,8 +1277,8 @@ ALTER TABLE `users`
 --
 ALTER TABLE `user_management_log`
   ADD PRIMARY KEY (`log_id`),
-  ADD KEY `admin_id` (`admin_id`),
-  ADD KEY `target_user_id` (`target_user_id`);
+  ADD KEY `user_management_log_ibfk_1` (`admin_id`),
+  ADD KEY `user_management_log_ibfk_2` (`target_user_id`);
 
 --
 -- Indexes for table `user_verifications`
@@ -1066,26 +1293,68 @@ ALTER TABLE `user_verifications`
 --
 ALTER TABLE `verification_management_log`
   ADD PRIMARY KEY (`log_id`),
-  ADD KEY `admin_id` (`admin_id`),
-  ADD KEY `target_user_id` (`target_user_id`);
+  ADD KEY `verification_management_log_ibfk_1` (`admin_id`),
+  ADD KEY `verification_management_log_ibfk_2` (`target_user_id`);
 
 --
 -- Indexes for table `wishlists`
 --
 ALTER TABLE `wishlists`
   ADD PRIMARY KEY (`wishlist_id`),
-  ADD KEY `customer_id` (`customer_id`);
+  ADD KEY `wishlists_ibfk_1` (`customer_id`);
 
 --
 -- Indexes for table `wishlist_items`
 --
 ALTER TABLE `wishlist_items`
   ADD PRIMARY KEY (`wishlist_item_id`),
-  ADD KEY `wishlist_id` (`wishlist_id`);
+  ADD KEY `wishlist_items_ibfk_1` (`wishlist_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `admins`
+--
+ALTER TABLE `admins`
+  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `admin_deletions`
+--
+ALTER TABLE `admin_deletions`
+  MODIFY `deletion_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `admin_suspensions`
+--
+ALTER TABLE `admin_suspensions`
+  MODIFY `suspension_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `bookingitems`
+--
+ALTER TABLE `bookingitems`
+  MODIFY `booking_item_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `bookings`
+--
+ALTER TABLE `bookings`
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `cartitems`
+--
+ALTER TABLE `cartitems`
+  MODIFY `cart_item_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `carts`
+--
+ALTER TABLE `carts`
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `contact_messages`
@@ -1100,28 +1369,208 @@ ALTER TABLE `content_logs`
   MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `customers`
+--
+ALTER TABLE `customers`
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `equipment`
+--
+ALTER TABLE `equipment`
+  MODIFY `equipment_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `equipment_categories`
+--
+ALTER TABLE `equipment_categories`
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `equipment_log`
+--
+ALTER TABLE `equipment_log`
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `equipment_reservations`
+--
+ALTER TABLE `equipment_reservations`
+  MODIFY `reservation_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `faqs`
 --
 ALTER TABLE `faqs`
   MODIFY `faq_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `guideavailability`
+--
+ALTER TABLE `guideavailability`
+  MODIFY `availability_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `guideimages`
+--
+ALTER TABLE `guideimages`
+  MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `guides`
+--
+ALTER TABLE `guides`
+  MODIFY `guide_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `inactive_users`
+--
+ALTER TABLE `inactive_users`
+  MODIFY `inactive_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `locations`
 --
 ALTER TABLE `locations`
-  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `location_images`
 --
 ALTER TABLE `location_images`
-  MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=256;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pages`
 --
 ALTER TABLE `pages`
   MODIFY `page_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `payments`
+--
+ALTER TABLE `payments`
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `ratings`
+--
+ALTER TABLE `ratings`
+  MODIFY `rating_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `reminders`
+--
+ALTER TABLE `reminders`
+  MODIFY `reminder_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `renterequipment`
+--
+ALTER TABLE `renterequipment`
+  MODIFY `renter_equipment_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `renterequipmentphotos`
+--
+ALTER TABLE `renterequipmentphotos`
+  MODIFY `photo_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `renters`
+--
+ALTER TABLE `renters`
+  MODIFY `renter_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `reviews`
+--
+ALTER TABLE `reviews`
+  MODIFY `review_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `review_flags`
+--
+ALTER TABLE `review_flags`
+  MODIFY `flag_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `suspended_users`
+--
+ALTER TABLE `suspended_users`
+  MODIFY `suspension_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `travel_chats`
+--
+ALTER TABLE `travel_chats`
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `travel_chat_members`
+--
+ALTER TABLE `travel_chat_members`
+  MODIFY `chat_member_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `travel_messages`
+--
+ALTER TABLE `travel_messages`
+  MODIFY `message_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `travel_plans`
+--
+ALTER TABLE `travel_plans`
+  MODIFY `plan_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `travel_requests`
+--
+ALTER TABLE `travel_requests`
+  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `user_management_log`
+--
+ALTER TABLE `user_management_log`
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `user_verifications`
+--
+ALTER TABLE `user_verifications`
+  MODIFY `verification_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `verification_management_log`
+--
+ALTER TABLE `verification_management_log`
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `wishlists`
+--
+ALTER TABLE `wishlists`
+  MODIFY `wishlist_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `wishlist_items`
+--
+ALTER TABLE `wishlist_items`
+  MODIFY `wishlist_item_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables

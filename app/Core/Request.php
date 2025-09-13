@@ -15,6 +15,7 @@ class Request
     private string $method;
     private string $path;
     private string $body;
+    private array $params; // URL parameters
 
     public function __construct()
     {
@@ -26,6 +27,7 @@ class Request
         $this->path = $this->getRequestPath();
         $this->body = $this->getRequestBody();
         $this->json = $this->parseJsonBody();
+        $this->params = []; // Initialize URL parameters
     }
 
     /**
@@ -49,7 +51,19 @@ class Request
      */
     public function get(string $key, mixed $default = null): mixed
     {
+        // Check URL parameters first, then GET parameters
+        if (isset($this->params[$key])) {
+            return $this->params[$key];
+        }
         return $this->get[$key] ?? $default;
+    }
+
+    /**
+     * Set URL parameter
+     */
+    public function setParam(string $key, mixed $value): void
+    {
+        $this->params[$key] = $value;
     }
 
     /**
