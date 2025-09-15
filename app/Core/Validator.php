@@ -207,4 +207,99 @@ class Validator
     {
         return $this->errors[$field][0] ?? null;
     }
+
+    /**
+     * Validate travel plan data
+     */
+    public function validateTravelPlan(array $data): array
+    {
+        $this->errors = [];
+
+        // Required fields
+        if (empty($data['destination'])) {
+            $this->addError('destination', 'Destination is required');
+        } elseif (strlen($data['destination']) > 255) {
+            $this->addError('destination', 'Destination is too long (max 255 characters)');
+        }
+
+        if (empty($data['travel_date'])) {
+            $this->addError('travel_date', 'Travel date is required');
+        } elseif (!$this->isValidDate($data['travel_date'])) {
+            $this->addError('travel_date', 'Invalid travel date format');
+        } elseif (!$this->isFutureDate($data['travel_date'])) {
+            $this->addError('travel_date', 'Travel date must be in the future');
+        }
+
+        if (empty($data['companions_needed'])) {
+            $this->addError('companions_needed', 'Number of companions needed is required');
+        } elseif (!is_numeric($data['companions_needed']) || (int)$data['companions_needed'] < 1) {
+            $this->addError('companions_needed', 'At least 1 companion is required');
+        } elseif ((int)$data['companions_needed'] > 10) {
+            $this->addError('companions_needed', 'Maximum 10 companions allowed');
+        }
+
+        // Optional fields
+        if (!empty($data['notes']) && strlen($data['notes']) > 1000) {
+            $this->addError('notes', 'Notes are too long (max 1000 characters)');
+        }
+
+        return $this->errors;
+    }
+
+    /**
+     * Validate travel request data
+     */
+    public function validateTravelRequest(array $data): array
+    {
+        $this->errors = [];
+
+        if (empty($data['plan_id'])) {
+            $this->addError('plan_id', 'Plan ID is required');
+        } elseif (!is_numeric($data['plan_id'])) {
+            $this->addError('plan_id', 'Invalid plan ID');
+        }
+
+        return $this->errors;
+    }
+
+    /**
+     * Validate travel message data
+     */
+    public function validateTravelMessage(array $data): array
+    {
+        $this->errors = [];
+
+        if (empty($data['message'])) {
+            $this->addError('message', 'Message is required');
+        } elseif (strlen($data['message']) > 1000) {
+            $this->addError('message', 'Message is too long (max 1000 characters)');
+        }
+
+        if (empty($data['plan_id'])) {
+            $this->addError('plan_id', 'Plan ID is required');
+        } elseif (!is_numeric($data['plan_id'])) {
+            $this->addError('plan_id', 'Invalid plan ID');
+        }
+
+        return $this->errors;
+    }
+
+    /**
+     * Check if date is valid format
+     */
+    private function isValidDate(string $date): bool
+    {
+        $d = DateTime::createFromFormat('Y-m-d', $date);
+        return $d && $d->format('Y-m-d') === $date;
+    }
+
+    /**
+     * Check if date is in the future
+     */
+    private function isFutureDate(string $date): bool
+    {
+        $travelDate = new DateTime($date);
+        $today = new DateTime();
+        return $travelDate > $today;
+    }
 }
