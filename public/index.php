@@ -42,13 +42,16 @@ require_once __DIR__ . '/../app/Repositories/GuideRepository.php';
 require_once __DIR__ . '/../app/Repositories/LocationRepository.php';
 
 // Include services
-require_once __DIR__ . '/../app/Services/AuthService.php';
 require_once __DIR__ . '/../app/Services/FileService.php';
+require_once __DIR__ . '/../app/Services/AuthService.php';
 
 // Include controllers
 require_once __DIR__ . '/../app/Controllers/AuthController.php';
 require_once __DIR__ . '/../app/Controllers/LocationController.php';
 require_once __DIR__ . '/../app/Controllers/AdminController.php';
+require_once __DIR__ . '/../app/Controllers/RenterController.php';
+require_once __DIR__ . '/../app/Controllers/GuideController.php';
+require_once __DIR__ . '/../app/Controllers/EquipmentController.php';
 
 // Include middlewares
 require_once __DIR__ . '/../app/Middlewares/Cors.php';
@@ -103,25 +106,39 @@ try {
     // Individual location endpoint (must be after specific routes)
     $router->get('/api/locations/:id', [LocationController::class, 'getLocationWithImages']);
 
-    // File serving endpoint for uploaded images
-    $router->get('/api/files/*', function (Request $request, Response $response) {
-        $fileService = new FileService();
-        $requestUri = $_SERVER['REQUEST_URI'];
-        $filePath = str_replace('/api/files/', '', $requestUri);
+    // Renter endpoints
+    $router->get('/api/renters', [RenterController::class, 'list']);
+    $router->get('/api/renters/by-district', [RenterController::class, 'getByDistrict']);
+    $router->get('/api/renters/:id', [RenterController::class, 'show']);
 
-        // Security: prevent directory traversal
-        $filePath = str_replace('../', '', $filePath);
+    // Guide endpoints
+    $router->get('/api/guides', [GuideController::class, 'list']);
+    $router->get('/api/guides/by-district', [GuideController::class, 'getByDistrict']);
+    $router->get('/api/guides/:id', [GuideController::class, 'show']);
 
-        $fullPath = $fileService->getStoragePath() . '/' . $filePath;
+    // Equipment endpoints
+    $router->get('/api/equipment/categories', [EquipmentController::class, 'getCategories']);
+    $router->get('/api/equipment/categories-with-equipment', [EquipmentController::class, 'getCategoriesWithEquipment']);
+    $router->get('/api/equipment/by-category', [EquipmentController::class, 'getEquipmentByCategory']);
 
-        if (file_exists($fullPath)) {
-            $fileService->serveFile($fullPath);
-        } else {
-            http_response_code(404);
-            header('Content-Type: application/json');
-            echo json_encode(['error' => 'File not found']);
-        }
-    });
+    // Admin User Management endpoints
+    $router->get('/api/admin/users/customers', [AdminController::class, 'getCustomers']);
+    $router->get('/api/admin/users/renters', [AdminController::class, 'getRenters']);
+    $router->get('/api/admin/users/guides', [AdminController::class, 'getGuides']);
+    $router->get('/api/admin/users/suspended', [AdminController::class, 'getSuspendedUsers']);
+    $router->get('/api/admin/users/deleted', [AdminController::class, 'getDeletedUsers']);
+    $router->post('/api/admin/users/suspend', [AdminController::class, 'suspendUser']);
+    $router->post('/api/admin/users/activate', [AdminController::class, 'activateUser']);
+    $router->post('/api/admin/users/delete', [AdminController::class, 'deleteUser']);
+    $router->get('/api/admin/activity-log', [AdminController::class, 'getActivityLog']);
+
+    // Admin User Verification endpoints
+    $router->get('/api/admin/verifications/pending', [AdminController::class, 'getPendingVerifications']);
+    $router->get('/api/admin/verifications/rejected', [AdminController::class, 'getRejectedUsers']);
+    $router->post('/api/admin/verifications/approve', [AdminController::class, 'approveUser']);
+    $router->post('/api/admin/verifications/reject', [AdminController::class, 'rejectUser']);
+    $router->get('/api/admin/verifications/activity-log', [AdminController::class, 'getVerificationActivityLog']);
+
 
     // Handle OPTIONS requests for CORS preflight
     $router->options('/api/*', function (Request $request, Response $response) {

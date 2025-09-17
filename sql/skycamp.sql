@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 12, 2025 at 07:52 PM
+-- Generation Time: Sep 14, 2025 at 08:43 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -35,6 +35,13 @@ CREATE TABLE `admins` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `admins`
+--
+
+INSERT INTO `admins` (`admin_id`, `email`, `password_hash`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'admin@skycamp.com', '$2y$10$moNM6/oxHH0zNYIaN0Ee0uJFyR5DHBwAy60Pl1cvgVsE89MdlBp6K', 'Active', '2025-09-11 04:50:00', '2025-09-11 05:15:10');
 
 -- --------------------------------------------------------
 
@@ -198,7 +205,8 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`customer_id`, `user_id`, `first_name`, `last_name`, `dob`, `phone_number`, `home_address`, `location`, `latitude`, `longitude`, `gender`, `profile_picture`, `nic_number`, `nic_front_image`, `nic_back_image`, `travel_buddy_status`, `verification_status`, `created_at`) VALUES
-(1, 1, 'Supun', 'Gunathilaka', '2001-10-08', '0774005021', 'hasalaka', 'Hasalaka, Kandy District', 7.35160590, 80.95009700, 'Male', 'users/1/profile.jpg', '123456789V', 'users/1/nic_front.jpg', 'users/1/nic_back.jpg', 'Active', 'No', '2025-09-12 11:34:55');
+(1, 1, 'Supun', 'Gunathilaka', '2001-10-08', '0774005021', 'hasalaka, kandy.', 'Hasalaka, Kandy District', 7.35160590, 80.95009700, 'Male', 'users/1/profile.jpg', '123456789V', '', '', 'Active', 'No', '2025-09-12 11:34:55'),
+(3, 231, 'Isini', 'Kularathne', '2001-08-04', '0774429711', 'No  8, 1st lane, Mirigama', 'Meerigama, Gampaha District', 7.24751440, 80.12992150, 'Female', 'users/231/profile.jpg', '211111111V', 'users/231/nic_front.png', 'users/231/nic_back.png', 'Active', 'No', '2025-09-14 11:29:50');
 
 -- --------------------------------------------------------
 
@@ -216,6 +224,60 @@ CREATE TABLE `equipment` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `equipment`
+--
+
+INSERT INTO `equipment` (`equipment_id`, `category_id`, `name`, `description`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, '1-person tent', 'Compact tent for one person', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(2, 1, '2-person tent', 'Tent suitable for two people', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(3, 1, '3 or more person tent', 'Large tent for groups', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(4, 2, 'Sleeping bags', 'Warm sleeping bags for camping', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(5, 2, 'Air mattress', 'Inflatable mattress for camping comfort', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(6, 2, 'Camping pillow', 'Portable pillow for camping', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(7, 2, 'Emergency blanket', 'Compact emergency blanket', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(8, 3, 'Single gas stove', 'Portable single burner stove', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(9, 3, 'Double gas stove', 'Two-burner portable gas stove', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(10, 3, 'Gas BBQ grill', 'Portable barbecue grill', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(11, 3, 'Cooking pot and pan set', 'Camping cookware set', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(12, 3, 'Kettle for boiling water', 'Portable camping kettle', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(13, 3, 'Fork, spoon, knife set', 'Reusable cutlery set', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(14, 3, 'Chopping board', 'Compact camping chopping board', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(15, 3, 'Reusable plates and bowls', 'Eco-friendly camping plates and bowls', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(16, 3, 'Food storage containers', 'Containers for storing food', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(17, 3, 'Cooler box', 'Cooler for food and drinks', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(18, 4, 'Camping chair', 'Foldable camping chair', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(19, 4, 'Folding table', 'Portable camping table', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(20, 4, 'Hammock', 'Relaxing hammock', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(21, 5, 'Camping lanterns', 'Lanterns for lighting campsites', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(22, 5, 'Torch', 'Handheld torch', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(23, 5, 'Tent hanging light', 'Light for hanging inside tent', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(24, 6, 'Compass & Map', 'Navigation essentials', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(25, 6, 'Emergency whistle', 'Safety whistle', 'Active', '2025-09-13 14:37:18', '2025-09-13 17:35:32'),
+(26, 6, 'First-aid kit', 'Basic medical kit', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(27, 6, 'Walkie-talkies', 'Two-way radios', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(28, 7, 'Water bottles', 'Reusable water bottles', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(29, 7, 'Water jugs', 'Large jugs for water storage', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(30, 8, 'Hiking backpacks', 'Backpacks for hiking', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(31, 8, 'Dry bags', 'Waterproof dry bags', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(32, 8, 'Waterproof pouches', 'Small waterproof pouches', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(33, 8, 'Gear organizer bag', 'Organizer for camping gear', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(34, 9, 'Raincoat', 'Waterproof raincoat', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(35, 9, 'Warm jacket', 'Insulated jacket for cold weather', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(36, 9, 'Waterproof shoes', 'Durable waterproof shoes', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(37, 10, 'Card games / Board games', 'Games for fun at camp', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(38, 10, 'Travel guitar', 'Portable guitar for travel', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(39, 11, 'Power bank & Cables', 'Portable charger and cables', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(40, 12, 'Small binoculars', 'Compact binoculars', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(41, 12, 'Stargazing binoculars', 'High-powered binoculars for stars', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(42, 13, 'Beginner telescope', 'Easy-to-use telescope for beginners', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(43, 13, 'Big telescope', 'Large telescope for stargazing', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(44, 14, 'Tripod stands for telescope or binoculars', 'Sturdy tripods', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(45, 15, 'Star maps or books', 'Guides for stargazing', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(46, 15, 'Power bank for telescope', 'Portable power for telescopes', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(47, 15, 'Laser pointer for pointing at stars', 'Laser pointer for sky mapping', 'Active', '2025-09-13 14:37:18', '2025-09-13 14:37:18'),
+(48, 1, '4-person tent', 'Spacious tent suitable for four people', 'Active', '2025-09-13 14:52:32', '2025-09-13 14:52:32');
+
 -- --------------------------------------------------------
 
 --
@@ -229,6 +291,27 @@ CREATE TABLE `equipment_categories` (
   `description` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `equipment_categories`
+--
+
+INSERT INTO `equipment_categories` (`category_id`, `type`, `name`, `description`, `created_at`) VALUES
+(1, 'Camping', 'Tents', 'Different sizes of camping tents', '2025-09-13 14:37:17'),
+(2, 'Camping', 'Sleeping Gear', 'Essential sleeping items for camping', '2025-09-13 14:37:17'),
+(3, 'Camping', 'Cooking & Kitchen Items', 'Cooking and food preparation items', '2025-09-13 14:37:17'),
+(4, 'Camping', 'Camping Furniture', 'Furniture for outdoor camping', '2025-09-13 14:37:17'),
+(5, 'Camping', 'Lights', 'Lighting equipment for camping', '2025-09-13 14:37:17'),
+(6, 'Camping', 'Navigation & Safety Tools', 'Navigation and safety tools', '2025-09-13 14:37:17'),
+(7, 'Camping', 'Water & Hydration', 'Water bottles and hydration tools', '2025-09-13 14:37:17'),
+(8, 'Camping', 'Bags & Storage', 'Bags and storage equipment', '2025-09-13 14:37:17'),
+(9, 'Camping', 'Clothing', 'Clothing suitable for camping', '2025-09-13 14:37:17'),
+(10, 'Camping', 'Fun & Extras', 'Entertainment and extra items', '2025-09-13 14:37:17'),
+(11, 'Camping', 'Power & Charging', 'Power banks and charging accessories', '2025-09-13 14:37:17'),
+(12, 'Stargazing', 'Binoculars', 'Different binoculars for stargazing', '2025-09-13 14:37:17'),
+(13, 'Stargazing', 'Telescopes', 'Telescopes for beginners and advanced users', '2025-09-13 14:37:17'),
+(14, 'Stargazing', 'Tripods & Mounts', 'Tripod stands and mounts', '2025-09-13 14:37:17'),
+(15, 'Stargazing', 'Accessories', 'Stargazing accessories like maps and lasers', '2025-09-13 14:37:17');
 
 -- --------------------------------------------------------
 
@@ -340,6 +423,42 @@ CREATE TABLE `guides` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `guides`
+--
+
+INSERT INTO `guides` (`guide_id`, `user_id`, `first_name`, `last_name`, `dob`, `phone_number`, `home_address`, `gender`, `profile_picture`, `nic_number`, `nic_front_image`, `nic_back_image`, `camping_destinations`, `stargazing_spots`, `district`, `description`, `special_note`, `currency`, `languages`, `price_per_day`, `verification_status`, `created_at`) VALUES
+(1, 201, 'Nadeesha', 'Perera', '1993-07-12', '0711234567', 'No. 12, Baseline Rd, Borella', 'Female', 'users/201/profile.jpeg', '731234561V', NULL, NULL, 'Diyasaru Park', 'Knuckles Mountains', 'Colombo', 'Urban eco-guide for wetlands, boardwalks, and city-adjacent nature days.', 'Great for families & beginners; permits arranged on request.', 'LKR', 'Sinhala, English, Tamil', 7000.00, 'No', '2025-09-13 18:01:35'),
+(2, 202, 'Chamari', 'Silva', '1992-03-08', '0772345678', 'No. 8, Negombo Rd, Ja-Ela', 'Female', 'users/202/profile.jpeg', '731234562V', NULL, NULL, 'Muthurajawela Marsh', 'Minneriya Area', 'Gampaha', 'Birding & boat-trail specialist around Negombo lagoon and marshlands.', 'Crocodile safety briefing included for marsh tours.', 'LKR', 'Sinhala, English', 6800.00, 'No', '2025-09-13 18:01:35'),
+(3, 203, 'Ishara', 'Fernando', '1991-11-19', '0763456789', 'No. 21, Agalawatta Rd, Horana', 'Female', 'users/203/profile.jpeg', '731234563V', NULL, NULL, 'Thudugala Waterfall', 'Knuckles Mountains', 'Kalutara', 'Waterfall treks with safe swim spots and rainforest walks.', 'Avoid monsoon edges; I monitor rainfall and trail conditions.', 'LKR', 'Sinhala, English', 6500.00, 'No', '2025-09-13 18:01:35'),
+(4, 204, 'Sanduni', 'Jayasinghe', '1994-05-24', '0754567890', 'No. 56, Hantana Rd, Peradeniya', 'Female', 'users/204/profile.jpeg', '731234564V', NULL, NULL, 'Wewathenna Mountain', 'Knuckles Mountains', 'Kandy', 'Highland hikes with sunrise viewpoints and misty ridge walks.', 'Warm layers and rain shells provided on request.', 'LKR', 'Sinhala, English, Tamil', 9000.00, 'No', '2025-09-13 18:01:35'),
+(5, 205, 'Udari', 'Wickramasinghe', '1990-09-02', '0745678901', 'No. 10, Illukkumbura Rd, Rattota', 'Female', 'users/205/profile.jpeg', '731234565V', NULL, NULL, 'Riverston Peak', 'Riverston', 'Matale', 'Mini World’s End treks and windy plateau camping.', 'Tripod tie-downs and wind safety tips for exposed ridges.', 'LKR', 'Sinhala, English', 9500.00, 'No', '2025-09-13 18:01:35'),
+(6, 206, 'Tharushi', 'Gunasekara', '1995-12-14', '0786789012', 'No. 4, Station Rd, Nanu Oya', 'Female', 'users/206/profile.jpeg', '731234566V', NULL, NULL, 'Horton Plains', 'Horton Plains', 'Nuwara Eliya', 'Cloud-forest walks, World’s End loop, and cold-night camping near Ohiya.', 'Hot drinks and thermal layers checklist included.', 'LKR', 'Sinhala, Tamil, English', 12000.00, 'No', '2025-09-13 18:01:35'),
+(7, 207, 'Dilhani', 'Bandara', '1996-08-18', '0727890123', 'No. 5, Dewata Rd, Unawatuna', 'Female', 'users/207/profile.jpeg', '731234567V', NULL, NULL, 'Koggala Lake', 'Koggala Lake', 'Galle', 'Island-hopping, mangrove channels, and lakeside eco-camping.', 'Lifejackets provided for all water activities.', 'LKR', 'Sinhala, English', 7000.00, 'No', '2025-09-13 18:01:35'),
+(8, 208, 'Samadhi', 'Weerasinghe', '1993-10-07', '0708901234', 'No. 9, New Tangalle Rd, Weligama', 'Female', 'users/208/profile.jpeg', '731234568V', NULL, NULL, 'Madiha Beach', 'Koggala Lake', 'Matara', 'Coastal camps with reef-safe practices and surf-friendly itineraries.', 'Sun and reef-safety briefing before swims/snorkels.', 'LKR', 'Sinhala, English', 6000.00, 'No', '2025-09-13 18:01:35'),
+(9, 209, 'Shashini', 'Dissanayake', '1989-01-28', '0719012345', 'No. 3, Kirinda Rd, Tissamaharama', 'Female', 'users/209/profile.jpeg', '731234569V', NULL, NULL, 'Yala Buffer Zone', 'Yala Buffer Zone', 'Hambantota', 'Safari-style camps with strict wildlife protocols near Yala.', 'Authorized camps only; no off-trail night walks.', 'LKR', 'Sinhala, English', 14000.00, 'No', '2025-09-13 18:01:35'),
+(10, 210, 'Bimashi', 'Ranasinghe', '1994-02-12', '0779012234', 'No. 22, Temple Rd, Nallur', 'Female', 'users/210/profile.jpeg', '731234570V', NULL, NULL, 'Casuarina Beach', 'Casuarina Beach', 'Jaffna', 'North-coast beach camps and lagoon sunsets with local cuisine.', 'Respect cultural norms; modest beachwear guidance provided.', 'LKR', 'Tamil, English', 7500.00, 'No', '2025-09-13 18:01:35'),
+(11, 211, 'Hansani', 'Abeysekera', '1992-06-30', '0769023456', 'No. 14, A9 Hwy, Paranthan', 'Female', 'users/211/profile.jpeg', '731234571V', NULL, NULL, 'Iranamadu Tank', 'Casuarina Beach', 'Kilinochchi', 'Reservoir-side birding and dark-sky camping.', 'No swimming in deep areas; strong sun precautions.', 'LKR', 'Tamil, English', 7000.00, 'No', '2025-09-13 18:01:35'),
+(12, 212, 'Kavindya', 'Ekanayake', '1995-04-04', '0759034567', 'No. 7, Beach Rd, Pesalai', 'Female', 'users/212/profile.jpeg', '731234572V', NULL, NULL, 'Adam’s Bridge (Rama’s Bridge)', 'Casuarina Beach', 'Mannar', 'Mythic causeway vistas, salt flats, and lagoon birds.', 'Heat & tide-aware itineraries; ample water carried.', 'LKR', 'Tamil, English', 8000.00, 'No', '2025-09-13 18:01:35'),
+(13, 213, 'Sewwandi', 'Senanayake', '1991-09-09', '0749045678', 'No. 18, Kandy Rd, Thandikulam', 'Female', 'users/213/profile.jpeg', '731234573V', NULL, NULL, 'Madukanda Forest Edge', 'Minneriya Area', 'Vavuniya', 'Quiet forest camps blended with temple heritage.', 'Elephant-aware camping; stay in designated zones.', 'LKR', 'Tamil, Sinhala, English', 7000.00, 'No', '2025-09-13 18:01:35'),
+(14, 214, 'Nimesha', 'de Silva', '1993-01-20', '0789056789', 'No. 2, Coastal Rd, Puthukkudiyiruppu', 'Female', 'users/214/profile.jpeg', '731234574V', NULL, NULL, 'Nayaru Lagoon', 'Nilaveli Beach', 'Mullaitivu', 'Kayak-friendly lagoon and mangrove edges; remote eco-feel.', 'Mosquito protection and tide checks standard.', 'LKR', 'Tamil, English', 6800.00, 'No', '2025-09-13 18:01:35'),
+(15, 215, 'Pabasara', 'Karunaratne', '1997-07-01', '0729157890', 'No. 33, Uppuveli Rd, Trincomalee', 'Female', 'users/215/profile.jpeg', '731234575V', NULL, NULL, 'Marble Beach', 'Nilaveli Beach', 'Trincomalee', 'Snorkel-friendly bays and family beach camps on the east coast.', 'Work with Navy-managed zones; swim only in flagged areas.', 'LKR', 'Tamil, Sinhala, English', 8000.00, 'No', '2025-09-13 18:01:35'),
+(16, 216, 'Pasindu', 'Rathnayake', '1990-12-11', '0712234567', 'No. 40, Beach Rd, Kallady', 'Male', 'users/216/profile.jpeg', '731234576V', NULL, NULL, 'Pasikudah Beach', 'Nilaveli Beach', 'Batticaloa', 'Shallow-bay camps, safe swims, and coral-friendly practices.', 'Strong sun care and early-morning snorkel starts.', 'LKR', 'Tamil, English', 7000.00, 'No', '2025-09-13 18:01:35'),
+(17, 217, 'Kavindu', 'Herath', '1989-05-16', '0773345678', 'No. 6, Senanayake Mawatha, Uhana', 'Male', 'users/217/profile.jpeg', '731234577V', NULL, NULL, 'Gal Oya National Park', 'Minneriya Area', 'Ampara', 'Boat safaris and elephant crossings on the reservoir islands.', 'Always with rangers; crocodile-aware shoreline rules.', 'LKR', 'Sinhala, Tamil, English', 10500.00, 'No', '2025-09-13 18:01:35'),
+(18, 218, 'Sajith', 'Dasanayake', '1992-02-02', '0764456789', 'No. 15, Depot Rd, Kuliyapitiya', 'Male', 'users/218/profile.jpeg', '731234578V', NULL, NULL, 'Dolukanda Sacred Rock', 'Knuckles Mountains', 'Kurunegala', 'Legend-filled rock hikes with sunrise panoramas.', 'Steep sections managed with rest points and hydration.', 'LKR', 'Sinhala, English', 7500.00, 'No', '2025-09-13 18:01:35'),
+(19, 219, 'Nuwan', 'Peiris', '1991-04-21', '0755567890', 'No. 88, Lagoon Rd, Kalpitiya', 'Male', 'users/219/profile.jpeg', '731234579V', NULL, NULL, 'Kalpitiya Beach', 'Casuarina Beach', 'Puttalam', 'Kite-surf seasons, dolphin watching, and beach camps.', 'High-wind tie-downs provided for tents and gear.', 'LKR', 'Sinhala, Tamil, English', 8500.00, 'No', '2025-09-13 18:01:35'),
+(20, 220, 'Tharindu', 'Suraweera', '1993-03-05', '0746678901', 'No. 12, Temple Rd, Mihintale', 'Male', 'users/220/profile.jpeg', '731234580V', NULL, NULL, 'Wilpattu Camping', 'Ritigala Reserve', 'Anuradhapura', 'Jungle tracks, villus, and heritage-adjacent campouts.', 'Permits & park rules strictly followed; no night walks.', 'LKR', 'Sinhala, English', 12000.00, 'No', '2025-09-13 18:01:35'),
+(21, 221, 'Lahiru', 'Jayawardena', '1994-06-11', '0787789012', 'No. 27, Main St, Hingurakgoda', 'Male', 'users/221/profile.jpeg', '731234581V', NULL, NULL, 'Habarana Jungle', 'Minneriya Area', 'Polonnaruwa', 'Elephant corridor awareness and safari-style camping.', 'Camp only with trained teams; waterholes kept clear.', 'LKR', 'Sinhala, English', 11000.00, 'No', '2025-09-13 18:01:35'),
+(22, 222, 'Supun', 'Jayasuriya', '1992-08-08', '0728890123', 'No. 19, Welimada Rd, Bandarawela', 'Male', 'users/222/profile.jpeg', '731234582V', NULL, NULL, 'Madolsima', 'Namunukula Range', 'Badulla', 'Cliff-edge sunrise hikes and cloud-sea views.', 'Cold-night prep and cliff-edge safety emphasized.', 'LKR', 'Sinhala, Tamil, English', 9500.00, 'No', '2025-09-13 18:01:35'),
+(23, 223, 'Sahan', 'Wijesinghe', '1990-10-10', '0709901234', 'No. 6, Kataragama Rd, Buttala', 'Male', 'users/223/profile.jpeg', '731234583V', NULL, NULL, 'Udawalawe Border', 'Yala Buffer Zone', 'Monaragala', 'Elephant-rich borderlands with ranger-led camps.', 'Food storage protocols for wildlife safety.', 'LKR', 'Sinhala, English', 9000.00, 'No', '2025-09-13 18:01:35'),
+(24, 224, 'Sanjeewa', 'Alwis', '1988-12-22', '0716677889', 'No. 3, Pambahinna Rd, Eheliyagoda', 'Male', 'users/224/profile.jpeg', '731234584V', NULL, NULL, 'Belihuloya', 'Horton Plains', 'Ratnapura', 'Streams, natural pools, and short hikes near Sabaragamuwa.', 'Leech-season prep and river safety covered.', 'LKR', 'Sinhala, English', 8000.00, 'No', '2025-09-13 18:01:35'),
+(25, 225, 'Chathura', 'Priyankara', '1995-09-23', '0777788990', 'No. 44, Kandy Rd, Mawanella', 'Male', 'users/225/profile.jpeg', '731234585V', NULL, NULL, 'Knuckles Foothills', 'Knuckles Mountains', 'Kegalle', 'Foothill waterfalls, rare species, and cool misty camps.', 'Slippery-trail management and biodiversity etiquette.', 'LKR', 'Sinhala, English', 10000.00, 'No', '2025-09-13 18:01:35'),
+(26, 226, 'Isuru', 'Peris', '1991-01-17', '0765566778', 'No. 7, Kandapola Rd, Nuwara Eliya', 'Male', 'users/226/profile.jpeg', '731234586V', NULL, NULL, 'Horton Plains', 'Horton Plains', 'Nuwara Eliya', 'High-country loops and cold-weather camping best-practices.', 'Thermal wear checklist shared pre-trip.', 'LKR', 'Sinhala, Tamil, English', 12500.00, 'No', '2025-09-13 18:01:35'),
+(27, 227, 'Malith', 'Kulatunga', '1992-02-14', '0754455667', 'No. 61, Katugastota Rd, Kandy', 'Male', 'users/227/profile.jpeg', '731234587V', NULL, NULL, 'Wewathenna Mountain', 'Knuckles Mountains', 'Kandy', 'Ridge hikes, tea-estate connectors, and viewpoint camps.', 'Weather shifts fast; I carry spare rain shells.', 'LKR', 'Sinhala, English, Tamil', 9800.00, 'No', '2025-09-13 18:01:35'),
+(28, 228, 'Chamika', 'Withanage', '1993-03-13', '0743344556', 'No. 22, Beliatta Rd, Dikwella', 'Male', 'users/228/profile.jpeg', '731234588V', NULL, NULL, 'Madiha Beach', 'Koggala Lake', 'Matara', 'Chilled surf-culture camps with reef-safe plans.', 'Earliest water sessions scheduled for calm seas.', 'LKR', 'Sinhala, English', 6500.00, 'No', '2025-09-13 18:01:35'),
+(29, 229, 'Madushan', 'Abeynayake', '1990-06-06', '0782233445', 'No. 28, Nochchiyagama Rd, Anuradhapura', 'Male', 'users/229/profile.jpeg', '731234589V', NULL, NULL, 'Wilpattu Camping', 'Ritigala Reserve', 'Anuradhapura', 'Villus, jungle tracks, and ancient-ruin adjacency.', 'Strict no-litter and guided-only night routines.', 'LKR', 'Sinhala, English', 11800.00, 'No', '2025-09-13 18:01:35'),
+(30, 230, 'Pradeep', 'Wanniarachchi', '1989-08-29', '0721122334', 'No. 5, Hali Ela Rd, Badulla', 'Male', 'users/230/profile.jpeg', '731234590V', NULL, NULL, 'Narangala Peak', 'Namunukula Range', 'Badulla', '360° mountain views and starry night camps in Uva.', 'Steep trails; fitness and warm-gear checks beforehand.', 'LKR', 'Sinhala, Tamil, English', 9800.00, 'No', '2025-09-13 18:01:35');
+
 -- --------------------------------------------------------
 
 --
@@ -355,6 +474,13 @@ CREATE TABLE `inactive_users` (
   `deleted_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_by` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `inactive_users`
+--
+
+INSERT INTO `inactive_users` (`inactive_id`, `user_id`, `role`, `email`, `reason`, `deleted_at`, `deleted_by`) VALUES
+(1, 232, 'Customer', 'madu@gmail.com', 'Deleted by admin', '2025-09-14 18:22:02', 1);
 
 -- --------------------------------------------------------
 
@@ -394,7 +520,7 @@ INSERT INTO `locations` (`location_id`, `name`, `type`, `district`, `description
 (19, 'Yala Buffer Zone', 'Camping', 'Hambantota', 'Wild camping near Sri Lanka’s most famous national park, with chances to hear elephants and leopards at night.', 'Dry zone, hot climate (28–34°C). Best time Feb–July.', 'Close encounters with elephants, deer, peacocks, and sometimes leopards.', 'Streams and waterholes nearby, not safe for drinking. Always carry own supply.', 'Do not camp without authorized guides. Keep food sealed. Avoid late-night wandering.', 'Camping only allowed in guided safari camps.\n\n\nPermits required for Yala buffer camps.\n\n\nExcellent for wildlife photography.', 6.37278000, 81.51694000, '2025-09-10 01:46:49'),
 (20, 'Casuarina Beach', 'Camping', 'Jaffna', 'A peaceful white-sand beach with shallow, safe waters, ideal for family-friendly camping.', 'Hot and dry climate (28–34°C). Best months Dec–Apr.', 'Marine life includes reef fish and occasional turtles. Seabirds common.', 'Sea water only; bring drinking water.', 'Sun can be intense—use shade or tents. Respect local cultural norms.', 'About 20 km from Jaffna town.\n\n\nPopular with locals but less crowded than other northern beaches.\n\n\nCalm waters, safe for swimming and kayaking.', 9.66509300, 80.00930300, '2025-09-10 01:46:49'),
 (21, 'Iranamadu Tank', 'Camping', 'Kilinochchi', 'A vast reservoir surrounded by open skies and quiet landscapes, offering peaceful lakeside camping.', 'Hot and dry, 28–34°C most of the year. Best months: Dec–Apr, when skies are clear.', 'Attracts many water birds like pelicans, storks, and herons. Occasional sightings of freshwater fish and reptiles.', 'Tank water is not recommended for drinking. Bring bottled water.', 'Avoid swimming in deep areas. Sun exposure is high—carry shade and hydration.', 'Accessible via A9 road.\n\n\nPopular for birdwatching and stargazing.\n\n\nNo facilities—true wild camping experience.', 9.30038000, 80.45131000, '2025-09-10 01:47:09'),
-(22, 'Adam’s Bridge (Rama’s Bridge)', 'Camping', 'Mannar', 'A chain of sandbanks and shallow seas linked to mythology, with stunning views of lagoons and salt flats.', 'Arid and sunny, 28–35°C. Winds can be strong. Best from Dec–Mar.', 'Migratory birds like flamingos and pelicans are major highlights. Shallow waters hold marine life.', 'Only brackish seawater around. Carry your own drinking water.', 'Stay cautious of strong tides and heat. Avoid exploring salt flats without a guide.', 'Historically significant and culturally rich site.\n\n\nCamping spots near coastal stretches.\n\n\nBest combined with birdwatching tours.', 0.00000000, 0.00000000, '2025-09-10 01:47:09'),
+(22, 'Adam’s Bridge (Rama’s Bridge)', 'Camping', 'Mannar', 'A chain of sandbanks and shallow seas linked to mythology, with stunning views of lagoons and salt flats.', 'Arid and sunny, 28–35°C. Winds can be strong. Best from Dec–Mar.', 'Migratory birds like flamingos and pelicans are major highlights. Shallow waters hold marine life.', 'Only brackish seawater around. Carry your own drinking water.', 'Stay cautious of strong tides and heat. Avoid exploring salt flats without a guide.', 'Historically significant and culturally rich site.\n\n\nCamping spots near coastal stretches.\n\n\nBest combined with birdwatching tours.', 9.08649100, 79.56851900, '2025-09-10 01:47:09'),
 (23, 'Madukanda Forest Edge', 'Camping', 'Vavuniya', 'A peaceful camping location at the edge of lush forest and historic Madukanda temple grounds.', 'Dry-zone climate, 27–33°C. Nights are cooler with occasional breezes.', 'Forest birds, monkeys, and reptiles. Occasional wild elephants nearby.', 'Local wells and streams exist, but always purify before drinking.', 'Stay within designated camping zones. Respect cultural sites.', 'Close to Madukanda Raja Maha Viharaya.\n\n\nOffers a blend of culture and nature.\n\n\nIdeal for meditation and peaceful camping.', 8.75980000, 80.54410000, '2025-09-10 01:47:09'),
 (24, 'Nayaru Lagoon', 'Camping', 'Mullaitivu', 'A tranquil lagoon surrounded by mangroves, great for kayaking and marine-life exploration.', 'Warm and coastal, 28–32°C. Monsoon rains Oct–Dec.', 'Mangrove habitats support crabs, prawns, and birds like egrets and herons.', 'Lagoon water is saline; not suitable for drinking. Carry own supplies.', 'Be careful with tidal changes. Mosquito repellent is a must.', 'Scenic for kayaking and boating.\n\n\nRemote—minimal tourist activity.\n\n\nPeaceful spot for eco-camping.', 9.13330000, 80.81670000, '2025-09-10 01:47:09'),
 (25, 'Marble Beach', 'Camping', 'Trincomalee', 'A pristine white-sand beach with turquoise water, perfect for snorkeling, swimming, and beachfront camping.', 'Hot and sunny, 28–34°C. Best from May–Sep when seas are calmer.', 'Marine species include tropical fish, corals, and occasional turtles.', 'Sea water only; drinking water must be carried.', 'Respect Navy-managed zones. Only swim in safe flagged areas.', 'Maintained by Sri Lanka Air Force.\n\n\nWell-kept, clean environment.\n\n\nIdeal for family-friendly camping.', 8.51228000, 81.21117000, '2025-09-10 01:47:09'),
@@ -778,6 +904,42 @@ CREATE TABLE `renters` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `renters`
+--
+
+INSERT INTO `renters` (`renter_id`, `user_id`, `first_name`, `last_name`, `dob`, `phone_number`, `home_address`, `gender`, `profile_picture`, `nic_number`, `nic_front_image`, `nic_back_image`, `camping_destinations`, `stargazing_spots`, `district`, `verification_status`, `latitude`, `longitude`, `created_at`) VALUES
+(3, 101, 'Ruwantha', 'Hettiarachchi', '1987-04-15', '0771234567', '15, Lake Road, Colombo', 'Male', 'users/101/profile.jpeg', '873456789V', NULL, NULL, 'Diyasaru Park,Muthurajawela Marsh', 'Horton Plains', 'Colombo', 'Yes', 6.87956900, 79.92938000, '2025-09-13 10:45:50'),
+(4, 102, 'Sanduni', 'Jayawardena', '1992-09-21', '0712345678', '42, Hill Side, Colombo', 'Female', 'users/102/profile.jpeg', '923456789V', NULL, NULL, 'Muthurajawela Marsh', 'Knuckles Mountains', 'Colombo', 'No', 6.95000000, 79.92000000, '2025-09-13 10:45:50'),
+(5, 103, 'Mohamed', 'Fazil', '1985-12-05', '0753456789', '10, Mosque Lane, Colombo', 'Male', 'users/103/profile.jpeg', '853456789V', NULL, NULL, 'Diyasaru Park', 'Ambewela Hills', 'Colombo', 'Yes', 6.94000000, 79.91000000, '2025-09-13 10:45:50'),
+(6, 104, 'Dilani', 'Perera', '1994-07-11', '0764567890', '88, Flower Road, Gampaha', 'Female', 'users/104/profile.jpeg', '943456789V', NULL, NULL, 'Muthurajawela Marsh', 'Diyasaru Park', 'Gampaha', 'No', 7.19758000, 79.83243000, '2025-09-13 10:45:50'),
+(7, 105, 'Gayan', 'Wickramasinghe', '1989-03-28', '0785678901', '101, River Side, Gampaha', 'Male', 'users/105/profile.jpeg', '893456789V', NULL, NULL, 'Muthurajawela Marsh', 'Knuckles Mountains', 'Gampaha', 'Yes', 7.20000000, 79.85000000, '2025-09-13 10:45:50'),
+(8, 106, 'Shalini', 'Peiris', '1995-01-09', '0726789012', '77, Mountain View, Gampaha', 'Female', 'users/106/profile.jpeg', '953456789V', NULL, NULL, 'Muthurajawela Marsh,Diyasaru Park', 'Horton Plains', 'Gampaha', 'No', 7.21000000, 79.84000000, '2025-09-13 10:45:50'),
+(9, 107, 'Nimal', 'Perera', '1986-06-18', '0777890123', '5, Temple Road, Kandy', 'Male', 'users/107/profile.jpeg', '863456789V', NULL, NULL, 'Wewathenna Mountain', 'Knuckles Mountains', 'Kandy', 'Yes', 7.29000000, 80.63000000, '2025-09-13 10:45:50'),
+(10, 108, 'Tharindu', 'Silva', '1990-08-27', '0718901234', '22, Main Street, Kandy', 'Male', 'users/108/profile.jpeg', '903456789V', NULL, NULL, 'Knuckles Mountains', 'Horton Plains', 'Kandy', 'No', 7.31000000, 80.70000000, '2025-09-13 10:45:50'),
+(11, 109, 'Rizwan', 'Mohamed', '1988-02-14', '0769012345', '56, Sea Side, Kandy', 'Male', 'users/109/profile.jpeg', '883456789V', NULL, NULL, 'Knuckles Mountains', 'Ambewela Hills', 'Kandy', 'Yes', 7.30000000, 80.65000000, '2025-09-13 10:45:50'),
+(12, 110, 'Harshini', 'Abeywardena', '1993-11-30', '0720123456', '34, Park Avenue, Galle', 'Female', 'users/110/profile.jpeg', '933456789V', NULL, NULL, 'Koggala Lake', 'Galle Fort Beach', 'Galle', 'No', 6.02810000, 80.21700000, '2025-09-13 10:45:50'),
+(13, 111, 'Kasun', 'Fernando', '1987-08-05', '0772345678', '12, Lake View, Galle', 'Male', 'users/111/profile.jpeg', '873987654V', NULL, NULL, 'Koggala Lake', 'Kanneliya Rainforest', 'Galle', 'Yes', 6.05000000, 80.21000000, '2025-09-13 10:45:50'),
+(14, 112, 'Madhavi', 'Kumari', '1991-06-20', '0713456789', '45, Riverside, Galle', 'Female', 'users/112/profile.jpeg', '913567890V', NULL, NULL, 'Koggala Lake', 'Sinharaja Buffer Zone', 'Galle', 'No', 6.06000000, 80.23000000, '2025-09-13 10:45:50'),
+(15, 113, 'Suresh', 'Kumar', '1984-02-17', '0754561230', '102, Beach Road, Matara', 'Male', 'users/113/profile.jpeg', '842345123V', NULL, NULL, 'Madiha Beach', 'Kalametiya Beach', 'Matara', 'Yes', 5.94850000, 80.53500000, '2025-09-13 10:45:50'),
+(16, 114, 'Ishara', 'Senanayake', '1996-05-12', '0786543210', '67, Garden Road, Matara', 'Female', 'users/114/profile.jpeg', '963456123V', NULL, NULL, 'Kalametiya Beach', 'Koggala Lake', 'Matara', 'No', 5.96000000, 80.52000000, '2025-09-13 10:45:50'),
+(17, 115, 'Pradeep', 'Bandara', '1989-11-23', '0727890123', '21, Hill Road, Matara', 'Male', 'users/115/profile.jpeg', '893456321V', NULL, NULL, 'Madiha Beach', 'Sinharaja Buffer Zone', 'Matara', 'Yes', 5.97000000, 80.51000000, '2025-09-13 10:45:50'),
+(18, 116, 'Lakmini', 'Perera', '1992-10-10', '0762345678', '44, Temple Lane, Badulla', 'Female', 'users/116/profile.jpeg', '923987654V', NULL, NULL, 'Madolsima', 'Narangala Peak', 'Badulla', 'No', 7.01390000, 81.21650000, '2025-09-13 10:45:50'),
+(19, 117, 'Manjula', 'Karunaratne', '1985-08-25', '0715678901', '19, Forest Road, Badulla', 'Male', 'users/117/profile.jpeg', '853456987V', NULL, NULL, 'Narangala Peak', 'Namunukula Range', 'Badulla', 'Yes', 7.01400000, 81.22000000, '2025-09-13 10:45:50'),
+(20, 118, 'Kamal', 'Gunasekara', '1990-01-15', '0778901234', '78, Valley Side, Badulla', 'Male', 'users/118/profile.jpeg', '903456123V', NULL, NULL, 'Namunukula Range', 'Ella Rock', 'Badulla', 'No', 7.01800000, 81.20000000, '2025-09-13 10:45:50'),
+(21, 119, 'Anusha', 'Wijesinghe', '1993-07-07', '0723456789', '33, Lake Side, Anuradhapura', 'Female', 'users/119/profile.jpeg', '933456123V', NULL, NULL, 'Wilpattu Camping', 'Ritigala Reserve', 'Anuradhapura', 'No', 8.36360000, 80.36940000, '2025-09-13 10:45:50'),
+(22, 120, 'Ranil', 'Jayasinghe', '1986-04-14', '0716789012', '55, Temple Road, Anuradhapura', 'Male', 'users/120/profile.jpeg', '863987654V', NULL, NULL, 'Wilpattu Camping', 'Mihintale Hills', 'Anuradhapura', 'Yes', 8.35000000, 80.40000000, '2025-09-13 10:45:50'),
+(23, 121, 'Deepika', 'Fernando', '1991-09-03', '0757890123', '82, Riverside, Anuradhapura', 'Female', 'users/121/profile.jpeg', '913456789V', NULL, NULL, 'Wilpattu Camping', 'Kalawewa Tank', 'Anuradhapura', 'No', 8.37000000, 80.39000000, '2025-09-13 10:45:50'),
+(24, 122, 'Mahesh', 'Rathnayake', '1988-11-22', '0775678901', '12, Hill Road, Trincomalee', 'Male', 'users/122/profile.jpeg', '883456987V', NULL, NULL, 'Nilaveli Beach', 'Marble Beach', 'Trincomalee', 'Yes', 8.68860000, 81.18250000, '2025-09-13 10:45:50'),
+(25, 123, 'Chamari', 'Perera', '1994-02-16', '0719012345', '77, Garden View, Trincomalee', 'Female', 'users/123/profile.jpeg', '943456321V', NULL, NULL, 'Marble Beach', 'Nilaveli Beach', 'Trincomalee', 'No', 8.57000000, 81.22000000, '2025-09-13 10:45:50'),
+(26, 124, 'Viraj', 'Hettiarachchi', '1987-12-09', '0760123456', '88, Sea Road, Trincomalee', 'Male', 'users/124/profile.jpeg', '873456321V', NULL, NULL, 'Nilaveli Beach,Marble Beach', 'Pigeon Island', 'Trincomalee', 'Yes', 8.68000000, 81.20000000, '2025-09-13 10:45:50'),
+(27, 125, 'Pooja', 'Nirmala', '1995-03-29', '0721234567', '25, Temple Road, Kurunegala', 'Female', 'users/125/profile.jpeg', '953456321V', NULL, NULL, 'Dolukanda Rock', 'Wilpattu Vicinity', 'Kurunegala', 'No', 7.47230000, 80.36230000, '2025-09-13 10:45:50'),
+(28, 126, 'Saman', 'Perera', '1989-05-18', '0712340987', '47, Riverside, Kurunegala', 'Male', 'users/126/profile.jpeg', '893456654V', NULL, NULL, 'Dolukanda Rock', 'Ritigala Reserve', 'Kurunegala', 'Yes', 7.46000000, 80.35000000, '2025-09-13 10:45:50'),
+(29, 127, 'Thushari', 'Lakmali', '1993-01-25', '0758901234', '91, Hill Side, Kurunegala', 'Female', 'users/127/profile.jpeg', '933456654V', NULL, NULL, 'Dolukanda Rock', 'Minneriya Area', 'Kurunegala', 'No', 7.48000000, 80.37000000, '2025-09-13 10:45:50'),
+(30, 128, 'Dilan', 'Jayakody', '1988-06-14', '0770987654', '67, Lake Road, Jaffna', 'Male', 'users/128/profile.jpeg', '883456654V', NULL, NULL, 'Casuarina Beach', 'Jaffna Fort View', 'Jaffna', 'Yes', 9.78700000, 80.16700000, '2025-09-13 10:45:50'),
+(31, 129, 'Gayani', 'Silva', '1992-12-01', '0719876543', '12, Garden Lane, Jaffna', 'Female', 'users/129/profile.jpeg', '923456654V', NULL, NULL, 'Casuarina Beach', 'Point Pedro', 'Jaffna', 'No', 9.82000000, 80.23000000, '2025-09-13 10:45:50'),
+(32, 130, 'Udaya', 'Abeywardena', '1986-09-30', '0767654321', '44, Park Avenue, Jaffna', 'Male', 'users/130/profile.jpeg', '863456654V', NULL, NULL, 'Casuarina Beach', 'Nainativu Island', 'Jaffna', 'Yes', 9.80000000, 80.20000000, '2025-09-13 10:45:50');
+
 -- --------------------------------------------------------
 
 --
@@ -915,7 +1077,69 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `email`, `password_hash`, `role`, `is_active`, `created_at`) VALUES
-(1, 'supungunathilaka123@gmail.com', '$argon2id$v=19$m=65536,t=4,p=3$Z0Q2d1VEaE56MEpFbEQ5YQ$1FUMc/JyyJwGPIseBUwF2qmFdGlJn2HHobtYhBoYpB0', 'Customer', 1, '2025-09-12 11:34:55');
+(1, 'supungunathilaka123@gmail.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Customer', 1, '2025-09-12 11:34:55'),
+(101, 'ruwantha.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(102, 'sanduni.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(103, 'mohamed.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(104, 'dilani.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(105, 'gayan.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(106, 'shalini.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(107, 'nimal.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(108, 'tharindu.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(109, 'rizwan.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(110, 'harshini.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(111, 'kasun.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(112, 'madhavi.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(113, 'suresh.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(114, 'ishara.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(115, 'pradeep.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(116, 'lakmini.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(117, 'manjula.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(118, 'kamal.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(119, 'anusha.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(120, 'ranil.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(121, 'deepika.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(122, 'mahesh.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(123, 'chamari.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(124, 'viraj.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(125, 'pooja.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(126, 'saman.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(127, 'thushari.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(128, 'dilan.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(129, 'gayani.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(130, 'udaya.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
+(131, 'isini2001@gmail.com', '$argon2id$v=19$m=65536,t=4,p=3$ZmRUYjA3bXI0V0FHLlA0TA$e82HGcBF3qThBAJXJ/9bIyrPnW6NJQTorI902BK8rQk', 'Renter', 1, '2025-09-13 05:22:00'),
+(201, 'nadeesha.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(202, 'chamari.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(203, 'ishara.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(204, 'sanduni.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(205, 'udari.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(206, 'tharushi.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(207, 'dilhani.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(208, 'samadhi.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(209, 'shashini.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(210, 'bimashi.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(211, 'hansani.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(212, 'kavindya.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(213, 'sewwandi.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(214, 'nimesha.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(215, 'pabasara.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(216, 'pasindu.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(217, 'kavindu.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(218, 'sajith.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(219, 'nuwan.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(220, 'tharindu.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(221, 'lahiru.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(222, 'supun.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(223, 'sahan.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(224, 'sanjeewa.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(225, 'chathura.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(226, 'isuru.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(227, 'malith.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(228, 'chamika.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(229, 'madushan.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(230, 'pradeep.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(231, 'isinikularathna2001@gmail.com', '$argon2id$v=19$m=65536,t=4,p=3$cE1CZy5xd0tmemNPZUZ5Tg$qxu4lkx/SHp1TIVz9cjFDTiJGnhNislYy7PD5qGPAn0', 'Customer', 1, '2025-09-14 11:29:50');
 
 -- --------------------------------------------------------
 
@@ -1318,7 +1542,7 @@ ALTER TABLE `wishlist_items`
 -- AUTO_INCREMENT for table `admins`
 --
 ALTER TABLE `admins`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `admin_deletions`
@@ -1372,19 +1596,19 @@ ALTER TABLE `content_logs`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `equipment`
 --
 ALTER TABLE `equipment`
-  MODIFY `equipment_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `equipment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `equipment_categories`
 --
 ALTER TABLE `equipment_categories`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `equipment_log`
@@ -1420,13 +1644,13 @@ ALTER TABLE `guideimages`
 -- AUTO_INCREMENT for table `guides`
 --
 ALTER TABLE `guides`
-  MODIFY `guide_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `guide_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `inactive_users`
 --
 ALTER TABLE `inactive_users`
-  MODIFY `inactive_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `inactive_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `locations`
@@ -1438,7 +1662,7 @@ ALTER TABLE `locations`
 -- AUTO_INCREMENT for table `location_images`
 --
 ALTER TABLE `location_images`
-  MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=256;
+  MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=181;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -1486,7 +1710,7 @@ ALTER TABLE `renterequipmentphotos`
 -- AUTO_INCREMENT for table `renters`
 --
 ALTER TABLE `renters`
-  MODIFY `renter_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `renter_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `reviews`
@@ -1504,7 +1728,7 @@ ALTER TABLE `review_flags`
 -- AUTO_INCREMENT for table `suspended_users`
 --
 ALTER TABLE `suspended_users`
-  MODIFY `suspension_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `suspension_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `travel_chats`
@@ -1540,7 +1764,7 @@ ALTER TABLE `travel_requests`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=233;
 
 --
 -- AUTO_INCREMENT for table `user_management_log`
