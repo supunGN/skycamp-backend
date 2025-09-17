@@ -517,7 +517,11 @@ class AuthService
                 'dob' => $roleRow['dob'] ?? '',
                 'gender' => $roleRow['gender'] ?? '',
                 'home_address' => $roleRow['home_address'] ?? '',
-                'profile_picture' => $roleRow['profile_picture'] ?? null
+                'profile_picture' => $roleRow['profile_picture'] ?? null,
+                // Persist critical profile flags/ids used by the frontend UI
+                'nic_number' => $roleRow['nic_number'] ?? null,
+                'verification_status' => $roleRow['verification_status'] ?? null,
+                'travel_buddy_status' => $roleRow['travel_buddy_status'] ?? null,
             ]);
         }
 
