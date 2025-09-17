@@ -33,6 +33,10 @@ require_once __DIR__ . '/../app/Models/User.php';
 require_once __DIR__ . '/../app/Models/Customer.php';
 require_once __DIR__ . '/../app/Models/Renter.php';
 require_once __DIR__ . '/../app/Models/Guide.php';
+require_once __DIR__ . '/../app/Models/TravelPlan.php';
+require_once __DIR__ . '/../app/Models/TravelRequest.php';
+require_once __DIR__ . '/../app/Models/TravelChat.php';
+require_once __DIR__ . '/../app/Models/TravelMessage.php';
 
 // Include repositories
 require_once __DIR__ . '/../app/Repositories/UserRepository.php';
@@ -40,6 +44,11 @@ require_once __DIR__ . '/../app/Repositories/CustomerRepository.php';
 require_once __DIR__ . '/../app/Repositories/RenterRepository.php';
 require_once __DIR__ . '/../app/Repositories/GuideRepository.php';
 require_once __DIR__ . '/../app/Repositories/LocationRepository.php';
+require_once __DIR__ . '/../app/Repositories/ReminderRepository.php';
+require_once __DIR__ . '/../app/Repositories/TravelPlanRepository.php';
+require_once __DIR__ . '/../app/Repositories/TravelRequestRepository.php';
+require_once __DIR__ . '/../app/Repositories/TravelChatRepository.php';
+require_once __DIR__ . '/../app/Repositories/TravelMessageRepository.php';
 
 // Include services
 require_once __DIR__ . '/../app/Services/FileService.php';
@@ -49,9 +58,12 @@ require_once __DIR__ . '/../app/Services/AuthService.php';
 require_once __DIR__ . '/../app/Controllers/AuthController.php';
 require_once __DIR__ . '/../app/Controllers/LocationController.php';
 require_once __DIR__ . '/../app/Controllers/AdminController.php';
+
 require_once __DIR__ . '/../app/Controllers/RenterController.php';
 require_once __DIR__ . '/../app/Controllers/GuideController.php';
 require_once __DIR__ . '/../app/Controllers/EquipmentController.php';
+
+require_once __DIR__ . '/../app/Controllers/TravelBuddyController.php';
 
 // Include middlewares
 require_once __DIR__ . '/../app/Middlewares/Cors.php';
@@ -74,6 +86,8 @@ try {
     $router->post('/api/auth/login', [AuthController::class, 'login']);
     $router->post('/api/auth/logout', [AuthController::class, 'logout']);
     $router->post('/api/auth/profile', [AuthController::class, 'updateProfile']);
+    $router->post('/api/auth/travel-buddy/toggle', [AuthController::class, 'toggleTravelBuddy']);
+    $router->post('/api/auth/verification/submit', [AuthController::class, 'submitVerification']);
 
     // Admin routes
     $router->post('/api/admin/login', [AdminController::class, 'login']);
@@ -106,10 +120,38 @@ try {
     // Individual location endpoint (must be after specific routes)
     $router->get('/api/locations/:id', [LocationController::class, 'getLocationWithImages']);
 
+
     // Renter endpoints
     $router->get('/api/renters', [RenterController::class, 'list']);
     $router->get('/api/renters/by-district', [RenterController::class, 'getByDistrict']);
     $router->get('/api/renters/:id', [RenterController::class, 'show']);
+
+    // Travel Buddy endpoints
+    $router->get('/api/travel-plans', [TravelBuddyController::class, 'listPlans']);
+    $router->post('/api/travel-plans', [TravelBuddyController::class, 'createPlan']);
+    $router->post('/api/travel-requests', [TravelBuddyController::class, 'requestJoin']);
+    $router->get('/api/travel-messages', [TravelBuddyController::class, 'listMessages']);
+    $router->post('/api/travel-messages', [TravelBuddyController::class, 'sendMessage']);
+    $router->get('/api/travel-buddy/status', [TravelBuddyController::class, 'getStatus']);
+
+    // File serving endpoint for uploaded images
+    $router->get('/api/files/*', function (Request $request, Response $response) {
+        $fileService = new FileService();
+        $requestUri = $_SERVER['REQUEST_URI'];
+        $pathOnly = parse_url($requestUri, PHP_URL_PATH);
+        $relativeFilePath = str_replace('/api/files/', '', $pathOnly);
+
+        // Resolve potential locations: public mirror first, then storage path
+        $publicPath = __DIR__ . '/storage/uploads/' . ltrim($relativeFilePath, '/\\');
+        $storagePath = rtrim($fileService->getStoragePath(), '/\\') . '/' . ltrim($relativeFilePath, '/\\');
+
+        if (file_exists($publicPath)) {
+            $fileService->serveFile($publicPath);
+            return;
+        }
+
+        $fileService->serveFile($storagePath);
+    });
 
     // Guide endpoints
     $router->get('/api/guides', [GuideController::class, 'list']);

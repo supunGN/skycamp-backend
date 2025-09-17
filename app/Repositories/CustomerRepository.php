@@ -129,4 +129,59 @@ class CustomerRepository
 
         return $stmt->fetchColumn() > 0;
     }
+
+    /**
+     * Update travel buddy status for a customer
+     */
+    public function updateTravelBuddyStatus(string $customerId, string $status): bool
+    {
+        if (!in_array($status, ['Active', 'Inactive'])) {
+            throw new InvalidArgumentException('Invalid travel buddy status. Must be Active or Inactive.');
+        }
+
+        $sql = "UPDATE customers SET travel_buddy_status = :status WHERE customer_id = :customer_id";
+        
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([
+            'customer_id' => $customerId,
+            'status' => $status
+        ]);
+    }
+
+    /**
+     * Update travel buddy status by user ID
+     */
+    public function updateTravelBuddyStatusByUserId(string $userId, string $status): bool
+    {
+        if (!in_array($status, ['Active', 'Inactive'])) {
+            throw new InvalidArgumentException('Invalid travel buddy status. Must be Active or Inactive.');
+        }
+
+        $sql = "UPDATE customers SET travel_buddy_status = :status WHERE user_id = :user_id";
+        
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([
+            'user_id' => $userId,
+            'status' => $status
+        ]);
+    }
+
+    /**
+     * Update verification documents for a customer
+     */
+    public function updateVerificationDocuments(string $userId, string $nicFrontImage, string $nicBackImage): bool
+    {
+        $sql = "UPDATE customers SET 
+            nic_front_image = :nic_front_image, 
+            nic_back_image = :nic_back_image,
+            verification_status = 'Pending'
+            WHERE user_id = :user_id";
+        
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([
+            'user_id' => $userId,
+            'nic_front_image' => $nicFrontImage,
+            'nic_back_image' => $nicBackImage
+        ]);
+    }
 }
