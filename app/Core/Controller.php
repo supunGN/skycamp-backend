@@ -9,6 +9,7 @@ abstract class Controller
 {
     protected Request $request;
     protected Response $response;
+    protected Session $session;
 
     /**
      * Constructor
@@ -17,6 +18,7 @@ abstract class Controller
     {
         $this->request = new Request();
         $this->response = new Response();
+        $this->session = new Session();
     }
 
     /**
@@ -24,8 +26,15 @@ abstract class Controller
      */
     protected function getCurrentUser(): ?array
     {
-        $session = new Session();
-        return $session->getUser();
+        return $this->session->getUser();
+    }
+
+    /**
+     * Get current authenticated admin
+     */
+    protected function getCurrentAdmin(): ?array
+    {
+        return $this->session->getAdmin();
     }
 
     /**
@@ -33,8 +42,23 @@ abstract class Controller
      */
     protected function isAuthenticated(): bool
     {
-        $session = new Session();
-        return $session->isAuthenticated();
+        return $this->session->isAuthenticated();
+    }
+
+    /**
+     * Check if admin is authenticated
+     */
+    protected function isAdminAuthenticated(): bool
+    {
+        return $this->session->isAdminAuthenticated();
+    }
+
+    /**
+     * Check if any user (user or admin) is authenticated
+     */
+    protected function isAnyAuthenticated(): bool
+    {
+        return $this->session->isAnyAuthenticated();
     }
 
     /**
@@ -44,6 +68,16 @@ abstract class Controller
     {
         if (!$this->isAuthenticated()) {
             $this->response->unauthorized('Authentication required');
+        }
+    }
+
+    /**
+     * Require admin authentication
+     */
+    protected function requireAdminAuth(): void
+    {
+        if (!$this->isAdminAuthenticated()) {
+            $this->response->unauthorized('Admin authentication required');
         }
     }
 

@@ -67,6 +67,14 @@ class Request
     }
 
     /**
+     * Get all query parameters (GET parameters)
+     */
+    public function getQueryParams(): array
+    {
+        return array_merge($this->params, $this->get);
+    }
+
+    /**
      * Get POST parameter
      */
     public function post(string $key, mixed $default = null): mixed

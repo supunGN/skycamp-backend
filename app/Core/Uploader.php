@@ -27,22 +27,39 @@ class Uploader
             return null;
         }
 
-        // Generate filename if not provided
+        // Determine extension from uploaded file
+        $originalExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         if ($filename === null) {
+            // Generate filename with extension
             $filename = $this->generateFilename($file);
+        } else {
+            // Ensure provided filename has an extension; if not, append detected extension
+            if (pathinfo($filename, PATHINFO_EXTENSION) === '') {
+                $filename = $filename . '.' . $originalExtension;
+            }
         }
 
-        // Create directory path
+        // Create directory path (storage)
         $uploadPath = $this->getUploadPath($directory);
         $filePath = $uploadPath . '/' . $filename;
+
+        // Also compute public path for direct serving via /storage/uploads
+        $publicBase = __DIR__ . '/../../public/storage/uploads';
+        $publicDir = rtrim($publicBase . '/' . trim($directory, '/'), '/');
+        $publicPath = $publicDir . '/' . $filename;
 
         // Ensure directory exists
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }
+        if (!is_dir($publicDir)) {
+            mkdir($publicDir, 0755, true);
+        }
 
         // Move uploaded file
         if (move_uploaded_file($file['tmp_name'], $filePath)) {
+            // Mirror to public directory
+            @copy($filePath, $publicPath);
             // Return web-accessible URL instead of full file path
             return $this->getFileUrl($filePath);
         }
@@ -179,9 +196,13 @@ class Uploader
      */
     public function getFileUrl(string $filePath): string
     {
-        // Convert absolute file path to web-accessible URL
-        $basePath = $this->config['storage_path'] ?? __DIR__ . '/../../public/storage/uploads';
-        $relativePath = str_replace($basePath, '', $filePath);
-        return '/storage/uploads' . $relativePath;
+        // Accepts either absolute storage path or already-relative path
+        $storageBase = rtrim($this->config['storage_path'] ?? __DIR__ . '/../../storage/uploads', '/');
+        if (str_starts_with($filePath, $storageBase)) {
+            $relativePath = ltrim(str_replace($storageBase, '', $filePath), '/');
+        } else {
+            $relativePath = ltrim($filePath, '/');
+        }
+        return '/storage/uploads/' . $relativePath;
     }
 }

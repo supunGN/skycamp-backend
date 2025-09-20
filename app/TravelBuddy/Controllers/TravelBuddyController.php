@@ -31,9 +31,8 @@ class TravelBuddyController extends Controller
     private function checkTravelBuddyAccess(Request $request, Response $response): ?Customer
     {
         // Get current user from session
-        $session = new Session();
-        $userId = $session->get('user_id');
-        
+        $userId = $this->session->get('user_id');
+
         if (!$userId) {
             $response->setStatusCode(401);
             $response->json([
@@ -46,7 +45,7 @@ class TravelBuddyController extends Controller
         // Get user details
         $userRepository = new UserRepository();
         $user = $userRepository->findById($userId);
-        
+
         if (!$user) {
             $response->setStatusCode(401);
             $response->json([
@@ -68,7 +67,7 @@ class TravelBuddyController extends Controller
 
         // Get customer details and check travel buddy status
         $customer = $this->customerRepository->findByUserId($userId);
-        
+
         if (!$customer) {
             $response->setStatusCode(403);
             $response->json([
@@ -160,12 +159,12 @@ class TravelBuddyController extends Controller
         if (!$customer) return;
 
         try {
-            $data = $request->getBody();
-            
+            $data = $request->json();
+
             // Validate required fields
             $validator = new Validator();
             $errors = $validator->validateTravelPlan($data);
-            
+
             if (!empty($errors)) {
                 $response->setStatusCode(400);
                 $response->json([
@@ -227,7 +226,7 @@ class TravelBuddyController extends Controller
 
         try {
             $data = $request->getBody();
-            
+
             // Validate required fields
             if (empty($data['plan_id'])) {
                 $response->setStatusCode(400);
@@ -239,7 +238,7 @@ class TravelBuddyController extends Controller
             }
 
             $planId = (int) $data['plan_id'];
-            
+
             // Check if plan exists
             $plan = $this->travelPlanRepository->findById($planId);
             if (!$plan) {
@@ -321,7 +320,7 @@ class TravelBuddyController extends Controller
         try {
             $params = $request->getQueryParams();
             $planId = (int) ($params['plan_id'] ?? 0);
-            
+
             if (!$planId) {
                 $response->setStatusCode(400);
                 $response->json([
@@ -390,7 +389,7 @@ class TravelBuddyController extends Controller
 
         try {
             $data = $request->getBody();
-            
+
             // Validate required fields
             if (empty($data['plan_id']) || empty($data['message'])) {
                 $response->setStatusCode(400);
@@ -467,9 +466,8 @@ class TravelBuddyController extends Controller
      */
     public function getStatus(Request $request, Response $response): void
     {
-        $session = new Session();
-        $userId = $session->get('user_id');
-        
+        $userId = $this->session->get('user_id');
+
         if (!$userId) {
             $response->setStatusCode(401);
             $response->json([
@@ -482,7 +480,7 @@ class TravelBuddyController extends Controller
         try {
             $userRepository = new UserRepository();
             $user = $userRepository->findById($userId);
-            
+
             if (!$user || $user->role !== 'Customer') {
                 $response->json([
                     'success' => true,
@@ -495,7 +493,7 @@ class TravelBuddyController extends Controller
             }
 
             $customer = $this->customerRepository->findByUserId($userId);
-            
+
             if (!$customer) {
                 $response->json([
                     'success' => true,

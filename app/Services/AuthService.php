@@ -13,6 +13,7 @@ class AuthService
     private GuideRepository $guideRepository;
     private Session $session;
     private FileService $fileService;
+    private PDO $pdo;
 
     public function __construct()
     {
@@ -22,6 +23,7 @@ class AuthService
         $this->guideRepository = new GuideRepository();
         $this->session = new Session();
         $this->fileService = new FileService();
+        $this->pdo = Database::getConnection();
     }
 
     /**
@@ -422,29 +424,50 @@ class AuthService
 
         switch ($data['userRole']) {
             case 'customer':
+                // Auto-submit for verification if NIC uploaded during registration
+                $verificationStatus = ($nicFrontImagePath && $nicBackImagePath) ? 'Pending' : 'No';
+
                 $customerData = array_merge($commonData, [
                     'location' => $data['location'] ?? null,
                     'latitude' => !empty($data['latitude']) ? (float) $data['latitude'] : null,
                     'longitude' => !empty($data['longitude']) ? (float) $data['longitude'] : null,
                     'travel_buddy_status' => $data['travelBuddyStatus'] ?? 'Inactive',
-                    'verification_status' => 'No'
+                    'verification_status' => $verificationStatus
                 ]);
                 $this->customerRepository->create($customerData);
+
+                // Create verification record and notify admin if NIC uploaded
+                if ($verificationStatus === 'Pending') {
+                    $this->createVerificationRecord($userId, 'Pending');
+                    $this->notifyAdminForVerification($userId, 'customer');
+                }
                 break;
 
             case 'renter':
+                // Auto-submit for verification if NIC uploaded during registration
+                $verificationStatus = ($nicFrontImagePath && $nicBackImagePath) ? 'Pending' : 'No';
+
                 $renterData = array_merge($commonData, [
                     'camping_destinations' => $data['campingDestinations'] ?? null,
                     'stargazing_spots' => $data['stargazingSpots'] ?? null,
                     'district' => $data['district'] ?? null,
-                    'verification_status' => 'No',
+                    'verification_status' => $verificationStatus,
                     'latitude' => !empty($data['latitude']) ? (float) $data['latitude'] : null,
                     'longitude' => !empty($data['longitude']) ? (float) $data['longitude'] : null
                 ]);
                 $this->renterRepository->create($renterData);
+
+                // Create verification record and notify admin if NIC uploaded
+                if ($verificationStatus === 'Pending') {
+                    $this->createVerificationRecord($userId, 'Pending');
+                    $this->notifyAdminForVerification($userId, 'renter');
+                }
                 break;
 
             case 'guide':
+                // Auto-submit for verification if NIC uploaded during registration
+                $verificationStatus = ($nicFrontImagePath && $nicBackImagePath) ? 'Pending' : 'No';
+
                 $guideData = array_merge($commonData, [
                     'camping_destinations' => $data['campingDestinations'] ?? null,
                     'stargazing_spots' => $data['stargazingSpots'] ?? null,
@@ -454,10 +477,63 @@ class AuthService
                     'currency' => $data['currency'] ?? null,
                     'languages' => $data['languages'] ?? null,
                     'price_per_day' => !empty($data['pricePerDay']) ? (float) $data['pricePerDay'] : null,
-                    'verification_status' => 'No'
+                    'verification_status' => $verificationStatus
                 ]);
                 $this->guideRepository->create($guideData);
+
+                // Create verification record and notify admin if NIC uploaded
+                if ($verificationStatus === 'Pending') {
+                    $this->createVerificationRecord($userId, 'Pending');
+                    $this->notifyAdminForVerification($userId, 'guide');
+                }
                 break;
+        }
+    }
+
+    /**
+     * Create verification record in user_verifications table
+     */
+    private function createVerificationRecord(string $userId, string $status): void
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                INSERT INTO user_verifications (user_id, status, created_at) 
+                VALUES (?, ?, NOW())
+            ");
+            $stmt->execute([$userId, $status]);
+        } catch (Exception $e) {
+            error_log("Failed to create verification record: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Notify admin about new verification request
+     */
+    private function notifyAdminForVerification(string $userId, string $userType): void
+    {
+        try {
+            // Get user details for notification
+            $stmt = $this->pdo->prepare("
+                SELECT u.first_name, u.last_name, u.email 
+                FROM users u 
+                WHERE u.user_id = ?
+            ");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user) {
+                $message = "New verification request from {$user['first_name']} {$user['last_name']} ({$userType})";
+
+                // Create notification for all admins
+                $stmt = $this->pdo->prepare("
+                    INSERT INTO notifications (user_id, type, message, is_read, created_at) 
+                    SELECT admin_id, 'Verification', ?, 0, NOW() 
+                    FROM admins
+                ");
+                $stmt->execute([$message]);
+            }
+        } catch (Exception $e) {
+            error_log("Failed to notify admin for verification: " . $e->getMessage());
         }
     }
 
