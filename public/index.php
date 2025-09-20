@@ -33,10 +33,10 @@ require_once __DIR__ . '/../app/Models/User.php';
 require_once __DIR__ . '/../app/Models/Customer.php';
 require_once __DIR__ . '/../app/Models/Renter.php';
 require_once __DIR__ . '/../app/Models/Guide.php';
-require_once __DIR__ . '/../app/TravelBuddy/Models/TravelPlan.php';
-require_once __DIR__ . '/../app/TravelBuddy/Models/TravelRequest.php';
-require_once __DIR__ . '/../app/TravelBuddy/Models/TravelChat.php';
-require_once __DIR__ . '/../app/TravelBuddy/Models/TravelMessage.php';
+require_once __DIR__ . '/../app/Models/TravelPlan.php';
+require_once __DIR__ . '/../app/Models/TravelRequest.php';
+require_once __DIR__ . '/../app/Models/TravelChat.php';
+require_once __DIR__ . '/../app/Models/TravelMessage.php';
 require_once __DIR__ . '/../app/Models/Notification.php';
 require_once __DIR__ . '/../app/Models/Wishlist.php';
 require_once __DIR__ . '/../app/Models/WishlistItem.php';
@@ -48,10 +48,10 @@ require_once __DIR__ . '/../app/Repositories/RenterRepository.php';
 require_once __DIR__ . '/../app/Repositories/GuideRepository.php';
 require_once __DIR__ . '/../app/Repositories/LocationRepository.php';
 require_once __DIR__ . '/../app/Repositories/ReminderRepository.php';
-require_once __DIR__ . '/../app/TravelBuddy/Repositories/TravelPlanRepository.php';
-require_once __DIR__ . '/../app/TravelBuddy/Repositories/TravelRequestRepository.php';
-require_once __DIR__ . '/../app/TravelBuddy/Repositories/TravelChatRepository.php';
-require_once __DIR__ . '/../app/TravelBuddy/Repositories/TravelMessageRepository.php';
+require_once __DIR__ . '/../app/Repositories/TravelPlanRepository.php';
+require_once __DIR__ . '/../app/Repositories/TravelRequestRepository.php';
+require_once __DIR__ . '/../app/Repositories/TravelChatRepository.php';
+require_once __DIR__ . '/../app/Repositories/TravelMessageRepository.php';
 require_once __DIR__ . '/../app/Repositories/NotificationRepository.php';
 require_once __DIR__ . '/../app/Repositories/WishlistRepository.php';
 
@@ -69,7 +69,7 @@ require_once __DIR__ . '/../app/Controllers/RenterController.php';
 require_once __DIR__ . '/../app/Controllers/GuideController.php';
 require_once __DIR__ . '/../app/Controllers/EquipmentController.php';
 
-require_once __DIR__ . '/../app/TravelBuddy/Controllers/TravelBuddyController.php';
+require_once __DIR__ . '/../app/Controllers/TravelBuddyController.php';
 require_once __DIR__ . '/../app/Controllers/NotificationController.php';
 require_once __DIR__ . '/../app/Controllers/WishlistController.php';
 
