@@ -188,7 +188,7 @@ class FileService
     /**
      * Upload general file
      */
-    public function uploadFile(array $file, string $directory = '', string $filename = null): array
+    public function uploadFile(array $file, string $directory = '', ?string $filename = null): array
     {
         try {
             $filePath = $this->uploader->upload($file, $directory, $filename);

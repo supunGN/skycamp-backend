@@ -521,6 +521,9 @@ class AuthController extends Controller
             $front = $customer->nicFrontImage ?? null;
             $back = $customer->nicBackImage ?? null;
 
+            // Debug: Log the raw values from database
+            error_log("Raw NIC values - Front: " . ($front ?? 'null') . ", Back: " . ($back ?? 'null'));
+
             // Build public URLs from relative paths with cache-busting
             $buildUrl = function (?string $p) use ($customer): ?string {
                 if (!$p) return null;
@@ -544,7 +547,9 @@ class AuthController extends Controller
                 if (!empty($relative)) {
                     // Add cache-busting parameter using updated_at timestamp
                     $timestamp = strtotime($customer->updatedAt);
-                    return 'http://localhost/skycamp/skycamp-backend/storage/uploads/' . $relative . '?ts=' . $timestamp;
+                    $url = 'http://localhost/skycamp/skycamp-backend/storage/uploads/' . $relative . '?ts=' . $timestamp;
+                    error_log("Built URL: " . $url);
+                    return $url;
                 }
 
                 return null;
@@ -567,11 +572,14 @@ class AuthController extends Controller
                     'verification_status' => $customer->verificationStatus ?? 'No',
                     'nic_front_image_url' => $buildUrl($front),
                     'nic_back_image_url' => $buildUrl($back),
-                    'rejection_reason' => $verificationRecord['status'] === 'Rejected' ? $verificationRecord['note'] : null,
-                    'rejection_date' => $verificationRecord['status'] === 'Rejected' ? $verificationRecord['created_at'] : null,
-                    'can_resubmit' => $verificationRecord['status'] === 'Rejected' || !$verificationRecord,
+                    'rejection_reason' => ($verificationRecord && $verificationRecord['status'] === 'Rejected') ? $verificationRecord['note'] : null,
+                    'rejection_date' => ($verificationRecord && $verificationRecord['status'] === 'Rejected') ? $verificationRecord['created_at'] : null,
+                    'can_resubmit' => ($verificationRecord && $verificationRecord['status'] === 'Rejected') || !$verificationRecord,
                 ]
             ]);
+
+            // Debug: Log final URLs being returned
+            error_log("Final URLs - Front: " . ($buildUrl($front) ?? 'null') . ", Back: " . ($buildUrl($back) ?? 'null'));
         } catch (Exception $e) {
             $this->log('Get verification docs error: ' . $e->getMessage(), 'ERROR');
             $response->serverError('Failed to get verification documents');

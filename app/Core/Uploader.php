@@ -18,7 +18,7 @@ class Uploader
     /**
      * Upload file with validation
      */
-    public function upload(array $file, string $directory = '', string $filename = null): ?string
+    public function upload(array $file, string $directory = '', ?string $filename = null): ?string
     {
         $this->errors = [];
 

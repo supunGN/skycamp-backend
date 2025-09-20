@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 19, 2025 at 03:09 PM
+-- Generation Time: Sep 20, 2025 at 03:58 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -197,16 +197,37 @@ CREATE TABLE `customers` (
   `nic_back_image` varchar(255) DEFAULT NULL,
   `travel_buddy_status` enum('Active','Inactive') DEFAULT 'Inactive',
   `verification_status` enum('Yes','No','Pending') DEFAULT 'No',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `customers`
 --
 
-INSERT INTO `customers` (`customer_id`, `user_id`, `first_name`, `last_name`, `dob`, `phone_number`, `home_address`, `location`, `latitude`, `longitude`, `gender`, `profile_picture`, `nic_number`, `nic_front_image`, `nic_back_image`, `travel_buddy_status`, `verification_status`, `created_at`) VALUES
-(1, 1, 'Supun', 'Gunathilaka', '2001-10-08', '0774005021', 'hasalaka, kandy.', 'Hasalaka, Kandy District', 7.35160590, 80.95009700, 'Male', 'users/1/profile.jpg', '123456789V', 'users/1/nic_front.jpg', 'users/1/nic_back.jpg', 'Active', 'Pending', '2025-09-12 11:34:55'),
-(3, 231, 'Isini', 'Kularathne', '2001-08-04', '0774429711', 'No  8, 1st lane, Mirigama', 'Meerigama, Gampaha District', 7.24751440, 80.12992150, 'Female', 'users/231/profile.jpg', '211111111V', 'users/231/nic_front.png', 'users/231/nic_back.png', 'Active', 'No', '2025-09-14 11:29:50');
+INSERT INTO `customers` (`customer_id`, `user_id`, `first_name`, `last_name`, `dob`, `phone_number`, `home_address`, `location`, `latitude`, `longitude`, `gender`, `profile_picture`, `nic_number`, `nic_front_image`, `nic_back_image`, `travel_buddy_status`, `verification_status`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Nandana', 'Gunathilaka', '2001-10-08', '0774005021', 'hasalaka, kandy.', 'Hasalaka, Kandy District', 7.35160590, 80.95009700, 'Male', 'users/1/profile.jpg', '123456789V', 'users/1/nic_front.jpg', 'users/1/nic_back.jpg', 'Active', 'Yes', '2025-09-12 11:34:55', '2025-09-20 10:14:11'),
+(2, 51, 'Amal', 'Jayawardena', '1995-05-14', '0771234567', 'No. 12, Kandy Road, Gampaha', 'Gampaha District', 7.09190000, 79.99460000, 'Male', 'users/51/profile.jpg', '951234590V', 'users/51/nic_front.jpg', 'users/51/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(3, 52, 'Nadeesha', 'Silva', '1998-03-21', '0712345678', 'No. 45, Station Road, Matara', 'Matara District', 5.94960000, 80.54690000, 'Female', 'users/52/profile.jpg', '981234591V', 'users/52/nic_front.jpg', 'users/52/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(4, 53, 'Ruwan', 'Fernando', '1992-11-10', '0756789123', 'No. 7, Negombo Road, Negombo', 'Negombo, Gampaha District', 7.20830000, 79.83580000, 'Male', 'users/53/profile.jpg', '921234592V', 'users/53/nic_front.jpg', 'users/53/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(5, 54, 'Shanika', 'Perera', '1996-08-04', '0724567890', 'No. 15, Hill Street, Kandy', 'Kandy District', 7.29060000, 80.63370000, 'Female', 'users/54/profile.jpg', '961234593V', 'users/54/nic_front.jpg', 'users/54/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(6, 55, 'Chathura', 'Abeysekara', '1993-02-19', '0709876543', 'No. 32, Beach Road, Galle', 'Galle District', 6.05350000, 80.22000000, 'Male', 'users/55/profile.jpg', '931234594V', 'users/55/nic_front.jpg', 'users/55/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(7, 56, 'Thilini', 'Ranathunga', '1997-06-12', '0743210987', 'No. 89, Temple Road, Kurunegala', 'Kurunegala District', 7.48330000, 80.36670000, 'Female', 'users/56/profile.jpg', '971234595V', 'users/56/nic_front.jpg', 'users/56/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(8, 57, 'Sampath', 'Madushanka', '1991-09-28', '0765432198', 'No. 8, Market Street, Anuradhapura', 'Anuradhapura District', 8.31140000, 80.40370000, 'Male', 'users/57/profile.jpg', '911234596V', 'users/57/nic_front.jpg', 'users/57/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(9, 58, 'Harshani', 'Gunawardena', '1999-12-01', '0787654321', 'No. 22, Lake Road, Polonnaruwa', 'Polonnaruwa District', 7.93360000, 81.00040000, 'Female', 'users/58/profile.jpg', '991234597V', 'users/58/nic_front.jpg', 'users/58/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(10, 59, 'Pradeep', 'Ekanayake', '1990-04-07', '0711122334', 'No. 14, Bazaar Street, Ratnapura', 'Ratnapura District', 6.70560000, 80.38470000, 'Male', 'users/59/profile.jpg', '901234598V', 'users/59/nic_front.jpg', 'users/59/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(11, 60, 'Dulmini', 'Fernando', '1994-07-18', '0752233445', 'No. 55, River Road, Trincomalee', 'Trincomalee District', 8.57110000, 81.23350000, 'Female', 'users/60/profile.jpg', '941234599V', 'users/60/nic_front.jpg', 'users/60/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(12, 61, 'Nimal', 'Karunaratne', '1992-05-15', '0773344556', 'No. 9, Main Street, Jaffna', 'Jaffna District', 9.66850000, 80.00740000, 'Male', 'users/61/profile.jpg', '921234600V', 'users/61/nic_front.jpg', 'users/61/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(13, 62, 'Sajini', 'Rajapaksha', '1997-11-23', '0724455667', 'No. 19, Temple Road, Badulla', 'Badulla District', 6.98960000, 81.05500000, 'Female', 'users/62/profile.jpg', '971234601V', 'users/62/nic_front.jpg', 'users/62/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(14, 63, 'Chamika', 'Jayasinghe', '1995-01-30', '0705566778', 'No. 11, Station Road, Monaragala', 'Monaragala District', 6.86670000, 81.35000000, 'Male', 'users/63/profile.jpg', '951234602V', 'users/63/nic_front.jpg', 'users/63/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(15, 64, 'Gayani', 'Perera', '1998-08-09', '0746677889', 'No. 27, Hill View, Hambantota', 'Hambantota District', 6.12450000, 81.11850000, 'Female', 'users/64/profile.jpg', '981234603V', 'users/64/nic_front.jpg', 'users/64/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(16, 65, 'Ravindu', 'Senanayake', '1993-03-25', '0767788990', 'No. 88, Church Road, Puttalam', 'Puttalam District', 8.03620000, 79.82830000, 'Male', 'users/65/profile.jpg', '931234604V', 'users/65/nic_front.jpg', 'users/65/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(17, 66, 'Ishara', 'Dissanayake', '1996-02-17', '0788899001', 'No. 5, Sea Road, Kalpitiya', 'Kalpitiya, Puttalam District', 8.23610000, 79.75960000, 'Female', 'users/66/profile.jpg', '961234605V', 'users/66/nic_front.jpg', 'users/66/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(18, 67, 'Asela', 'Kumara', '1992-09-11', '0719900112', 'No. 40, Park Road, Colombo', 'Colombo District', 6.92710000, 79.86120000, 'Male', 'users/67/profile.jpg', '921234606V', 'users/67/nic_front.jpg', 'users/67/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(19, 68, 'Pavithra', 'Wijesinghe', '1999-10-29', '0751122334', 'No. 18, New Road, Chilaw', 'Chilaw, Puttalam District', 7.57580000, 79.79530000, 'Female', 'users/68/profile.jpg', '991234607V', 'users/68/nic_front.jpg', 'users/68/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(20, 69, 'Sunil', 'Herath', '1991-06-05', '0772233445', 'No. 21, Temple Lane, Kegalle', 'Kegalle District', 7.25000000, 80.35000000, 'Male', 'users/69/profile.jpg', '911234608V', 'users/69/nic_front.jpg', 'users/69/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(21, 70, 'Rashmi', 'Dias', '1997-04-02', '0723344556', 'No. 77, Lake Road, Kilinochchi', 'Kilinochchi District', 9.40000000, 80.40000000, 'Female', 'users/70/profile.jpg', '971234609V', 'users/70/nic_front.jpg', 'users/70/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(22, 71, 'Chanuka', 'Bandara', '1995-12-12', '0744455667', 'No. 34, Station Road, Matale', 'Matale District', 7.46670000, 80.63330000, 'Male', 'users/71/profile.jpg', '951234610V', 'users/71/nic_front.jpg', 'users/71/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08');
 
 -- --------------------------------------------------------
 
@@ -787,6 +808,15 @@ CREATE TABLE `notifications` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`notification_id`, `user_id`, `type`, `message`, `is_read`, `created_at`) VALUES
+(1, 1, 'Verification', 'Your identity verification request has been rejected. Reason: NIC images do not match the provided personal information. Please review your documents and resubmit for verification.', 1, '2025-09-19 13:53:43'),
+(2, 1, 'Verification', '⏳ Your identity verification request has been submitted and is under review. This usually takes 24-48 hours.', 1, '2025-09-20 09:01:32'),
+(3, 1, 'Verification', '🎉 Congratulations! Your identity verification has been approved. You now have access to all verified user features.', 1, '2025-09-20 09:02:08');
+
 -- --------------------------------------------------------
 
 --
@@ -1081,6 +1111,27 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `email`, `password_hash`, `role`, `is_active`, `created_at`) VALUES
 (1, 'supungunathilaka123@gmail.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Customer', 1, '2025-09-12 11:34:55'),
+(51, 'amal@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(52, 'nadeesha@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(53, 'ruwan@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(54, 'shanika@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(55, 'chathura@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(56, 'thilini@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(57, 'sampath@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(58, 'harshani@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(59, 'pradeep@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(60, 'dulmini@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(61, 'nimal@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(62, 'sajini@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(63, 'chamika@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(64, 'gayani@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(65, 'ravindu@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(66, 'ishara@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(67, 'asela@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(68, 'pavithra@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(69, 'sunil@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(70, 'rashmi@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
+(71, 'chanuka@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
 (101, 'ruwantha.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
 (102, 'sanduni.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
 (103, 'mohamed.r@example.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Renter', 1, '2025-09-13 10:44:55'),
@@ -1141,8 +1192,7 @@ INSERT INTO `users` (`user_id`, `email`, `password_hash`, `role`, `is_active`, `
 (227, 'malith.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
 (228, 'chamika.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
 (229, 'madushan.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
-(230, 'pradeep.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
-(231, 'isinikularathna2001@gmail.com', '$argon2id$v=19$m=65536,t=4,p=3$cE1CZy5xd0tmemNPZUZ5Tg$qxu4lkx/SHp1TIVz9cjFDTiJGnhNislYy7PD5qGPAn0', 'Customer', 1, '2025-09-14 11:29:50');
+(230, 'pradeep.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54');
 
 -- --------------------------------------------------------
 
@@ -1178,7 +1228,12 @@ CREATE TABLE `user_verifications` (
 --
 
 INSERT INTO `user_verifications` (`verification_id`, `user_id`, `reviewed_by`, `status`, `note`, `created_at`) VALUES
-(2, 1, 1, 'Rejected', 'Documents submitted are not valid identification.', '2025-09-19 13:05:41');
+(2, 1, 1, 'Approved', 'NIC images are legible and match the provided information.', '2025-09-19 13:05:41'),
+(3, 1, 1, 'Approved', 'NIC images are legible and match the provided information.', '2025-09-19 13:19:25'),
+(4, 1, 1, 'Approved', 'NIC images are legible and match the provided information.', '2025-09-19 13:21:08'),
+(6, 1, 1, 'Approved', 'NIC images are legible and match the provided information.', '2025-09-19 13:29:50'),
+(7, 1, 1, 'Approved', 'NIC images are legible and match the provided information.', '2025-09-19 13:52:54'),
+(8, 1, 1, 'Approved', 'NIC images are legible and match the provided information.', '2025-09-20 09:01:32');
 
 -- --------------------------------------------------------
 
@@ -1199,7 +1254,12 @@ CREATE TABLE `verification_management_log` (
 --
 
 INSERT INTO `verification_management_log` (`log_id`, `admin_id`, `target_user_id`, `action`, `timestamp`) VALUES
-(2, 1, 1, '', '2025-09-19 13:07:18');
+(2, 1, 1, '', '2025-09-19 13:07:18'),
+(3, 1, 1, '', '2025-09-19 13:20:17'),
+(4, 1, 1, '', '2025-09-19 13:24:11'),
+(6, 1, 1, '', '2025-09-19 13:30:39'),
+(7, 1, 1, '', '2025-09-19 13:53:43'),
+(8, 1, 1, '', '2025-09-20 09:02:08');
 
 -- --------------------------------------------------------
 
@@ -1213,6 +1273,15 @@ CREATE TABLE `wishlists` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `wishlists`
+--
+
+INSERT INTO `wishlists` (`wishlist_id`, `customer_id`, `created_at`) VALUES
+(1, 1, '2025-09-19 14:12:11'),
+(5, 2, '2025-09-20 13:52:20'),
+(6, 3, '2025-09-20 13:53:17');
+
 -- --------------------------------------------------------
 
 --
@@ -1222,9 +1291,22 @@ CREATE TABLE `wishlists` (
 CREATE TABLE `wishlist_items` (
   `wishlist_item_id` int(11) NOT NULL,
   `wishlist_id` int(11) NOT NULL,
+  `item_type` enum('equipment','location','guide') NOT NULL,
+  `item_id` int(11) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `image_url` varchar(500) DEFAULT NULL,
+  `price` decimal(10,2) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `wishlist_items`
+--
+
+INSERT INTO `wishlist_items` (`wishlist_item_id`, `wishlist_id`, `item_type`, `item_id`, `name`, `description`, `image_url`, `price`, `created_at`) VALUES
+(67, 1, 'location', 39, 'Belihuloya', 'A forested riverside destination famous for cool streams, natural pools, and biodiversity.', 'http://localhost/skycamp/skycamp-backend/storage/uploads/locations/camping_destinations/belihuloya1.jpg', NULL, '2025-09-20 07:49:42'),
+(68, 1, 'location', 35, 'Bogahakumbura Forest', 'A hidden forest camping site popular with birdwatchers and eco-tourists.', 'http://localhost/skycamp/skycamp-backend/storage/uploads/locations/camping_destinations/bogahakumbura_forest1.jpg', NULL, '2025-09-20 07:49:44');
 
 --
 -- Indexes for dumped tables
@@ -1549,7 +1631,8 @@ ALTER TABLE `wishlists`
 --
 ALTER TABLE `wishlist_items`
   ADD PRIMARY KEY (`wishlist_item_id`),
-  ADD KEY `wishlist_items_ibfk_1` (`wishlist_id`);
+  ADD KEY `idx_item_type_id` (`item_type`,`item_id`),
+  ADD KEY `idx_wishlist_id` (`wishlist_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -1613,7 +1696,7 @@ ALTER TABLE `content_logs`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `equipment`
@@ -1685,7 +1768,7 @@ ALTER TABLE `location_images`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `pages`
@@ -1727,7 +1810,7 @@ ALTER TABLE `renterequipmentphotos`
 -- AUTO_INCREMENT for table `renters`
 --
 ALTER TABLE `renters`
-  MODIFY `renter_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `renter_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `reviews`
@@ -1781,7 +1864,7 @@ ALTER TABLE `travel_requests`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=233;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=235;
 
 --
 -- AUTO_INCREMENT for table `user_management_log`
@@ -1793,25 +1876,25 @@ ALTER TABLE `user_management_log`
 -- AUTO_INCREMENT for table `user_verifications`
 --
 ALTER TABLE `user_verifications`
-  MODIFY `verification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `verification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `verification_management_log`
 --
 ALTER TABLE `verification_management_log`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `wishlists`
 --
 ALTER TABLE `wishlists`
-  MODIFY `wishlist_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `wishlist_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `wishlist_items`
 --
 ALTER TABLE `wishlist_items`
-  MODIFY `wishlist_item_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `wishlist_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- Constraints for dumped tables

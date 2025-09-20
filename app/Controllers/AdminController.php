@@ -504,6 +504,7 @@ class AdminController extends Controller
             $stmt->execute();
             $pendingVerifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
             $response->json([
                 'success' => true,
                 'data' => $pendingVerifications
