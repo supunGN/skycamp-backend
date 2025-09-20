@@ -37,6 +37,9 @@ require_once __DIR__ . '/../app/Models/TravelPlan.php';
 require_once __DIR__ . '/../app/Models/TravelRequest.php';
 require_once __DIR__ . '/../app/Models/TravelChat.php';
 require_once __DIR__ . '/../app/Models/TravelMessage.php';
+require_once __DIR__ . '/../app/Models/Notification.php';
+require_once __DIR__ . '/../app/Models/Wishlist.php';
+require_once __DIR__ . '/../app/Models/WishlistItem.php';
 
 // Include repositories
 require_once __DIR__ . '/../app/Repositories/UserRepository.php';
@@ -49,10 +52,13 @@ require_once __DIR__ . '/../app/Repositories/TravelPlanRepository.php';
 require_once __DIR__ . '/../app/Repositories/TravelRequestRepository.php';
 require_once __DIR__ . '/../app/Repositories/TravelChatRepository.php';
 require_once __DIR__ . '/../app/Repositories/TravelMessageRepository.php';
+require_once __DIR__ . '/../app/Repositories/NotificationRepository.php';
+require_once __DIR__ . '/../app/Repositories/WishlistRepository.php';
 
 // Include services
 require_once __DIR__ . '/../app/Services/FileService.php';
 require_once __DIR__ . '/../app/Services/AuthService.php';
+require_once __DIR__ . '/../app/Services/NotificationService.php';
 
 // Include controllers
 require_once __DIR__ . '/../app/Controllers/AuthController.php';
@@ -64,6 +70,8 @@ require_once __DIR__ . '/../app/Controllers/GuideController.php';
 require_once __DIR__ . '/../app/Controllers/EquipmentController.php';
 
 require_once __DIR__ . '/../app/Controllers/TravelBuddyController.php';
+require_once __DIR__ . '/../app/Controllers/NotificationController.php';
+require_once __DIR__ . '/../app/Controllers/WishlistController.php';
 
 // Include middlewares
 require_once __DIR__ . '/../app/Middlewares/Cors.php';
@@ -88,6 +96,7 @@ try {
     $router->post('/api/auth/profile', [AuthController::class, 'updateProfile']);
     $router->post('/api/auth/travel-buddy/toggle', [AuthController::class, 'toggleTravelBuddy']);
     $router->post('/api/auth/verification/submit', [AuthController::class, 'submitVerification']);
+    $router->get('/api/auth/verification/docs', [AuthController::class, 'getVerificationDocs']);
 
     // Admin routes
     $router->post('/api/admin/login', [AdminController::class, 'login']);
@@ -176,10 +185,25 @@ try {
 
     // Admin User Verification endpoints
     $router->get('/api/admin/verifications/pending', [AdminController::class, 'getPendingVerifications']);
+    $router->get('/api/admin/verifications/pending-count', [AdminController::class, 'getPendingVerificationCount']);
     $router->get('/api/admin/verifications/rejected', [AdminController::class, 'getRejectedUsers']);
     $router->post('/api/admin/verifications/approve', [AdminController::class, 'approveUser']);
     $router->post('/api/admin/verifications/reject', [AdminController::class, 'rejectUser']);
     $router->get('/api/admin/verifications/activity-log', [AdminController::class, 'getVerificationActivityLog']);
+
+    // Notification endpoints
+    $router->get('/api/notifications', [NotificationController::class, 'getUserNotifications']);
+    $router->get('/api/notifications/unread-count', [NotificationController::class, 'getUnreadCount']);
+    $router->post('/api/notifications/mark-read', [NotificationController::class, 'markAsRead']);
+    $router->post('/api/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead']);
+
+    // Wishlist endpoints
+    $router->get('/api/wishlist', [WishlistController::class, 'getWishlist']);
+    $router->post('/api/wishlist/add', [WishlistController::class, 'addItem']);
+    $router->post('/api/wishlist/remove', [WishlistController::class, 'removeItem']);
+    $router->get('/api/wishlist/check', [WishlistController::class, 'checkItem']);
+    $router->get('/api/wishlist/count', [WishlistController::class, 'getItemCount']);
+    $router->post('/api/wishlist/clear', [WishlistController::class, 'clearWishlist']);
 
 
     // Handle OPTIONS requests for CORS preflight

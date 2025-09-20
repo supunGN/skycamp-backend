@@ -140,7 +140,7 @@ class CustomerRepository
         }
 
         $sql = "UPDATE customers SET travel_buddy_status = :status WHERE customer_id = :customer_id";
-        
+
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
             'customer_id' => $customerId,
@@ -158,7 +158,7 @@ class CustomerRepository
         }
 
         $sql = "UPDATE customers SET travel_buddy_status = :status WHERE user_id = :user_id";
-        
+
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
             'user_id' => $userId,
@@ -176,12 +176,30 @@ class CustomerRepository
             nic_back_image = :nic_back_image,
             verification_status = 'Pending'
             WHERE user_id = :user_id";
-        
+
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
             'user_id' => $userId,
             'nic_front_image' => $nicFrontImage,
             'nic_back_image' => $nicBackImage
+        ]);
+    }
+
+    /**
+     * Update verification status for a customer
+     */
+    public function updateVerificationStatus(string $userId, string $status): bool
+    {
+        if (!in_array($status, ['Yes', 'No', 'Pending'])) {
+            throw new InvalidArgumentException('Invalid verification status. Must be Yes, No, or Pending.');
+        }
+
+        $sql = "UPDATE customers SET verification_status = :status WHERE user_id = :user_id";
+
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([
+            'user_id' => $userId,
+            'status' => $status
         ]);
     }
 }

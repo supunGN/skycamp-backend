@@ -1,19 +1,22 @@
 <?php
 
 /**
- * Session Management Class
- * Handles user sessions with cookie-based storage
+ * Enhanced Session Management Class
+ * Handles secure user and admin sessions with idle timeout and regeneration
  */
 
 class Session
 {
     private bool $started = false;
     private array $config;
+    private ?int $lastRegeneration = null;
 
     public function __construct()
     {
         $this->config = Database::getConfig('session') ?? [];
         $this->start();
+        $this->checkIdleTimeout();
+        $this->checkRegenerationInterval();
     }
 
     /**
@@ -97,6 +100,22 @@ class Session
         $this->set('user_role', $user['role']);
         $this->set('user_email', $user['email'] ?? null);
         $this->set('authenticated', true);
+        $this->set('session_type', 'user');
+        $this->updateLastActivity();
+        $this->regenerate();
+    }
+
+    /**
+     * Set admin authentication data
+     */
+    public function setAdmin(array $admin): void
+    {
+        $this->set('admin_id', $admin['admin_id']);
+        $this->set('admin_email', $admin['email']);
+        $this->set('admin_authenticated', true);
+        $this->set('session_type', 'admin');
+        $this->updateLastActivity();
+        $this->regenerate();
     }
 
     /**
@@ -121,6 +140,22 @@ class Session
     public function isAuthenticated(): bool
     {
         return $this->get('authenticated', false) === true;
+    }
+
+    /**
+     * Check if admin is authenticated
+     */
+    public function isAdminAuthenticated(): bool
+    {
+        return $this->get('admin_authenticated', false) === true;
+    }
+
+    /**
+     * Check if any user (user or admin) is authenticated
+     */
+    public function isAnyAuthenticated(): bool
+    {
+        return $this->isAuthenticated() || $this->isAdminAuthenticated();
     }
 
     /**
@@ -151,12 +186,14 @@ class Session
     }
 
     /**
-     * Regenerate session ID
+     * Regenerate session ID and update timestamp
      */
     public function regenerate(): void
     {
         if ($this->started) {
             session_regenerate_id(true);
+            $this->set('last_regeneration', time());
+            $this->lastRegeneration = time();
         }
     }
 
@@ -174,5 +211,106 @@ class Session
     public function getId(): string
     {
         return session_id();
+    }
+
+    /**
+     * Check idle timeout and destroy session if expired
+     */
+    private function checkIdleTimeout(): void
+    {
+        $idleTimeout = $this->config['idle_timeout'] ?? 1800; // 30 minutes default
+        $lastActivity = $this->get($this->config['last_activity_key'] ?? 'last_activity');
+
+        if ($lastActivity && (time() - $lastActivity) > $idleTimeout) {
+            $this->destroy();
+            return;
+        }
+
+        // Update last activity on each request
+        $this->updateLastActivity();
+    }
+
+    /**
+     * Check if session ID needs regeneration
+     */
+    private function checkRegenerationInterval(): void
+    {
+        $regenerationInterval = $this->config['regeneration_interval'] ?? 300; // 5 minutes default
+        $lastRegeneration = $this->get('last_regeneration');
+
+        if (!$lastRegeneration || (time() - $lastRegeneration) > $regenerationInterval) {
+            $this->regenerate();
+        }
+    }
+
+    /**
+     * Update last activity timestamp
+     */
+    private function updateLastActivity(): void
+    {
+        $this->set($this->config['last_activity_key'] ?? 'last_activity', time());
+    }
+
+    /**
+     * Get admin data
+     */
+    public function getAdmin(): ?array
+    {
+        if (!$this->isAdminAuthenticated()) {
+            return null;
+        }
+
+        return [
+            'admin_id' => $this->get('admin_id'),
+            'email' => $this->get('admin_email')
+        ];
+    }
+
+    /**
+     * Get current session type
+     */
+    public function getSessionType(): ?string
+    {
+        return $this->get($this->config['session_type_key'] ?? 'session_type');
+    }
+
+    /**
+     * Check if session is for admin
+     */
+    public function isAdminSession(): bool
+    {
+        return $this->getSessionType() === 'admin';
+    }
+
+    /**
+     * Check if session is for user
+     */
+    public function isUserSession(): bool
+    {
+        return $this->getSessionType() === 'user';
+    }
+
+    /**
+     * Unified logout for both user and admin sessions
+     */
+    public function logout(): void
+    {
+        $this->destroy();
+    }
+
+    /**
+     * Get session security info
+     */
+    public function getSecurityInfo(): array
+    {
+        return [
+            'session_id' => $this->getId(),
+            'last_activity' => $this->get($this->config['last_activity_key'] ?? 'last_activity'),
+            'last_regeneration' => $this->get('last_regeneration'),
+            'session_type' => $this->getSessionType(),
+            'is_authenticated' => $this->isAnyAuthenticated(),
+            'idle_timeout' => $this->config['idle_timeout'] ?? 1800,
+            'regeneration_interval' => $this->config['regeneration_interval'] ?? 300
+        ];
     }
 }

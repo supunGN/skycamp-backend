@@ -1,9 +1,9 @@
- -- phpMyAdmin SQL Dump
+-- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 14, 2025 at 08:43 PM
+-- Generation Time: Sep 19, 2025 at 03:09 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -196,7 +196,7 @@ CREATE TABLE `customers` (
   `nic_front_image` varchar(255) DEFAULT NULL,
   `nic_back_image` varchar(255) DEFAULT NULL,
   `travel_buddy_status` enum('Active','Inactive') DEFAULT 'Inactive',
-  `verification_status` enum('Yes','No') DEFAULT 'No',
+  `verification_status` enum('Yes','No','Pending') DEFAULT 'No',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -205,7 +205,7 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`customer_id`, `user_id`, `first_name`, `last_name`, `dob`, `phone_number`, `home_address`, `location`, `latitude`, `longitude`, `gender`, `profile_picture`, `nic_number`, `nic_front_image`, `nic_back_image`, `travel_buddy_status`, `verification_status`, `created_at`) VALUES
-(1, 1, 'Supun', 'Gunathilaka', '2001-10-08', '0774005021', 'hasalaka, kandy.', 'Hasalaka, Kandy District', 7.35160590, 80.95009700, 'Male', 'users/1/profile.jpg', '123456789V', '', '', 'Active', 'No', '2025-09-12 11:34:55'),
+(1, 1, 'Supun', 'Gunathilaka', '2001-10-08', '0774005021', 'hasalaka, kandy.', 'Hasalaka, Kandy District', 7.35160590, 80.95009700, 'Male', 'users/1/profile.jpg', '123456789V', 'users/1/nic_front.jpg', 'users/1/nic_back.jpg', 'Active', 'Pending', '2025-09-12 11:34:55'),
 (3, 231, 'Isini', 'Kularathne', '2001-08-04', '0774429711', 'No  8, 1st lane, Mirigama', 'Meerigama, Gampaha District', 7.24751440, 80.12992150, 'Female', 'users/231/profile.jpg', '211111111V', 'users/231/nic_front.png', 'users/231/nic_back.png', 'Active', 'No', '2025-09-14 11:29:50');
 
 -- --------------------------------------------------------
@@ -419,7 +419,7 @@ CREATE TABLE `guides` (
   `currency` varchar(10) DEFAULT NULL,
   `languages` text DEFAULT NULL,
   `price_per_day` decimal(10,2) DEFAULT NULL,
-  `verification_status` enum('Yes','No') DEFAULT 'No',
+  `verification_status` enum('Yes','No','Pending') DEFAULT 'No',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -470,6 +470,9 @@ CREATE TABLE `inactive_users` (
   `user_id` int(11) NOT NULL,
   `role` enum('Customer','Renter','Guide') NOT NULL,
   `email` varchar(150) NOT NULL,
+  `first_name` varchar(100) NOT NULL,
+  `last_name` varchar(100) NOT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
   `reason` text DEFAULT NULL,
   `deleted_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_by` int(11) NOT NULL
@@ -479,8 +482,8 @@ CREATE TABLE `inactive_users` (
 -- Dumping data for table `inactive_users`
 --
 
-INSERT INTO `inactive_users` (`inactive_id`, `user_id`, `role`, `email`, `reason`, `deleted_at`, `deleted_by`) VALUES
-(1, 232, 'Customer', 'madu@gmail.com', 'Deleted by admin', '2025-09-14 18:22:02', 1);
+INSERT INTO `inactive_users` (`inactive_id`, `user_id`, `role`, `email`, `first_name`, `last_name`, `phone_number`, `reason`, `deleted_at`, `deleted_by`) VALUES
+(1, 232, 'Customer', 'madu@gmail.com', 'Unknown', 'User', '000-000-0000', 'Deleted by admin', '2025-09-14 18:22:02', 1);
 
 -- --------------------------------------------------------
 
@@ -898,7 +901,7 @@ CREATE TABLE `renters` (
   `camping_destinations` text DEFAULT NULL,
   `stargazing_spots` text DEFAULT NULL,
   `district` varchar(100) DEFAULT NULL,
-  `verification_status` enum('Yes','No') DEFAULT 'No',
+  `verification_status` enum('Yes','No','Pending') DEFAULT 'No',
   `latitude` decimal(10,8) DEFAULT NULL,
   `longitude` decimal(11,8) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -1170,6 +1173,13 @@ CREATE TABLE `user_verifications` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `user_verifications`
+--
+
+INSERT INTO `user_verifications` (`verification_id`, `user_id`, `reviewed_by`, `status`, `note`, `created_at`) VALUES
+(2, 1, 1, 'Rejected', 'Documents submitted are not valid identification.', '2025-09-19 13:05:41');
+
 -- --------------------------------------------------------
 
 --
@@ -1183,6 +1193,13 @@ CREATE TABLE `verification_management_log` (
   `action` enum('Created','Updated','Deleted') NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `verification_management_log`
+--
+
+INSERT INTO `verification_management_log` (`log_id`, `admin_id`, `target_user_id`, `action`, `timestamp`) VALUES
+(2, 1, 1, '', '2025-09-19 13:07:18');
 
 -- --------------------------------------------------------
 
@@ -1776,13 +1793,13 @@ ALTER TABLE `user_management_log`
 -- AUTO_INCREMENT for table `user_verifications`
 --
 ALTER TABLE `user_verifications`
-  MODIFY `verification_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `verification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `verification_management_log`
 --
 ALTER TABLE `verification_management_log`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `wishlists`

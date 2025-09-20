@@ -20,7 +20,8 @@ class Customer
     public string $gender;
     public ?string $profilePicture;
     public string $nicNumber;
-    public ?string $nicImage;
+    public ?string $nicFrontImage;
+    public ?string $nicBackImage;
     public string $travelBuddyStatus;
     public string $verificationStatus;
     public string $createdAt;
@@ -40,7 +41,8 @@ class Customer
         $this->gender = $data['gender'] ?? 'Male';
         $this->profilePicture = $data['profile_picture'] ?? null;
         $this->nicNumber = $data['nic_number'] ?? '';
-        $this->nicImage = $data['nic_image'] ?? null;
+        $this->nicFrontImage = $data['nic_front_image'] ?? ($data['nic_image'] ?? null);
+        $this->nicBackImage = $data['nic_back_image'] ?? ($data['nic_image'] ?? null);
         $this->travelBuddyStatus = $data['travel_buddy_status'] ?? 'Inactive';
         $this->verificationStatus = $data['verification_status'] ?? 'No';
         $this->createdAt = $data['created_at'] ?? date('Y-m-d H:i:s');
@@ -65,7 +67,8 @@ class Customer
             'gender' => $this->gender,
             'profile_picture' => $this->profilePicture,
             'nic_number' => $this->nicNumber,
-            'nic_image' => $this->nicImage,
+            'nic_front_image' => $this->nicFrontImage,
+            'nic_back_image' => $this->nicBackImage,
             'travel_buddy_status' => $this->travelBuddyStatus,
             'verification_status' => $this->verificationStatus,
             'created_at' => $this->createdAt

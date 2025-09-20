@@ -1,15 +1,17 @@
 <?php
 
+use App\Services\NotificationService;
+
 class AdminController extends Controller
 {
-    private Session $session;
     private PDO $pdo;
+    private NotificationService $notificationService;
 
     public function __construct()
     {
         parent::__construct();
-        $this->session = new Session();
         $this->pdo = Database::getConnection();
+        $this->notificationService = new NotificationService($this->pdo);
     }
 
     public function login(Request $request, Response $response): void
@@ -48,11 +50,11 @@ class AdminController extends Controller
             return;
         }
 
-        // Set admin session
-        $_SESSION['admin_authenticated'] = true;
-        $_SESSION['admin_id'] = $row['admin_id'];
-        $_SESSION['admin_email'] = $row['email'];
-        $this->session->regenerate();
+        // Set admin session using centralized Session class
+        $this->session->setAdmin([
+            'admin_id' => $row['admin_id'],
+            'email' => $row['email']
+        ]);
 
         error_log("✅ Admin Login Success - Admin ID: " . $row['admin_id'] . ", Email: " . $row['email']);
 
@@ -68,25 +70,22 @@ class AdminController extends Controller
 
     public function me(Request $request, Response $response): void
     {
-        if (!($_SESSION['admin_authenticated'] ?? false)) {
+        if (!$this->session->isAdminAuthenticated()) {
             $response->json(['success' => false, 'authenticated' => false], 401);
             return;
         }
 
+        $admin = $this->session->getAdmin();
         $response->json([
             'success' => true,
             'authenticated' => true,
-            'user' => [
-                'admin_id' => $_SESSION['admin_id'] ?? null,
-                'email' => $_SESSION['admin_email'] ?? null,
-            ]
+            'user' => $admin
         ], 200);
     }
 
     public function logout(Request $request, Response $response): void
     {
-        unset($_SESSION['admin_authenticated'], $_SESSION['admin_id'], $_SESSION['admin_email']);
-        $this->session->regenerate();
+        $this->session->logout();
         $response->json(['success' => true], 200);
     }
 
@@ -275,7 +274,7 @@ class AdminController extends Controller
                 $userId,
                 ucfirst($userType), // Capitalize first letter
                 $reason,
-                $_SESSION['admin_id']
+                $this->session->getAdmin()['admin_id']
             ]);
 
             // Log the action
@@ -382,7 +381,7 @@ class AdminController extends Controller
                 $user['last_name'],
                 $user['phone_number'],
                 $reason,
-                $_SESSION['admin_id']
+                $this->session->getAdmin()['admin_id']
             ]);
 
             // Delete from role-specific table
@@ -441,16 +440,6 @@ class AdminController extends Controller
     }
 
     /**
-     * Require admin authentication
-     */
-    private function requireAdminAuth(): void
-    {
-        if (!($_SESSION['admin_authenticated'] ?? false)) {
-            throw new Exception('Admin authentication required');
-        }
-    }
-
-    /**
      * Get all pending verifications
      * GET /api/admin/verifications/pending
      */
@@ -495,22 +484,22 @@ class AdminController extends Controller
                         WHEN u.role = 'Renter' THEN r.verification_status
                         WHEN u.role = 'Guide' THEN g.verification_status
                     END as verification_status,
+                    uv.status as verification_record_status,
+                    uv.created_at as verification_requested_at,
+                    uv.note as verification_note,
                     u.created_at
                 FROM users u
                 LEFT JOIN customers c ON u.user_id = c.user_id AND u.role = 'Customer'
                 LEFT JOIN renters r ON u.user_id = r.user_id AND u.role = 'Renter'
                 LEFT JOIN guides g ON u.user_id = g.user_id AND u.role = 'Guide'
+                LEFT JOIN user_verifications uv ON u.user_id = uv.user_id
                 WHERE (
-                    (u.role = 'Customer' AND c.verification_status = 'No') OR
-                    (u.role = 'Renter' AND r.verification_status = 'No') OR
-                    (u.role = 'Guide' AND g.verification_status = 'No')
+                    (u.role = 'Customer' AND c.verification_status = 'Pending') OR
+                    (u.role = 'Renter' AND r.verification_status = 'Pending') OR
+                    (u.role = 'Guide' AND g.verification_status = 'Pending')
                 )
-                AND (
-                    (u.role = 'Customer' AND c.nic_front_image IS NOT NULL AND c.nic_back_image IS NOT NULL) OR
-                    (u.role = 'Renter' AND r.nic_front_image IS NOT NULL AND r.nic_back_image IS NOT NULL) OR
-                    (u.role = 'Guide' AND g.nic_front_image IS NOT NULL AND g.nic_back_image IS NOT NULL)
-                )
-                ORDER BY u.created_at ASC
+                AND uv.status = 'Pending'
+                ORDER BY uv.created_at ASC
             ");
             $stmt->execute();
             $pendingVerifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -536,36 +525,35 @@ class AdminController extends Controller
 
             $stmt = $this->pdo->prepare("
                 SELECT 
-                    vml.verification_id,
-                    vml.user_id,
-                    vml.user_type,
-                    vml.admin_id,
-                    vml.action,
-                    vml.reason,
-                    vml.created_at as rejected_at,
+                    uv.verification_id,
+                    uv.user_id,
+                    uv.reviewed_by as admin_id,
+                    uv.note as reason,
+                    uv.created_at as rejected_at,
                     u.email,
+                    u.role,
                     CASE 
-                        WHEN vml.user_type = 'customer' THEN c.first_name
-                        WHEN vml.user_type = 'renter' THEN r.first_name
-                        WHEN vml.user_type = 'guide' THEN g.first_name
+                        WHEN u.role = 'Customer' THEN c.first_name
+                        WHEN u.role = 'Renter' THEN r.first_name
+                        WHEN u.role = 'Guide' THEN g.first_name
                     END as first_name,
                     CASE 
-                        WHEN vml.user_type = 'customer' THEN c.last_name
-                        WHEN vml.user_type = 'renter' THEN r.last_name
-                        WHEN vml.user_type = 'guide' THEN g.last_name
+                        WHEN u.role = 'Customer' THEN c.last_name
+                        WHEN u.role = 'Renter' THEN r.last_name
+                        WHEN u.role = 'Guide' THEN g.last_name
                     END as last_name,
                     CASE 
-                        WHEN vml.user_type = 'customer' THEN c.nic_number
-                        WHEN vml.user_type = 'renter' THEN r.nic_number
-                        WHEN vml.user_type = 'guide' THEN g.nic_number
+                        WHEN u.role = 'Customer' THEN c.nic_number
+                        WHEN u.role = 'Renter' THEN r.nic_number
+                        WHEN u.role = 'Guide' THEN g.nic_number
                     END as nic_number
-                FROM verification_management_log vml
-                JOIN users u ON vml.user_id = u.user_id
-                LEFT JOIN customers c ON u.user_id = c.user_id AND vml.user_type = 'customer'
-                LEFT JOIN renters r ON u.user_id = r.user_id AND vml.user_type = 'renter'
-                LEFT JOIN guides g ON u.user_id = g.user_id AND vml.user_type = 'guide'
-                WHERE vml.action = 'Rejected'
-                ORDER BY vml.created_at DESC
+                FROM user_verifications uv
+                JOIN users u ON uv.user_id = u.user_id
+                LEFT JOIN customers c ON u.user_id = c.user_id AND u.role = 'Customer'
+                LEFT JOIN renters r ON u.user_id = r.user_id AND u.role = 'Renter'
+                LEFT JOIN guides g ON u.user_id = g.user_id AND u.role = 'Guide'
+                WHERE uv.status = 'Rejected'
+                ORDER BY uv.created_at DESC
             ");
             $stmt->execute();
             $rejectedUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -613,11 +601,20 @@ class AdminController extends Controller
                 return;
             }
 
+            // Update verification status in the appropriate table
             $stmt = $this->pdo->prepare("UPDATE {$tableMap[$userType]} SET verification_status = 'Yes' WHERE user_id = ?");
             $stmt->execute([$userId]);
 
+            // Update verification record
+            $adminId = $this->session->getAdmin()['admin_id'];
+            $stmt = $this->pdo->prepare("UPDATE user_verifications SET status = 'Approved', reviewed_by = ?, note = ? WHERE user_id = ?");
+            $stmt->execute([$adminId, $reason, $userId]);
+
             // Log the action
             $this->logVerificationAction('Approved', $userId, $userType, $reason);
+
+            // Send notification to user
+            $this->notificationService->sendVerificationNotification($userId, 'approved', $reason);
 
             $this->pdo->commit();
 
@@ -652,8 +649,33 @@ class AdminController extends Controller
 
             $this->pdo->beginTransaction();
 
+            // Update verification record
+            $adminId = $this->session->getAdmin()['admin_id'];
+            $stmt = $this->pdo->prepare("UPDATE user_verifications SET status = 'Rejected', reviewed_by = ?, note = ? WHERE user_id = ?");
+            $stmt->execute([$adminId, $reason, $userId]);
+
+            // Update verification status in the appropriate table
+            $tableMap = [
+                'customer' => 'customers',
+                'renter' => 'renters',
+                'guide' => 'guides'
+            ];
+
+            if (!isset($tableMap[$userType])) {
+                $this->pdo->rollBack();
+                $response->error('Invalid user type', 400);
+                return;
+            }
+
+            // Update verification status in the appropriate table
+            $stmt = $this->pdo->prepare("UPDATE {$tableMap[$userType]} SET verification_status = 'No' WHERE user_id = ?");
+            $stmt->execute([$userId]);
+
             // Log the rejection action
             $this->logVerificationAction('Rejected', $userId, $userType, $reason);
+
+            // Send notification to user
+            $this->notificationService->sendVerificationNotification($userId, 'rejected', $reason);
 
             $this->pdo->commit();
 
@@ -669,6 +691,41 @@ class AdminController extends Controller
     }
 
     /**
+     * Get pending verification count
+     * GET /api/admin/verifications/pending-count
+     */
+    public function getPendingVerificationCount(Request $request, Response $response): void
+    {
+        try {
+            $this->requireAdminAuth();
+
+            // Count all users with pending verification status
+            $stmt = $this->pdo->prepare("
+                SELECT COUNT(*) as count
+                FROM users u
+                LEFT JOIN customers c ON u.user_id = c.user_id AND u.role = 'Customer'
+                LEFT JOIN renters r ON u.user_id = r.user_id AND u.role = 'Renter'
+                LEFT JOIN guides g ON u.user_id = g.user_id AND u.role = 'Guide'
+                WHERE (
+                    (u.role = 'Customer' AND c.verification_status = 'Pending') OR
+                    (u.role = 'Renter' AND r.verification_status = 'Pending') OR
+                    (u.role = 'Guide' AND g.verification_status = 'Pending')
+                )
+            ");
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $response->json([
+                'success' => true,
+                'count' => (int)$result['count']
+            ], 200);
+        } catch (Exception $e) {
+            $this->log("Error fetching pending verification count: " . $e->getMessage(), 'ERROR');
+            $response->serverError('Failed to fetch pending verification count');
+        }
+    }
+
+    /**
      * Get verification activity log
      * GET /api/admin/verifications/activity-log
      */
@@ -679,26 +736,31 @@ class AdminController extends Controller
 
             $stmt = $this->pdo->prepare("
                 SELECT 
-                    vml.*,
+                    vml.log_id,
+                    vml.target_user_id as user_id,
+                    vml.admin_id,
+                    vml.action,
+                    vml.timestamp as created_at,
                     a.email as admin_email,
                     u.email as user_email,
+                    u.role,
                     CASE 
-                        WHEN vml.user_type = 'customer' THEN c.first_name
-                        WHEN vml.user_type = 'renter' THEN r.first_name
-                        WHEN vml.user_type = 'guide' THEN g.first_name
+                        WHEN u.role = 'Customer' THEN c.first_name
+                        WHEN u.role = 'Renter' THEN r.first_name
+                        WHEN u.role = 'Guide' THEN g.first_name
                     END as user_first_name,
                     CASE 
-                        WHEN vml.user_type = 'customer' THEN c.last_name
-                        WHEN vml.user_type = 'renter' THEN r.last_name
-                        WHEN vml.user_type = 'guide' THEN g.last_name
+                        WHEN u.role = 'Customer' THEN c.last_name
+                        WHEN u.role = 'Renter' THEN r.last_name
+                        WHEN u.role = 'Guide' THEN g.last_name
                     END as user_last_name
                 FROM verification_management_log vml
                 LEFT JOIN admins a ON vml.admin_id = a.admin_id
-                LEFT JOIN users u ON vml.user_id = u.user_id
-                LEFT JOIN customers c ON u.user_id = c.user_id AND vml.user_type = 'customer'
-                LEFT JOIN renters r ON u.user_id = r.user_id AND vml.user_type = 'renter'
-                LEFT JOIN guides g ON u.user_id = g.user_id AND vml.user_type = 'guide'
-                ORDER BY vml.created_at DESC
+                LEFT JOIN users u ON vml.target_user_id = u.user_id
+                LEFT JOIN customers c ON u.user_id = c.user_id AND u.role = 'Customer'
+                LEFT JOIN renters r ON u.user_id = r.user_id AND u.role = 'Renter'
+                LEFT JOIN guides g ON u.user_id = g.user_id AND u.role = 'Guide'
+                ORDER BY vml.timestamp DESC
             ");
             $stmt->execute();
             $activityLog = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -720,15 +782,13 @@ class AdminController extends Controller
     {
         try {
             $stmt = $this->pdo->prepare("
-                INSERT INTO verification_management_log (user_id, user_type, admin_id, action, reason, created_at)
-                VALUES (?, ?, ?, ?, ?, NOW())
+                INSERT INTO verification_management_log (target_user_id, admin_id, action, timestamp)
+                VALUES (?, ?, ?, NOW())
             ");
             $stmt->execute([
                 $userId,
-                $userType,
-                $_SESSION['admin_id'],
-                $action,
-                $reason
+                $this->session->getAdmin()['admin_id'],
+                $action
             ]);
         } catch (Exception $e) {
             $this->log("Error logging verification action: " . $e->getMessage(), 'ERROR');
