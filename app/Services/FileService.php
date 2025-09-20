@@ -243,7 +243,7 @@ class FileService
     public function getFileUrl(string $filePath): string
     {
         $relativePath = str_replace($this->config['storage_path'], '', $filePath);
-        return '/api/files' . $relativePath;
+        return '/api/files/' . ltrim($relativePath, '/\\');
     }
 
     /**
@@ -335,7 +335,7 @@ class FileService
      */
     public function getStoragePath(): string
     {
-        return $this->config['storage_path'] ?? __DIR__ . '/../../storage/uploads';
+        return $this->config['storage_path'] ?? __DIR__ . '/../../public/storage/uploads';
     }
 
     /**

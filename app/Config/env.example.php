@@ -44,7 +44,7 @@ return [
     'upload' => [
         'max_size' => 5 * 1024 * 1024, // 5MB
         'allowed_types' => ['jpg', 'jpeg', 'png', 'webp'],
-        'storage_path' => __DIR__ . '/../../storage/uploads'
+        'storage_path' => __DIR__ . '/../../public/storage/uploads'
     ],
 
     // Application Configuration

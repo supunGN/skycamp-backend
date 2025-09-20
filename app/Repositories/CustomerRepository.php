@@ -184,4 +184,34 @@ class CustomerRepository
             'nic_back_image' => $nicBackImage
         ]);
     }
+
+    /**
+     * Update verification status for a customer
+     */
+    public function updateVerificationStatus(string $userId, string $status): bool
+    {
+        $sql = "UPDATE customers SET verification_status = :status WHERE user_id = :user_id";
+        
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([
+            'user_id' => $userId,
+            'status' => $status
+        ]);
+    }
+
+    /**
+     * Get customers by verification status
+     */
+    public function getCustomersByVerificationStatus(string $status): array
+    {
+        $sql = "SELECT c.*, u.email, u.first_name, u.last_name 
+                FROM customers c 
+                JOIN users u ON c.user_id = u.id 
+                WHERE c.verification_status = :status";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['status' => $status]);
+        
+        return $stmt->fetchAll();
+    }
 }

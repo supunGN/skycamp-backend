@@ -33,10 +33,10 @@ require_once __DIR__ . '/../app/Models/User.php';
 require_once __DIR__ . '/../app/Models/Customer.php';
 require_once __DIR__ . '/../app/Models/Renter.php';
 require_once __DIR__ . '/../app/Models/Guide.php';
-require_once __DIR__ . '/../app/Models/TravelPlan.php';
-require_once __DIR__ . '/../app/Models/TravelRequest.php';
-require_once __DIR__ . '/../app/Models/TravelChat.php';
-require_once __DIR__ . '/../app/Models/TravelMessage.php';
+require_once __DIR__ . '/../app/TravelBuddy/Models/TravelPlan.php';
+require_once __DIR__ . '/../app/TravelBuddy/Models/TravelRequest.php';
+require_once __DIR__ . '/../app/TravelBuddy/Models/TravelChat.php';
+require_once __DIR__ . '/../app/TravelBuddy/Models/TravelMessage.php';
 
 // Include repositories
 require_once __DIR__ . '/../app/Repositories/UserRepository.php';
@@ -45,10 +45,10 @@ require_once __DIR__ . '/../app/Repositories/RenterRepository.php';
 require_once __DIR__ . '/../app/Repositories/GuideRepository.php';
 require_once __DIR__ . '/../app/Repositories/LocationRepository.php';
 require_once __DIR__ . '/../app/Repositories/ReminderRepository.php';
-require_once __DIR__ . '/../app/Repositories/TravelPlanRepository.php';
-require_once __DIR__ . '/../app/Repositories/TravelRequestRepository.php';
-require_once __DIR__ . '/../app/Repositories/TravelChatRepository.php';
-require_once __DIR__ . '/../app/Repositories/TravelMessageRepository.php';
+require_once __DIR__ . '/../app/TravelBuddy/Repositories/TravelPlanRepository.php';
+require_once __DIR__ . '/../app/TravelBuddy/Repositories/TravelRequestRepository.php';
+require_once __DIR__ . '/../app/TravelBuddy/Repositories/TravelChatRepository.php';
+require_once __DIR__ . '/../app/TravelBuddy/Repositories/TravelMessageRepository.php';
 
 // Include services
 require_once __DIR__ . '/../app/Services/FileService.php';
@@ -63,7 +63,8 @@ require_once __DIR__ . '/../app/Controllers/RenterController.php';
 require_once __DIR__ . '/../app/Controllers/GuideController.php';
 require_once __DIR__ . '/../app/Controllers/EquipmentController.php';
 
-require_once __DIR__ . '/../app/Controllers/TravelBuddyController.php';
+require_once __DIR__ . '/../app/TravelBuddy/Controllers/TravelBuddyController.php';
+require_once __DIR__ . '/../app/Controllers/TempAdminController.php';
 
 // Include middlewares
 require_once __DIR__ . '/../app/Middlewares/Cors.php';
@@ -93,6 +94,10 @@ try {
     $router->post('/api/admin/login', [AdminController::class, 'login']);
     $router->get('/api/admin/me', [AdminController::class, 'me']);
     $router->post('/api/admin/logout', [AdminController::class, 'logout']);
+
+    // Temporary admin routes for development
+    $router->post('/api/temp-admin/verify-customer', [TempAdminController::class, 'verifyCustomer']);
+    $router->get('/api/temp-admin/pending-verifications', [TempAdminController::class, 'getPendingVerifications']);
 
     // Location proxy endpoints
     $router->get('/api/location/search', [LocationController::class, 'search']);

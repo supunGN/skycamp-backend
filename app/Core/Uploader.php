@@ -43,7 +43,8 @@ class Uploader
 
         // Move uploaded file
         if (move_uploaded_file($file['tmp_name'], $filePath)) {
-            return $filePath;
+            // Return web-accessible URL instead of full file path
+            return $this->getFileUrl($filePath);
         }
 
         $this->errors[] = 'Failed to upload file';
@@ -178,8 +179,9 @@ class Uploader
      */
     public function getFileUrl(string $filePath): string
     {
-        // This would be used if you create a file serving endpoint
-        $relativePath = str_replace($this->config['storage_path'], '', $filePath);
-        return '/api/files' . $relativePath;
+        // Convert absolute file path to web-accessible URL
+        $basePath = $this->config['storage_path'] ?? __DIR__ . '/../../public/storage/uploads';
+        $relativePath = str_replace($basePath, '', $filePath);
+        return '/storage/uploads' . $relativePath;
     }
 }
