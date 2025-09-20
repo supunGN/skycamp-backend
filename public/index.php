@@ -13,6 +13,12 @@ ini_set('display_errors', 1);
 // Set timezone
 date_default_timezone_set('UTC');
 
+// Set CORS headers for development
+header('Access-Control-Allow-Origin: http://localhost:5173');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Allow-Credentials: true');
+
 // Start output buffering
 ob_start();
 
@@ -66,6 +72,7 @@ require_once __DIR__ . '/../app/Controllers/LocationController.php';
 require_once __DIR__ . '/../app/Controllers/AdminController.php';
 
 require_once __DIR__ . '/../app/Controllers/RenterController.php';
+require_once __DIR__ . '/../app/Controllers/RenterDashboardController.php';
 require_once __DIR__ . '/../app/Controllers/GuideController.php';
 require_once __DIR__ . '/../app/Controllers/EquipmentController.php';
 
@@ -135,6 +142,37 @@ try {
     $router->get('/api/renters/by-district', [RenterController::class, 'getByDistrict']);
     $router->get('/api/renters/:id', [RenterController::class, 'show']);
 
+    // Renter Dashboard endpoints
+    $router->get('/api/renter/dashboard/stats', [RenterDashboardController::class, 'getDashboardStats']);
+    $router->get('/api/renter/profile', [RenterDashboardController::class, 'getProfile']);
+    $router->post('/api/renter/profile', [RenterDashboardController::class, 'updateProfile']);
+    $router->get('/api/renter/verification/docs', [RenterDashboardController::class, 'getVerificationDocs']);
+    $router->post('/api/renter/verification/submit', [RenterDashboardController::class, 'submitVerification']);
+
+    // Renter Equipment Management endpoints
+    $router->get('/api/renter/equipment/catalog', [RenterDashboardController::class, 'getEquipmentCatalog']);
+    $router->get('/api/renter/equipment/list', [RenterDashboardController::class, 'getRenterEquipment']);
+    $router->post('/api/renter/equipment/add', [RenterDashboardController::class, 'addEquipment']);
+    $router->put('/api/renter/equipment/update/:id', [RenterDashboardController::class, 'updateEquipment']);
+    $router->post('/api/renter/equipment/update/:id', [RenterDashboardController::class, 'updateEquipmentWithPhotos']);
+    $router->put('/api/renter/equipment/delete/:id', [RenterDashboardController::class, 'deleteEquipment']);
+    $router->put('/api/renter/equipment/restore/:id', [RenterDashboardController::class, 'restoreEquipment']);
+    $router->put('/api/renter/equipment/photo/:photoId/set-primary', [RenterDashboardController::class, 'setPrimaryPhoto']);
+    $router->delete('/api/renter/equipment/photo/:photoId', [RenterDashboardController::class, 'removeEquipmentPhoto']);
+
+    // Renter Location Management endpoints
+    $router->get('/api/renter/locations/available', [RenterDashboardController::class, 'getAvailableLocations']);
+    $router->get('/api/renter/locations/coverage', [RenterDashboardController::class, 'getRenterLocations']);
+    $router->put('/api/renter/locations/update', [RenterDashboardController::class, 'updateRenterLocations']);
+    $router->get('/api/renter/locations/check-removal/:locationName', [RenterDashboardController::class, 'checkLocationRemoval']);
+
+    // Renter Bookings endpoints
+    $router->get('/api/renter/bookings', [RenterDashboardController::class, 'getRenterBookings']);
+    $router->put('/api/renter/bookings/:id/mark-received', [RenterDashboardController::class, 'markBookingAsReceived']);
+
+    // Renter Test endpoints
+    $router->post('/api/renter/test-notifications', [RenterDashboardController::class, 'createTestNotifications']);
+
     // Travel Buddy endpoints
     $router->get('/api/travel-plans', [TravelBuddyController::class, 'listPlans']);
     $router->post('/api/travel-plans', [TravelBuddyController::class, 'createPlan']);
@@ -166,6 +204,10 @@ try {
 
     // Admin User Verification endpoints
     $router->get('/api/admin/verifications/pending', [AdminController::class, 'getPendingVerifications']);
+    $router->get('/api/admin/verifications/pending/customers', [AdminController::class, 'getPendingCustomerVerifications']);
+    $router->get('/api/admin/verifications/pending/renters', [AdminController::class, 'getPendingRenterVerifications']);
+    $router->get('/api/admin/verifications/pending/guides', [AdminController::class, 'getPendingGuideVerifications']);
+    $router->post('/api/admin/verifications/create-test-data', [AdminController::class, 'createTestData']);
     $router->get('/api/admin/verifications/pending-count', [AdminController::class, 'getPendingVerificationCount']);
     $router->get('/api/admin/verifications/rejected', [AdminController::class, 'getRejectedUsers']);
     $router->post('/api/admin/verifications/approve', [AdminController::class, 'approveUser']);
@@ -186,6 +228,19 @@ try {
     $router->get('/api/wishlist/count', [WishlistController::class, 'getItemCount']);
     $router->post('/api/wishlist/clear', [WishlistController::class, 'clearWishlist']);
 
+
+    // Debug endpoint to check session status
+    $router->get('/api/debug/session', function (Request $request, Response $response) {
+        $session = new Session();
+        $response->json([
+            'success' => true,
+            'session_id' => session_id(),
+            'session_data' => $_SESSION,
+            'cookies' => $_COOKIE,
+            'user_id' => $session->get('user_id'),
+            'headers' => getallheaders()
+        ]);
+    });
 
     // Handle OPTIONS requests for CORS preflight
     $router->options('/api/*', function (Request $request, Response $response) {

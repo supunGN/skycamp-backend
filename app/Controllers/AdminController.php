@@ -447,13 +447,348 @@ class AdminController extends Controller
     {
         try {
             $this->requireAdminAuth();
+            error_log("=== getPendingVerifications START ===");
 
-            // Get all users with pending verification status
+            // Get all users with pending verification status - step by step approach
+            $allPending = [];
+
+            // Get pending customers
+            try {
+                error_log("Fetching pending customers...");
+                $stmt = $this->pdo->prepare("
+                SELECT 
+                    u.user_id,
+                    u.role,
+                    u.email,
+                        c.first_name,
+                        c.last_name,
+                        c.nic_number,
+                        c.nic_front_image,
+                        c.nic_back_image,
+                        c.verification_status,
+                        c.updated_at as verification_requested_at,
+                    u.created_at
+                FROM users u
+                    INNER JOIN customers c ON u.user_id = c.user_id
+                    WHERE u.role = 'Customer' AND c.verification_status = 'Pending'
+                    ORDER BY c.updated_at DESC
+            ");
+                $stmt->execute();
+                $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $allPending = array_merge($allPending, $customers);
+                error_log("Found " . count($customers) . " pending customers");
+                error_log("Customer data: " . json_encode($customers));
+            } catch (Exception $e) {
+                error_log("Error fetching pending customers: " . $e->getMessage());
+                error_log("Customer query error trace: " . $e->getTraceAsString());
+            }
+
+            // Get pending renters
+            try {
+                error_log("Fetching pending renters...");
+                $stmt = $this->pdo->prepare("
+                    SELECT 
+                        u.user_id,
+                        u.role,
+                        u.email,
+                        r.first_name,
+                        r.last_name,
+                        r.nic_number,
+                        r.nic_front_image,
+                        r.nic_back_image,
+                        r.verification_status,
+                        r.created_at as verification_requested_at,
+                        u.created_at
+                    FROM users u
+                    INNER JOIN renters r ON u.user_id = r.user_id
+                    WHERE u.role = 'Renter' AND r.verification_status = 'Pending'
+                    ORDER BY r.created_at DESC
+                ");
+                $stmt->execute();
+                $renters = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $allPending = array_merge($allPending, $renters);
+                error_log("Found " . count($renters) . " pending renters");
+                error_log("Renter data: " . json_encode($renters));
+            } catch (Exception $e) {
+                error_log("Error fetching pending renters: " . $e->getMessage());
+                error_log("Renter query error trace: " . $e->getTraceAsString());
+            }
+
+            // Get pending guides
+            try {
+                error_log("Fetching pending guides...");
+                $stmt = $this->pdo->prepare("
+                    SELECT 
+                        u.user_id,
+                        u.role,
+                        u.email,
+                        g.first_name,
+                        g.last_name,
+                        g.nic_number,
+                        g.nic_front_image,
+                        g.nic_back_image,
+                        g.verification_status,
+                        g.created_at as verification_requested_at,
+                        u.created_at
+                    FROM users u
+                    INNER JOIN guides g ON u.user_id = g.user_id
+                    WHERE u.role = 'Guide' AND g.verification_status = 'Pending'
+                    ORDER BY g.created_at DESC
+                ");
+                $stmt->execute();
+                $guides = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $allPending = array_merge($allPending, $guides);
+                error_log("Found " . count($guides) . " pending guides");
+                error_log("Guide data: " . json_encode($guides));
+            } catch (Exception $e) {
+                error_log("Error fetching pending guides: " . $e->getMessage());
+                error_log("Guide query error trace: " . $e->getTraceAsString());
+            }
+
+            // Sort by verification_requested_at (fallback to created_at if not available)
+            usort($allPending, function ($a, $b) {
+                $timeA = $a['verification_requested_at'] ? strtotime($a['verification_requested_at']) : strtotime($a['created_at']);
+                $timeB = $b['verification_requested_at'] ? strtotime($b['verification_requested_at']) : strtotime($b['created_at']);
+                return $timeB - $timeA;
+            });
+
+            error_log("Total pending verifications: " . count($allPending));
+            error_log("Final merged data: " . json_encode($allPending));
+
+            $response->json([
+                'success' => true,
+                'data' => $allPending
+            ], 200);
+        } catch (Exception $e) {
+            error_log("MAIN ERROR fetching pending verifications: " . $e->getMessage());
+            error_log("MAIN ERROR stack trace: " . $e->getTraceAsString());
+            $this->log("Error fetching pending verifications: " . $e->getMessage(), 'ERROR');
+            $response->json([
+                'success' => false,
+                'message' => 'Failed to fetch pending verifications',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Create test data for verification testing
+     * POST /api/admin/verifications/create-test-data
+     */
+    public function createTestData(Request $request, Response $response): void
+    {
+        try {
+            $this->requireAdminAuth();
+            error_log("=== createTestData START ===");
+
+            // Create a test renter with Pending status
+            error_log("Creating test user...");
+            $stmt = $this->pdo->prepare("
+                INSERT INTO users (email, password_hash, role, created_at) 
+                VALUES ('test.renter@example.com', 'password123', 'Renter', NOW())
+            ");
+            $stmt->execute();
+            $userId = $this->pdo->lastInsertId();
+            error_log("Created user with ID: " . $userId);
+
+            error_log("Creating test renter...");
+            $stmt = $this->pdo->prepare("
+                INSERT INTO renters (
+                    user_id, first_name, last_name, dob, phone_number, home_address, 
+                    gender, nic_number, nic_front_image, nic_back_image, 
+                    verification_status, created_at
+                ) VALUES (
+                    ?, 'Test', 'Renter', '1990-01-01', '0771234567', 'Test Address',
+                    'Male', '901234567V', 'test_front.jpg', 'test_back.jpg',
+                    'Pending', NOW()
+                )
+            ");
+            $stmt->execute([$userId]);
+            error_log("Test renter created successfully");
+
+            $response->json([
+                'success' => true,
+                'message' => 'Test renter created with Pending status',
+                'user_id' => $userId
+            ], 200);
+        } catch (Exception $e) {
+            error_log("ERROR creating test data: " . $e->getMessage());
+            error_log("ERROR stack trace: " . $e->getTraceAsString());
+            $response->json([
+                'success' => false,
+                'message' => 'Failed to create test data',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get pending customer verifications
+     * GET /api/admin/verifications/pending/customers
+     */
+    public function getPendingCustomerVerifications(Request $request, Response $response): void
+    {
+        try {
+            $this->requireAdminAuth();
+            error_log("=== getPendingCustomerVerifications START ===");
+
             $stmt = $this->pdo->prepare("
                 SELECT 
                     u.user_id,
                     u.role,
                     u.email,
+                    c.first_name,
+                    c.last_name,
+                    c.nic_number,
+                    c.nic_front_image,
+                    c.nic_back_image,
+                    c.verification_status,
+                    c.updated_at as verification_requested_at,
+                    u.created_at
+                FROM users u
+                INNER JOIN customers c ON u.user_id = c.user_id
+                WHERE u.role = 'Customer' AND c.verification_status = 'Pending'
+                ORDER BY c.updated_at DESC
+            ");
+
+            $stmt->execute();
+            $pendingCustomers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("Found " . count($pendingCustomers) . " pending customers in separate endpoint");
+            error_log("Customer data from separate endpoint: " . json_encode($pendingCustomers));
+
+            $response->json([
+                'success' => true,
+                'data' => $pendingCustomers
+            ], 200);
+        } catch (Exception $e) {
+            error_log("ERROR fetching pending customer verifications: " . $e->getMessage());
+            error_log("ERROR stack trace: " . $e->getTraceAsString());
+            $response->json([
+                'success' => false,
+                'message' => 'Failed to fetch pending customer verifications',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get pending renter verifications
+     * GET /api/admin/verifications/pending/renters
+     */
+    public function getPendingRenterVerifications(Request $request, Response $response): void
+    {
+        try {
+            $this->requireAdminAuth();
+            error_log("=== getPendingRenterVerifications START ===");
+
+            $stmt = $this->pdo->prepare("
+                SELECT 
+                    u.user_id,
+                    u.role,
+                    u.email,
+                    r.first_name,
+                    r.last_name,
+                    r.nic_number,
+                    r.nic_front_image,
+                    r.nic_back_image,
+                    r.verification_status,
+                    r.created_at as verification_requested_at,
+                    u.created_at
+                FROM users u
+                INNER JOIN renters r ON u.user_id = r.user_id
+                WHERE u.role = 'Renter' AND r.verification_status = 'Pending'
+                ORDER BY r.created_at DESC
+            ");
+
+            $stmt->execute();
+            $pendingRenters = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("Found " . count($pendingRenters) . " pending renters in separate endpoint");
+            error_log("Renter data from separate endpoint: " . json_encode($pendingRenters));
+
+            $response->json([
+                'success' => true,
+                'data' => $pendingRenters
+            ], 200);
+        } catch (Exception $e) {
+            error_log("ERROR fetching pending renter verifications: " . $e->getMessage());
+            error_log("ERROR stack trace: " . $e->getTraceAsString());
+            $response->json([
+                'success' => false,
+                'message' => 'Failed to fetch pending renter verifications',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get pending guide verifications
+     * GET /api/admin/verifications/pending/guides
+     */
+    public function getPendingGuideVerifications(Request $request, Response $response): void
+    {
+        try {
+            $this->requireAdminAuth();
+            error_log("=== getPendingGuideVerifications START ===");
+
+            $stmt = $this->pdo->prepare("
+                SELECT 
+                    u.user_id,
+                    u.role,
+                    u.email,
+                    g.first_name,
+                    g.last_name,
+                    g.nic_number,
+                    g.nic_front_image,
+                    g.nic_back_image,
+                    g.verification_status,
+                    g.created_at as verification_requested_at,
+                    u.created_at
+                FROM users u
+                INNER JOIN guides g ON u.user_id = g.user_id
+                WHERE u.role = 'Guide' AND g.verification_status = 'Pending'
+                ORDER BY g.created_at DESC
+            ");
+
+            $stmt->execute();
+            $pendingGuides = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("Found " . count($pendingGuides) . " pending guides in separate endpoint");
+            error_log("Guide data from separate endpoint: " . json_encode($pendingGuides));
+
+            $response->json([
+                'success' => true,
+                'data' => $pendingGuides
+            ], 200);
+        } catch (Exception $e) {
+            error_log("ERROR fetching pending guide verifications: " . $e->getMessage());
+            error_log("ERROR stack trace: " . $e->getTraceAsString());
+            $response->json([
+                'success' => false,
+                'message' => 'Failed to fetch pending guide verifications',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get all rejected users
+     * GET /api/admin/verifications/rejected
+     */
+    public function getRejectedUsers(Request $request, Response $response): void
+    {
+        try {
+            $this->requireAdminAuth();
+            error_log("=== getRejectedUsers START ===");
+
+            // Get rejected users from user_verifications table
+            $stmt = $this->pdo->prepare("
+                SELECT 
+                    uv.verification_id,
+                    uv.user_id,
+                    uv.reviewed_by as admin_id,
+                    uv.note as reason,
+                    uv.created_at as rejected_at,
+                    u.email,
+                    u.role,
                     CASE 
                         WHEN u.role = 'Customer' THEN c.first_name
                         WHEN u.role = 'Renter' THEN r.first_name
@@ -478,76 +813,7 @@ class AdminController extends Controller
                         WHEN u.role = 'Customer' THEN c.nic_back_image
                         WHEN u.role = 'Renter' THEN r.nic_back_image
                         WHEN u.role = 'Guide' THEN g.nic_back_image
-                    END as nic_back_image,
-                    CASE 
-                        WHEN u.role = 'Customer' THEN c.verification_status
-                        WHEN u.role = 'Renter' THEN r.verification_status
-                        WHEN u.role = 'Guide' THEN g.verification_status
-                    END as verification_status,
-                    uv.status as verification_record_status,
-                    uv.created_at as verification_requested_at,
-                    uv.note as verification_note,
-                    u.created_at
-                FROM users u
-                LEFT JOIN customers c ON u.user_id = c.user_id AND u.role = 'Customer'
-                LEFT JOIN renters r ON u.user_id = r.user_id AND u.role = 'Renter'
-                LEFT JOIN guides g ON u.user_id = g.user_id AND u.role = 'Guide'
-                LEFT JOIN user_verifications uv ON u.user_id = uv.user_id
-                WHERE (
-                    (u.role = 'Customer' AND c.verification_status = 'Pending') OR
-                    (u.role = 'Renter' AND r.verification_status = 'Pending') OR
-                    (u.role = 'Guide' AND g.verification_status = 'Pending')
-                )
-                AND uv.status = 'Pending'
-                ORDER BY uv.created_at ASC
-            ");
-            $stmt->execute();
-            $pendingVerifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-            $response->json([
-                'success' => true,
-                'data' => $pendingVerifications
-            ], 200);
-        } catch (Exception $e) {
-            $this->log("Error fetching pending verifications: " . $e->getMessage(), 'ERROR');
-            $response->serverError('Failed to fetch pending verifications');
-        }
-    }
-
-    /**
-     * Get all rejected users
-     * GET /api/admin/verifications/rejected
-     */
-    public function getRejectedUsers(Request $request, Response $response): void
-    {
-        try {
-            $this->requireAdminAuth();
-
-            $stmt = $this->pdo->prepare("
-                SELECT 
-                    uv.verification_id,
-                    uv.user_id,
-                    uv.reviewed_by as admin_id,
-                    uv.note as reason,
-                    uv.created_at as rejected_at,
-                    u.email,
-                    u.role,
-                    CASE 
-                        WHEN u.role = 'Customer' THEN c.first_name
-                        WHEN u.role = 'Renter' THEN r.first_name
-                        WHEN u.role = 'Guide' THEN g.first_name
-                    END as first_name,
-                    CASE 
-                        WHEN u.role = 'Customer' THEN c.last_name
-                        WHEN u.role = 'Renter' THEN r.last_name
-                        WHEN u.role = 'Guide' THEN g.last_name
-                    END as last_name,
-                    CASE 
-                        WHEN u.role = 'Customer' THEN c.nic_number
-                        WHEN u.role = 'Renter' THEN r.nic_number
-                        WHEN u.role = 'Guide' THEN g.nic_number
-                    END as nic_number
+                    END as nic_back_image
                 FROM user_verifications uv
                 JOIN users u ON uv.user_id = u.user_id
                 LEFT JOIN customers c ON u.user_id = c.user_id AND u.role = 'Customer'
@@ -559,13 +825,22 @@ class AdminController extends Controller
             $stmt->execute();
             $rejectedUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+            error_log("Found " . count($rejectedUsers) . " rejected users");
+            error_log("Rejected users data: " . json_encode($rejectedUsers));
+
             $response->json([
                 'success' => true,
                 'data' => $rejectedUsers
             ], 200);
         } catch (Exception $e) {
+            error_log("ERROR fetching rejected users: " . $e->getMessage());
+            error_log("ERROR stack trace: " . $e->getTraceAsString());
             $this->log("Error fetching rejected users: " . $e->getMessage(), 'ERROR');
-            $response->serverError('Failed to fetch rejected users');
+            $response->json([
+                'success' => false,
+                'message' => 'Failed to fetch rejected users',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -734,6 +1009,7 @@ class AdminController extends Controller
     {
         try {
             $this->requireAdminAuth();
+            error_log("=== getVerificationActivityLog START ===");
 
             $stmt = $this->pdo->prepare("
                 SELECT 
@@ -762,17 +1038,27 @@ class AdminController extends Controller
                 LEFT JOIN renters r ON u.user_id = r.user_id AND u.role = 'Renter'
                 LEFT JOIN guides g ON u.user_id = g.user_id AND u.role = 'Guide'
                 ORDER BY vml.timestamp DESC
+                LIMIT 50
             ");
             $stmt->execute();
             $activityLog = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            error_log("Found " . count($activityLog) . " activity log entries");
+            error_log("Activity log data: " . json_encode($activityLog));
 
             $response->json([
                 'success' => true,
                 'data' => $activityLog
             ], 200);
         } catch (Exception $e) {
+            error_log("ERROR fetching verification activity log: " . $e->getMessage());
+            error_log("ERROR stack trace: " . $e->getTraceAsString());
             $this->log("Error fetching verification activity log: " . $e->getMessage(), 'ERROR');
-            $response->serverError('Failed to fetch verification activity log');
+            $response->json([
+                'success' => false,
+                'message' => 'Failed to fetch verification activity log',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 20, 2025 at 03:58 PM
+-- Generation Time: Sep 20, 2025 at 08:51 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -227,7 +227,8 @@ INSERT INTO `customers` (`customer_id`, `user_id`, `first_name`, `last_name`, `d
 (19, 68, 'Pavithra', 'Wijesinghe', '1999-10-29', '0751122334', 'No. 18, New Road, Chilaw', 'Chilaw, Puttalam District', 7.57580000, 79.79530000, 'Female', 'users/68/profile.jpg', '991234607V', 'users/68/nic_front.jpg', 'users/68/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
 (20, 69, 'Sunil', 'Herath', '1991-06-05', '0772233445', 'No. 21, Temple Lane, Kegalle', 'Kegalle District', 7.25000000, 80.35000000, 'Male', 'users/69/profile.jpg', '911234608V', 'users/69/nic_front.jpg', 'users/69/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
 (21, 70, 'Rashmi', 'Dias', '1997-04-02', '0723344556', 'No. 77, Lake Road, Kilinochchi', 'Kilinochchi District', 9.40000000, 80.40000000, 'Female', 'users/70/profile.jpg', '971234609V', 'users/70/nic_front.jpg', 'users/70/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
-(22, 71, 'Chanuka', 'Bandara', '1995-12-12', '0744455667', 'No. 34, Station Road, Matale', 'Matale District', 7.46670000, 80.63330000, 'Male', 'users/71/profile.jpg', '951234610V', 'users/71/nic_front.jpg', 'users/71/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08');
+(22, 71, 'Chanuka', 'Bandara', '1995-12-12', '0744455667', 'No. 34, Station Road, Matale', 'Matale District', 7.46670000, 80.63330000, 'Male', 'users/71/profile.jpg', '951234610V', 'users/71/nic_front.jpg', 'users/71/nic_back.jpg', 'Active', 'Yes', '2025-09-20 12:20:08', '2025-09-20 12:20:08'),
+(23, 235, 'Chamandi', 'Sanjula', '2001-10-31', '0776389515', 'Kalutara', 'Dodangoda, Dodangoda DS Division, Kalutara District', 6.57708995, 80.01767135, 'Female', 'users/235/profile.jpg', '895623788V', 'users/235/nic_front.jpg', 'users/235/nic_back.jpg', 'Active', 'Yes', '2025-09-20 08:53:31', '2025-09-20 14:46:34');
 
 -- --------------------------------------------------------
 
@@ -815,7 +816,14 @@ CREATE TABLE `notifications` (
 INSERT INTO `notifications` (`notification_id`, `user_id`, `type`, `message`, `is_read`, `created_at`) VALUES
 (1, 1, 'Verification', 'Your identity verification request has been rejected. Reason: NIC images do not match the provided personal information. Please review your documents and resubmit for verification.', 1, '2025-09-19 13:53:43'),
 (2, 1, 'Verification', '⏳ Your identity verification request has been submitted and is under review. This usually takes 24-48 hours.', 1, '2025-09-20 09:01:32'),
-(3, 1, 'Verification', '🎉 Congratulations! Your identity verification has been approved. You now have access to all verified user features.', 1, '2025-09-20 09:02:08');
+(3, 1, 'Verification', '🎉 Congratulations! Your identity verification has been approved. You now have access to all verified user features.', 1, '2025-09-20 09:02:08'),
+(13, 235, 'Verification', '⏳ Your identity verification request has been submitted and is under review. This usually takes 24-48 hours.', 1, '2025-09-20 14:23:52'),
+(14, 235, 'Verification', '⏳ Your identity verification request has been submitted and is under review. This usually takes 24-48 hours.', 1, '2025-09-20 14:43:32'),
+(15, 235, 'Verification', '❌ Your identity verification request has been rejected. Reason: Incomplete document submission. Both front and back NIC images required. Please review your documents and resubmit for verification.', 1, '2025-09-20 14:45:10'),
+(16, 235, 'Verification', '🎉 Congratulations! Your identity verification has been approved. You now have access to all verified user features.', 0, '2025-09-20 14:46:34'),
+(17, 236, 'Verification', '❌ Your identity verification request has been rejected. Reason: NIC documents are unclear or illegible. Please resubmit with better quality images. Please review your documents and resubmit for verification.', 0, '2025-09-20 18:36:52'),
+(18, 101, 'Verification', '❌ Your identity verification request has been rejected. Reason: Incomplete document submission. Both front and back NIC images required. Please review your documents and resubmit for verification.', 0, '2025-09-20 18:37:02'),
+(19, 102, 'Verification', '❌ Your identity verification request has been rejected. Reason: NIC images do not match the provided personal information. Please review your documents and resubmit for verification.', 0, '2025-09-20 18:47:08');
 
 -- --------------------------------------------------------
 
@@ -942,8 +950,8 @@ CREATE TABLE `renters` (
 --
 
 INSERT INTO `renters` (`renter_id`, `user_id`, `first_name`, `last_name`, `dob`, `phone_number`, `home_address`, `gender`, `profile_picture`, `nic_number`, `nic_front_image`, `nic_back_image`, `camping_destinations`, `stargazing_spots`, `district`, `verification_status`, `latitude`, `longitude`, `created_at`) VALUES
-(3, 101, 'Ruwantha', 'Hettiarachchi', '1987-04-15', '0771234567', '15, Lake Road, Colombo', 'Male', 'users/101/profile.jpeg', '873456789V', NULL, NULL, 'Diyasaru Park,Muthurajawela Marsh', 'Horton Plains', 'Colombo', 'Yes', 6.87956900, 79.92938000, '2025-09-13 10:45:50'),
-(4, 102, 'Sanduni', 'Jayawardena', '1992-09-21', '0712345678', '42, Hill Side, Colombo', 'Female', 'users/102/profile.jpeg', '923456789V', NULL, NULL, 'Muthurajawela Marsh', 'Knuckles Mountains', 'Colombo', 'No', 6.95000000, 79.92000000, '2025-09-13 10:45:50'),
+(3, 101, 'Ruwan', 'Hettiarachchi', '1987-06-15', '0771234567', '15, Lake Road, Colombo', 'Male', 'users/101/profile.jpg', '873456789V', 'users/101/nic_front.jpg', 'users/101/nic_back.jpg', 'Diyasaru Park,Muthurajawela Marsh', 'Horton Plains', 'Colombo', 'Pending', 6.87956900, 79.92938000, '2025-09-13 10:45:50'),
+(4, 102, 'Sanduni', 'Jayawardena', '1992-09-21', '0712345678', '42, Hill Side, Colombo', 'Female', 'users/102/profile.jpeg', '923456789V', 'users/102/nic_front.jpg', 'users/102/nic_back.jpg', 'Muthurajawela Marsh', 'Knuckles Mountains', 'Colombo', 'No', 6.95000000, 79.92000000, '2025-09-13 10:45:50'),
 (5, 103, 'Mohamed', 'Fazil', '1985-12-05', '0753456789', '10, Mosque Lane, Colombo', 'Male', 'users/103/profile.jpeg', '853456789V', NULL, NULL, 'Diyasaru Park', 'Ambewela Hills', 'Colombo', 'Yes', 6.94000000, 79.91000000, '2025-09-13 10:45:50'),
 (6, 104, 'Dilani', 'Perera', '1994-07-11', '0764567890', '88, Flower Road, Gampaha', 'Female', 'users/104/profile.jpeg', '943456789V', NULL, NULL, 'Muthurajawela Marsh', 'Diyasaru Park', 'Gampaha', 'No', 7.19758000, 79.83243000, '2025-09-13 10:45:50'),
 (7, 105, 'Gayan', 'Wickramasinghe', '1989-03-28', '0785678901', '101, River Side, Gampaha', 'Male', 'users/105/profile.jpeg', '893456789V', NULL, NULL, 'Muthurajawela Marsh', 'Knuckles Mountains', 'Gampaha', 'Yes', 7.20000000, 79.85000000, '2025-09-13 10:45:50'),
@@ -971,7 +979,8 @@ INSERT INTO `renters` (`renter_id`, `user_id`, `first_name`, `last_name`, `dob`,
 (29, 127, 'Thushari', 'Lakmali', '1993-01-25', '0758901234', '91, Hill Side, Kurunegala', 'Female', 'users/127/profile.jpeg', '933456654V', NULL, NULL, 'Dolukanda Rock', 'Minneriya Area', 'Kurunegala', 'No', 7.48000000, 80.37000000, '2025-09-13 10:45:50'),
 (30, 128, 'Dilan', 'Jayakody', '1988-06-14', '0770987654', '67, Lake Road, Jaffna', 'Male', 'users/128/profile.jpeg', '883456654V', NULL, NULL, 'Casuarina Beach', 'Jaffna Fort View', 'Jaffna', 'Yes', 9.78700000, 80.16700000, '2025-09-13 10:45:50'),
 (31, 129, 'Gayani', 'Silva', '1992-12-01', '0719876543', '12, Garden Lane, Jaffna', 'Female', 'users/129/profile.jpeg', '923456654V', NULL, NULL, 'Casuarina Beach', 'Point Pedro', 'Jaffna', 'No', 9.82000000, 80.23000000, '2025-09-13 10:45:50'),
-(32, 130, 'Udaya', 'Abeywardena', '1986-09-30', '0767654321', '44, Park Avenue, Jaffna', 'Male', 'users/130/profile.jpeg', '863456654V', NULL, NULL, 'Casuarina Beach', 'Nainativu Island', 'Jaffna', 'Yes', 9.80000000, 80.20000000, '2025-09-13 10:45:50');
+(32, 130, 'Udaya', 'Abeywardena', '1986-09-30', '0767654321', '44, Park Avenue, Jaffna', 'Male', 'users/130/profile.jpeg', '863456654V', NULL, NULL, 'Casuarina Beach', 'Nainativu Island', 'Jaffna', 'Yes', 9.80000000, 80.20000000, '2025-09-13 10:45:50'),
+(35, 236, 'Test', 'Renter', '1990-01-01', '0771234567', 'Test Address', 'Male', NULL, '901234567V', 'test_front.jpg', 'test_back.jpg', NULL, NULL, NULL, 'No', NULL, NULL, '2025-09-20 18:35:42');
 
 -- --------------------------------------------------------
 
@@ -1192,7 +1201,9 @@ INSERT INTO `users` (`user_id`, `email`, `password_hash`, `role`, `is_active`, `
 (227, 'malith.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
 (228, 'chamika.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
 (229, 'madushan.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
-(230, 'pradeep.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54');
+(230, 'pradeep.g@example.com', '$argon2id$v=19$m=65536,t=4,p=3$aGVZSER3R1RXVkh0cTdpVw$3Q0XjKH4aOa9F+BF5PxvHUzbd4gbayYv4zj2ZAdEiTI', 'Guide', 1, '2025-09-13 18:00:54'),
+(235, 'chesan966@gmail.com', '$argon2id$v=19$m=65536,t=4,p=3$R2MvZTNwdTlEZEdrdThOdw$BgbiSV8RPCgPwbNB1pJYWJCwklxw7SeI5DiTMjnnl6Y', 'Customer', 1, '2025-09-20 08:53:31'),
+(236, 'test.renter@example.com', 'password123', 'Renter', 1, '2025-09-20 18:35:41');
 
 -- --------------------------------------------------------
 
@@ -1233,7 +1244,12 @@ INSERT INTO `user_verifications` (`verification_id`, `user_id`, `reviewed_by`, `
 (4, 1, 1, 'Approved', 'NIC images are legible and match the provided information.', '2025-09-19 13:21:08'),
 (6, 1, 1, 'Approved', 'NIC images are legible and match the provided information.', '2025-09-19 13:29:50'),
 (7, 1, 1, 'Approved', 'NIC images are legible and match the provided information.', '2025-09-19 13:52:54'),
-(8, 1, 1, 'Approved', 'NIC images are legible and match the provided information.', '2025-09-20 09:01:32');
+(8, 1, 1, 'Approved', 'NIC images are legible and match the provided information.', '2025-09-20 09:01:32'),
+(14, 235, 1, 'Approved', 'NIC documents are clear and valid. Identity verified successfully.', '2025-09-20 14:23:52'),
+(15, 235, 1, 'Approved', 'NIC documents are clear and valid. Identity verified successfully.', '2025-09-20 14:43:32'),
+(16, 235, 1, 'Approved', 'NIC documents are clear and valid. Identity verified successfully.', '2025-09-20 14:45:47'),
+(17, 102, 1, 'Rejected', 'NIC images do not match the provided personal information.', '2025-09-20 18:19:36'),
+(18, 101, NULL, 'Pending', NULL, '2025-09-20 18:50:40');
 
 -- --------------------------------------------------------
 
@@ -1259,7 +1275,12 @@ INSERT INTO `verification_management_log` (`log_id`, `admin_id`, `target_user_id
 (4, 1, 1, '', '2025-09-19 13:24:11'),
 (6, 1, 1, '', '2025-09-19 13:30:39'),
 (7, 1, 1, '', '2025-09-19 13:53:43'),
-(8, 1, 1, '', '2025-09-20 09:02:08');
+(8, 1, 1, '', '2025-09-20 09:02:08'),
+(13, 1, 235, '', '2025-09-20 14:45:10'),
+(14, 1, 235, '', '2025-09-20 14:46:34'),
+(15, 1, 236, '', '2025-09-20 18:36:52'),
+(16, 1, 101, '', '2025-09-20 18:37:02'),
+(17, 1, 102, '', '2025-09-20 18:47:08');
 
 -- --------------------------------------------------------
 
@@ -1280,7 +1301,10 @@ CREATE TABLE `wishlists` (
 INSERT INTO `wishlists` (`wishlist_id`, `customer_id`, `created_at`) VALUES
 (1, 1, '2025-09-19 14:12:11'),
 (5, 2, '2025-09-20 13:52:20'),
-(6, 3, '2025-09-20 13:53:17');
+(6, 3, '2025-09-20 13:53:17'),
+(7, 17, '2025-09-20 14:18:17'),
+(8, 22, '2025-09-20 14:20:00'),
+(9, 23, '2025-09-20 14:23:33');
 
 -- --------------------------------------------------------
 
@@ -1306,7 +1330,8 @@ CREATE TABLE `wishlist_items` (
 
 INSERT INTO `wishlist_items` (`wishlist_item_id`, `wishlist_id`, `item_type`, `item_id`, `name`, `description`, `image_url`, `price`, `created_at`) VALUES
 (67, 1, 'location', 39, 'Belihuloya', 'A forested riverside destination famous for cool streams, natural pools, and biodiversity.', 'http://localhost/skycamp/skycamp-backend/storage/uploads/locations/camping_destinations/belihuloya1.jpg', NULL, '2025-09-20 07:49:42'),
-(68, 1, 'location', 35, 'Bogahakumbura Forest', 'A hidden forest camping site popular with birdwatchers and eco-tourists.', 'http://localhost/skycamp/skycamp-backend/storage/uploads/locations/camping_destinations/bogahakumbura_forest1.jpg', NULL, '2025-09-20 07:49:44');
+(68, 1, 'location', 35, 'Bogahakumbura Forest', 'A hidden forest camping site popular with birdwatchers and eco-tourists.', 'http://localhost/skycamp/skycamp-backend/storage/uploads/locations/camping_destinations/bogahakumbura_forest1.jpg', NULL, '2025-09-20 07:49:44'),
+(82, 9, 'equipment', 3, 'Ruwantha Hettiarachchi', 'Equipment rental in Colombo', 'http://localhost/skycamp/skycamp-backend/storage/uploads/users/101/profile.jpeg', NULL, '2025-09-20 14:48:06');
 
 --
 -- Indexes for dumped tables
@@ -1696,7 +1721,7 @@ ALTER TABLE `content_logs`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `equipment`
@@ -1768,7 +1793,7 @@ ALTER TABLE `location_images`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `pages`
@@ -1810,7 +1835,7 @@ ALTER TABLE `renterequipmentphotos`
 -- AUTO_INCREMENT for table `renters`
 --
 ALTER TABLE `renters`
-  MODIFY `renter_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `renter_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `reviews`
@@ -1864,7 +1889,7 @@ ALTER TABLE `travel_requests`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=235;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=237;
 
 --
 -- AUTO_INCREMENT for table `user_management_log`
@@ -1876,25 +1901,25 @@ ALTER TABLE `user_management_log`
 -- AUTO_INCREMENT for table `user_verifications`
 --
 ALTER TABLE `user_verifications`
-  MODIFY `verification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `verification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `verification_management_log`
 --
 ALTER TABLE `verification_management_log`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `wishlists`
 --
 ALTER TABLE `wishlists`
-  MODIFY `wishlist_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `wishlist_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `wishlist_items`
 --
 ALTER TABLE `wishlist_items`
-  MODIFY `wishlist_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `wishlist_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- Constraints for dumped tables

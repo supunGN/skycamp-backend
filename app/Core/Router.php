@@ -35,6 +35,14 @@ class Router
     }
 
     /**
+     * Add DELETE route
+     */
+    public function delete(string $path, callable|array $handler): void
+    {
+        $this->addRoute('DELETE', $path, $handler);
+    }
+
+    /**
      * Add OPTIONS route
      */
     public function options(string $path, callable|array $handler): void

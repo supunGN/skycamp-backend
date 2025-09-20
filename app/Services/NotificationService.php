@@ -161,4 +161,62 @@ class NotificationService
     {
         return $this->notificationRepository->markAllAsRead($userId);
     }
+
+    /**
+     * Send equipment added to cart notification to renter
+     */
+    public function sendEquipmentAddedToCartNotification(int $renterUserId, array $data): bool
+    {
+        $customerName = $data['customer_name'] ?? 'A customer';
+        $equipmentName = $data['equipment_name'] ?? 'equipment';
+        $quantity = $data['quantity'] ?? 1;
+
+        $message = "🛒 {$customerName} added {$quantity}x {$equipmentName} to their cart. Quantity reserved until checkout.";
+
+        return $this->notificationRepository->create([
+            'user_id' => $renterUserId,
+            'type' => 'EquipmentAddedToCart',
+            'message' => $message,
+            'is_read' => false,
+        ]);
+    }
+
+    /**
+     * Send booking created notification to renter
+     */
+    public function sendBookingCreatedNotification(int $renterUserId, array $data): bool
+    {
+        $customerName = $data['customer_name'] ?? 'A customer';
+        $equipmentName = $data['equipment_name'] ?? 'equipment';
+        $totalAmount = $data['total_amount'] ?? '0';
+        $bookingId = $data['booking_id'] ?? '';
+
+        $message = "📋 New booking #{$bookingId} from {$customerName} for {$equipmentName}. Total: Rs. {$totalAmount}";
+
+        return $this->notificationRepository->create([
+            'user_id' => $renterUserId,
+            'type' => 'BookingCreated',
+            'message' => $message,
+            'is_read' => false,
+        ]);
+    }
+
+    /**
+     * Send booking completed notification to renter
+     */
+    public function sendBookingCompletedNotification(int $renterUserId, array $data): bool
+    {
+        $customerName = $data['customer_name'] ?? 'A customer';
+        $equipmentName = $data['equipment_name'] ?? 'equipment';
+        $bookingId = $data['booking_id'] ?? '';
+
+        $message = "✅ Booking #{$bookingId} completed! {$customerName} has marked {$equipmentName} as received.";
+
+        return $this->notificationRepository->create([
+            'user_id' => $renterUserId,
+            'type' => 'BookingCompleted',
+            'message' => $message,
+            'is_read' => false,
+        ]);
+    }
 }

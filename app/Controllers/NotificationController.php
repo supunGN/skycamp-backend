@@ -54,6 +54,26 @@ class NotificationController extends Controller
         try {
             $userId = $this->session->get('user_id');
 
+            // If no session, try to establish session from request headers (for localStorage-based auth)
+            if (!$userId) {
+                // Check for user ID in headers (from localStorage)
+                $userId = $request->header('x-user-id');
+                $userRole = $request->header('x-user-role');
+
+                if ($userId) {
+                    // Verify the user exists
+                    $userStmt = $this->pdo->prepare("
+                        SELECT user_id, role FROM users WHERE user_id = ?
+                    ");
+                    $userStmt->execute([$userId]);
+                    $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+
+                    if (!$user) {
+                        $userId = null;
+                    }
+                }
+            }
+
             if (!$userId) {
                 $response->setStatusCode(401);
                 $response->json([
