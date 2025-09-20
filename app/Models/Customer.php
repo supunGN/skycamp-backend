@@ -25,6 +25,7 @@ class Customer
     public string $travelBuddyStatus;
     public string $verificationStatus;
     public string $createdAt;
+    public string $updatedAt;
 
     public function __construct(array $data = [])
     {
@@ -46,6 +47,7 @@ class Customer
         $this->travelBuddyStatus = $data['travel_buddy_status'] ?? 'Inactive';
         $this->verificationStatus = $data['verification_status'] ?? 'No';
         $this->createdAt = $data['created_at'] ?? date('Y-m-d H:i:s');
+        $this->updatedAt = $data['updated_at'] ?? $data['created_at'] ?? date('Y-m-d H:i:s');
     }
 
     /**
@@ -71,7 +73,8 @@ class Customer
             'nic_back_image' => $this->nicBackImage,
             'travel_buddy_status' => $this->travelBuddyStatus,
             'verification_status' => $this->verificationStatus,
-            'created_at' => $this->createdAt
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt
         ];
     }
 

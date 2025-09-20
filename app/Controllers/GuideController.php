@@ -209,9 +209,7 @@ class GuideController extends Controller
                     'homeAddress' => $guide->homeAddress,
                     'nicNumber' => $guide->nicNumber,
                     'campingDestinations' => $guide->campingDestinations,
-                    'stargazingSpots' => $guide->stargazingSpots,
-                    'latitude' => $guide->latitude,
-                    'longitude' => $guide->longitude
+                    'stargazingSpots' => $guide->stargazingSpots
                 ]
             ];
 

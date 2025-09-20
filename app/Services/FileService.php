@@ -19,6 +19,7 @@ class FileService
     /**
      * Save user image (profile, nic_front, nic_back)
      * Returns relative path or null if not provided/invalid
+     * Normalizes all images to .jpg format
      */
     public function saveUserImage(string $userId, array $file, string $logicalName): ?string
     {
@@ -47,41 +48,23 @@ class FileService
             return null;
         }
 
-        // Determine extension from MIME type
-        $extension = match ($mimeType) {
-            'image/jpeg' => 'jpg',
-            'image/png' => 'png',
-            'image/webp' => 'webp',
-            default => null
-        };
-
-        if (!$extension) {
-            return null;
-        }
-
-        // Ensure directory exists in both locations
+        // Ensure directory exists
         $storagePath = $this->getStoragePath();
-        $publicPath = __DIR__ . '/../../public/storage/uploads';
-
         $userDir = $storagePath . '/users/' . $userId;
-        $publicUserDir = $publicPath . '/users/' . $userId;
 
         if (!is_dir($userDir)) {
             mkdir($userDir, 0755, true);
         }
-        if (!is_dir($publicUserDir)) {
-            mkdir($publicUserDir, 0755, true);
-        }
 
-        // Generate safe filename
-        $filename = $logicalName . '.' . $extension;
+        // Clean up existing files with same logical name but different extensions
+        $this->cleanupUserImageFiles($userDir, $logicalName);
+
+        // Generate normalized filename (always .jpg)
+        $filename = $logicalName . '.jpg';
         $fullPath = $userDir . '/' . $filename;
-        $publicFullPath = $publicUserDir . '/' . $filename;
 
-        // Move uploaded file to both locations
+        // Move uploaded file
         if (move_uploaded_file($file['tmp_name'], $fullPath)) {
-            // Copy to public directory as well
-            copy($fullPath, $publicFullPath);
             // Return relative path for database storage
             return "users/{$userId}/{$filename}";
         }
@@ -121,18 +104,28 @@ class FileService
     }
 
     /**
-     * Upload NIC front image
+     * Upload NIC front image with strict validation
      */
     public function uploadNicFront(array $file, string $userId): array
     {
         try {
+            // Strict validation for NIC documents
+            $validationResult = $this->validateNicDocument($file, 'NIC Front');
+            if (!$validationResult['valid']) {
+                return [
+                    'success' => false,
+                    'message' => $validationResult['message'],
+                    'errors' => [$validationResult['message']]
+                ];
+            }
+
             $directory = "users/{$userId}";
             $filePath = $this->uploader->upload($file, $directory, 'nic_front');
 
             if (!$filePath) {
                 return [
                     'success' => false,
-                    'message' => 'Upload failed',
+                    'message' => 'Failed to upload NIC front image',
                     'errors' => $this->uploader->getErrors()
                 ];
             }
@@ -152,18 +145,28 @@ class FileService
     }
 
     /**
-     * Upload NIC back image
+     * Upload NIC back image with strict validation
      */
     public function uploadNicBack(array $file, string $userId): array
     {
         try {
+            // Strict validation for NIC documents
+            $validationResult = $this->validateNicDocument($file, 'NIC Back');
+            if (!$validationResult['valid']) {
+                return [
+                    'success' => false,
+                    'message' => $validationResult['message'],
+                    'errors' => [$validationResult['message']]
+                ];
+            }
+
             $directory = "users/{$userId}";
             $filePath = $this->uploader->upload($file, $directory, 'nic_back');
 
             if (!$filePath) {
                 return [
                     'success' => false,
-                    'message' => 'Upload failed',
+                    'message' => 'Failed to upload NIC back image',
                     'errors' => $this->uploader->getErrors()
                 ];
             }
@@ -242,8 +245,8 @@ class FileService
      */
     public function getFileUrl(string $filePath): string
     {
-        $relativePath = str_replace($this->config['storage_path'], '', $filePath);
-        return '/api/files/' . ltrim($relativePath, '/\\');
+        // Return direct storage path URL
+        return 'http://localhost/skycamp/skycamp-backend/storage/uploads/' . ltrim($filePath, '/\\');
     }
 
     /**
@@ -335,7 +338,145 @@ class FileService
      */
     public function getStoragePath(): string
     {
-        return $this->config['storage_path'] ?? __DIR__ . '/../../public/storage/uploads';
+        return $this->config['storage_path'] ?? __DIR__ . '/../../storage/uploads';
+    }
+
+    /**
+     * Validate NIC document with strict checks
+     */
+    private function validateNicDocument(array $file, string $documentType): array
+    {
+        // Check if file was uploaded
+        if (!isset($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+            return [
+                'valid' => false,
+                'message' => "$documentType: No file uploaded or invalid upload."
+            ];
+        }
+
+        // Check file size (5MB max)
+        if ($file['size'] > (5 * 1024 * 1024)) {
+            return [
+                'valid' => false,
+                'message' => "$documentType: File size exceeds 5MB limit."
+            ];
+        }
+
+        // Check file size (minimum 1KB to avoid empty files)
+        if ($file['size'] < 1024) {
+            return [
+                'valid' => false,
+                'message' => "$documentType: File too small. Please upload a valid image."
+            ];
+        }
+
+        // Check file extension
+        $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $allowedExtensions = ['jpg', 'jpeg', 'png'];
+
+        if (!in_array($fileExtension, $allowedExtensions)) {
+            return [
+                'valid' => false,
+                'message' => "$documentType: Only JPG and PNG images are allowed for verification documents."
+            ];
+        }
+
+        // Strict MIME type validation
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+
+        $allowedMimeTypes = ['image/jpeg', 'image/png'];
+        if (!in_array($mimeType, $allowedMimeTypes)) {
+            return [
+                'valid' => false,
+                'message' => "$documentType: Invalid file type. Only JPG and PNG images are accepted."
+            ];
+        }
+
+        // Verify MIME type matches extension
+        $expectedMime = match ($fileExtension) {
+            'jpg', 'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            default => null
+        };
+
+        if ($expectedMime && $mimeType !== $expectedMime) {
+            return [
+                'valid' => false,
+                'message' => "$documentType: File content does not match the file extension."
+            ];
+        }
+
+        // Use getimagesize() to verify it's a real image
+        $imageInfo = @getimagesize($file['tmp_name']);
+        if ($imageInfo === false) {
+            return [
+                'valid' => false,
+                'message' => "$documentType: Invalid image file. The uploaded file is not a valid image."
+            ];
+        }
+
+        // Verify image dimensions are reasonable for a document
+        $width = $imageInfo[0];
+        $height = $imageInfo[1];
+
+        if ($width < 200 || $height < 100) {
+            return [
+                'valid' => false,
+                'message' => "$documentType: Image too small. Minimum dimensions are 200x100 pixels for clear document visibility."
+            ];
+        }
+
+        if ($width > 4000 || $height > 4000) {
+            return [
+                'valid' => false,
+                'message' => "$documentType: Image too large. Maximum dimensions are 4000x4000 pixels."
+            ];
+        }
+
+        // Verify the image type matches what we expect
+        $expectedImageType = match ($fileExtension) {
+            'jpg', 'jpeg' => IMAGETYPE_JPEG,
+            'png' => IMAGETYPE_PNG,
+            default => null
+        };
+
+        if ($expectedImageType && $imageInfo[2] !== $expectedImageType) {
+            return [
+                'valid' => false,
+                'message' => "$documentType: Image type mismatch. File content does not match the expected image format."
+            ];
+        }
+
+        // Additional check: ensure the image has reasonable aspect ratio for documents
+        $aspectRatio = $width / $height;
+        if ($aspectRatio < 0.5 || $aspectRatio > 3.0) {
+            return [
+                'valid' => false,
+                'message' => "$documentType: Unusual image dimensions. Please ensure you're uploading a document image."
+            ];
+        }
+
+        return [
+            'valid' => true,
+            'message' => 'Valid NIC document'
+        ];
+    }
+
+    /**
+     * Clean up existing user image files with same logical name but different extensions
+     */
+    private function cleanupUserImageFiles(string $userDir, string $logicalName): void
+    {
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+
+        foreach ($allowedExtensions as $ext) {
+            $filePath = $userDir . '/' . $logicalName . '.' . $ext;
+            if (file_exists($filePath)) {
+                @unlink($filePath);
+            }
+        }
     }
 
     /**

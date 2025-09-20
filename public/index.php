@@ -70,7 +70,6 @@ require_once __DIR__ . '/../app/Controllers/GuideController.php';
 require_once __DIR__ . '/../app/Controllers/EquipmentController.php';
 
 require_once __DIR__ . '/../app/TravelBuddy/Controllers/TravelBuddyController.php';
-require_once __DIR__ . '/../app/Controllers/TempAdminController.php';
 require_once __DIR__ . '/../app/Controllers/NotificationController.php';
 require_once __DIR__ . '/../app/Controllers/WishlistController.php';
 
@@ -103,10 +102,6 @@ try {
     $router->post('/api/admin/login', [AdminController::class, 'login']);
     $router->get('/api/admin/me', [AdminController::class, 'me']);
     $router->post('/api/admin/logout', [AdminController::class, 'logout']);
-
-    // Temporary admin routes for development
-    $router->post('/api/temp-admin/verify-customer', [TempAdminController::class, 'verifyCustomer']);
-    $router->get('/api/temp-admin/pending-verifications', [TempAdminController::class, 'getPendingVerifications']);
 
     // Location proxy endpoints
     $router->get('/api/location/search', [LocationController::class, 'search']);
@@ -147,25 +142,6 @@ try {
     $router->get('/api/travel-messages', [TravelBuddyController::class, 'listMessages']);
     $router->post('/api/travel-messages', [TravelBuddyController::class, 'sendMessage']);
     $router->get('/api/travel-buddy/status', [TravelBuddyController::class, 'getStatus']);
-
-    // File serving endpoint for uploaded images
-    $router->get('/api/files/*', function (Request $request, Response $response) {
-        $fileService = new FileService();
-        $requestUri = $_SERVER['REQUEST_URI'];
-        $pathOnly = parse_url($requestUri, PHP_URL_PATH);
-        $relativeFilePath = str_replace('/api/files/', '', $pathOnly);
-
-        // Resolve potential locations: public mirror first, then storage path
-        $publicPath = __DIR__ . '/storage/uploads/' . ltrim($relativeFilePath, '/\\');
-        $storagePath = rtrim($fileService->getStoragePath(), '/\\') . '/' . ltrim($relativeFilePath, '/\\');
-
-        if (file_exists($publicPath)) {
-            $fileService->serveFile($publicPath);
-            return;
-        }
-
-        $fileService->serveFile($storagePath);
-    });
 
     // Guide endpoints
     $router->get('/api/guides', [GuideController::class, 'list']);

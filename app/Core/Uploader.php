@@ -29,13 +29,19 @@ class Uploader
 
         // Determine extension from uploaded file
         $originalExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
         if ($filename === null) {
             // Generate filename with extension
             $filename = $this->generateFilename($file);
         } else {
-            // Ensure provided filename has an extension; if not, append detected extension
-            if (pathinfo($filename, PATHINFO_EXTENSION) === '') {
-                $filename = $filename . '.' . $originalExtension;
+            // For user uploads, normalize to .jpg extension
+            if (in_array($originalExtension, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $filename = $filename . '.jpg';
+            } else {
+                // Ensure provided filename has an extension; if not, append detected extension
+                if (pathinfo($filename, PATHINFO_EXTENSION) === '') {
+                    $filename = $filename . '.' . $originalExtension;
+                }
             }
         }
 
@@ -43,25 +49,21 @@ class Uploader
         $uploadPath = $this->getUploadPath($directory);
         $filePath = $uploadPath . '/' . $filename;
 
-        // Also compute public path for direct serving via /storage/uploads
-        $publicBase = __DIR__ . '/../../public/storage/uploads';
-        $publicDir = rtrim($publicBase . '/' . trim($directory, '/'), '/');
-        $publicPath = $publicDir . '/' . $filename;
-
         // Ensure directory exists
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }
-        if (!is_dir($publicDir)) {
-            mkdir($publicDir, 0755, true);
+
+        // For user uploads, delete existing files with same base name but different extensions
+        if (strpos($directory, 'users/') === 0) {
+            $this->cleanupDuplicateFiles($uploadPath, pathinfo($filename, PATHINFO_FILENAME));
         }
 
         // Move uploaded file
         if (move_uploaded_file($file['tmp_name'], $filePath)) {
-            // Mirror to public directory
-            @copy($filePath, $publicPath);
-            // Return web-accessible URL instead of full file path
-            return $this->getFileUrl($filePath);
+            // Return relative path for database storage
+            $relative = ltrim(trim($directory, '/') . '/' . $filename, '/');
+            return $relative;
         }
 
         $this->errors[] = 'Failed to upload file';
@@ -69,7 +71,7 @@ class Uploader
     }
 
     /**
-     * Validate uploaded file
+     * Validate uploaded file with strict image validation
      */
     private function validateFile(array $file): bool
     {
@@ -82,20 +84,20 @@ class Uploader
         // Check file size
         $maxSize = $this->config['max_size'] ?? (5 * 1024 * 1024); // 5MB default
         if ($file['size'] > $maxSize) {
-            $this->errors[] = 'File size exceeds maximum allowed size';
+            $this->errors[] = 'File size exceeds maximum allowed size (5MB)';
             return false;
         }
 
-        // Check file type
+        // Check file type by extension
         $allowedTypes = $this->config['allowed_types'] ?? ['jpg', 'jpeg', 'png', 'webp'];
         $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 
         if (!in_array($fileExtension, $allowedTypes)) {
-            $this->errors[] = 'File type not allowed';
+            $this->errors[] = 'File type not allowed. Only JPG, PNG, and WebP images are accepted.';
             return false;
         }
 
-        // Additional MIME type check
+        // Strict MIME type validation
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mimeType = finfo_file($finfo, $file['tmp_name']);
         finfo_close($finfo);
@@ -108,7 +110,41 @@ class Uploader
         ];
 
         if (!isset($allowedMimeTypes[$fileExtension]) || $mimeType !== $allowedMimeTypes[$fileExtension]) {
-            $this->errors[] = 'Invalid file type';
+            $this->errors[] = 'Invalid file type. File content does not match the extension.';
+            return false;
+        }
+
+        // Additional validation using getimagesize() to ensure it's a real image
+        $imageInfo = @getimagesize($file['tmp_name']);
+        if ($imageInfo === false) {
+            $this->errors[] = 'Invalid image file. The uploaded file is not a valid image.';
+            return false;
+        }
+
+        // Verify image dimensions are reasonable (not too small or too large)
+        $width = $imageInfo[0];
+        $height = $imageInfo[1];
+
+        if ($width < 50 || $height < 50) {
+            $this->errors[] = 'Image too small. Minimum dimensions are 50x50 pixels.';
+            return false;
+        }
+
+        if ($width > 8000 || $height > 8000) {
+            $this->errors[] = 'Image too large. Maximum dimensions are 8000x8000 pixels.';
+            return false;
+        }
+
+        // Verify the image type matches what we expect
+        $expectedImageType = match ($fileExtension) {
+            'jpg', 'jpeg' => IMAGETYPE_JPEG,
+            'png' => IMAGETYPE_PNG,
+            'webp' => IMAGETYPE_WEBP,
+            default => null
+        };
+
+        if ($expectedImageType && $imageInfo[2] !== $expectedImageType) {
+            $this->errors[] = 'Image type mismatch. File content does not match the expected image format.';
             return false;
         }
 
@@ -189,6 +225,21 @@ class Uploader
             return unlink($filePath);
         }
         return false;
+    }
+
+    /**
+     * Clean up duplicate files with same base name but different extensions
+     */
+    private function cleanupDuplicateFiles(string $directory, string $baseName): void
+    {
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+
+        foreach ($allowedExtensions as $ext) {
+            $filePath = $directory . '/' . $baseName . '.' . $ext;
+            if (file_exists($filePath)) {
+                @unlink($filePath);
+            }
+        }
     }
 
     /**

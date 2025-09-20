@@ -23,12 +23,12 @@ class CustomerRepository
             user_id, first_name, last_name, dob, phone_number,
             home_address, location, latitude, longitude, gender, profile_picture, 
             nic_number, nic_front_image, nic_back_image, travel_buddy_status, 
-            verification_status, created_at
+            verification_status, created_at, updated_at
         ) VALUES (
             :user_id, :first_name, :last_name, :dob, :phone_number,
             :home_address, :location, :latitude, :longitude, :gender, :profile_picture, 
             :nic_number, :nic_front_image, :nic_back_image, :travel_buddy_status, 
-            :verification_status, :created_at
+            :verification_status, :created_at, :updated_at
         )";
 
         $stmt = $this->pdo->prepare($sql);
@@ -49,7 +49,8 @@ class CustomerRepository
             'nic_back_image' => $data['nic_back_image'],
             'travel_buddy_status' => $data['travel_buddy_status'],
             'verification_status' => $data['verification_status'],
-            'created_at' => $data['created_at']
+            'created_at' => $data['created_at'],
+            'updated_at' => $data['updated_at'] ?? $data['created_at']
         ]);
 
         return $this->pdo->lastInsertId();

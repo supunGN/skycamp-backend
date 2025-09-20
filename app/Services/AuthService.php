@@ -586,6 +586,14 @@ class AuthService
 
         // Add role-specific data if available
         if ($roleRow) {
+            // Build cache-busted profile picture URL
+            $profilePictureUrl = null;
+            if (!empty($roleRow['profile_picture'])) {
+                $timestamp = strtotime($roleRow['updated_at'] ?? $roleRow['created_at'] ?? 'now');
+                $profilePictureUrl = 'http://localhost/skycamp/skycamp-backend/storage/uploads/' .
+                    ltrim($roleRow['profile_picture'], '/') . '?ts=' . $timestamp;
+            }
+
             $normalizedUser = array_merge($normalizedUser, [
                 'first_name' => $roleRow['first_name'] ?? '',
                 'last_name' => $roleRow['last_name'] ?? '',
@@ -593,11 +601,13 @@ class AuthService
                 'dob' => $roleRow['dob'] ?? '',
                 'gender' => $roleRow['gender'] ?? '',
                 'home_address' => $roleRow['home_address'] ?? '',
-                'profile_picture' => $roleRow['profile_picture'] ?? null,
+                'profile_picture' => $roleRow['profile_picture'] ?? null, // Keep original path for frontend processing
+                'profile_picture_url' => $profilePictureUrl, // Full URL with cache-busting
                 // Persist critical profile flags/ids used by the frontend UI
                 'nic_number' => $roleRow['nic_number'] ?? null,
                 'verification_status' => $roleRow['verification_status'] ?? null,
                 'travel_buddy_status' => $roleRow['travel_buddy_status'] ?? null,
+                'updated_at' => $roleRow['updated_at'] ?? $roleRow['created_at'] ?? null,
             ]);
         }
 

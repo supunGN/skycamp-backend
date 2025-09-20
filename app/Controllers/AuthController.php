@@ -348,15 +348,15 @@ class AuthController extends Controller
                 return;
             }
 
-            // Validate file types and sizes
-            $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+            // Validate file types and sizes (basic check - detailed validation is in FileService)
+            $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
             $maxSize = 5 * 1024 * 1024; // 5MB
 
             if (!in_array($nicFrontFile['type'], $allowedTypes) || !in_array($nicBackFile['type'], $allowedTypes)) {
                 $response->setStatusCode(400);
                 $response->json([
                     'success' => false,
-                    'message' => 'Only JPG, PNG, and WebP images are allowed'
+                    'message' => 'Only JPG and PNG images are allowed for verification documents. PDFs, text files, and other formats are not accepted.'
                 ]);
                 return;
             }
@@ -365,7 +365,7 @@ class AuthController extends Controller
                 $response->setStatusCode(400);
                 $response->json([
                     'success' => false,
-                    'message' => 'File size must be less than 5MB'
+                    'message' => 'File size must be less than 5MB for each document.'
                 ]);
                 return;
             }
@@ -379,12 +379,27 @@ class AuthController extends Controller
             $nicBackPath = $backRes['success'] ? ($backRes['file_path'] ?? null) : null;
 
             if (!$nicFrontPath || !$nicBackPath) {
-                $errorMessage = $frontRes['message'] ?? $backRes['message'] ?? 'Failed to upload verification documents';
+                // Get detailed error messages from FileService
+                $frontError = $frontRes['message'] ?? 'Failed to upload NIC front image';
+                $backError = $backRes['message'] ?? 'Failed to upload NIC back image';
 
-                $response->setStatusCode(500);
+                $errorMessage = "Upload failed: ";
+                if (!$nicFrontPath && !$nicBackPath) {
+                    $errorMessage .= "Both documents failed - {$frontError} and {$backError}";
+                } elseif (!$nicFrontPath) {
+                    $errorMessage .= "NIC front image failed - {$frontError}";
+                } else {
+                    $errorMessage .= "NIC back image failed - {$backError}";
+                }
+
+                $response->setStatusCode(400);
                 $response->json([
                     'success' => false,
-                    'message' => $errorMessage
+                    'message' => $errorMessage,
+                    'details' => [
+                        'nic_front_error' => $frontRes['message'] ?? null,
+                        'nic_back_error' => $backRes['message'] ?? null
+                    ]
                 ]);
                 return;
             }
@@ -506,8 +521,8 @@ class AuthController extends Controller
             $front = $customer->nicFrontImage ?? null;
             $back = $customer->nicBackImage ?? null;
 
-            // Build public URLs from relative paths
-            $buildUrl = function (?string $p): ?string {
+            // Build public URLs from relative paths with cache-busting
+            $buildUrl = function (?string $p) use ($customer): ?string {
                 if (!$p) return null;
 
                 // Handle different path formats
@@ -527,7 +542,9 @@ class AuthController extends Controller
 
                 // Ensure the path is properly formatted
                 if (!empty($relative)) {
-                    return 'http://localhost/skycamp/skycamp-backend/public/storage/uploads/' . $relative;
+                    // Add cache-busting parameter using updated_at timestamp
+                    $timestamp = strtotime($customer->updatedAt);
+                    return 'http://localhost/skycamp/skycamp-backend/storage/uploads/' . $relative . '?ts=' . $timestamp;
                 }
 
                 return null;
