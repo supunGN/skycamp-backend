@@ -87,7 +87,9 @@ class NotificationController extends Controller
 
             $response->json([
                 'success' => true,
-                'count' => $count
+                'data' => [
+                    'count' => $count
+                ]
             ], 200);
         } catch (Exception $e) {
             $this->log("Error fetching unread count: " . $e->getMessage(), 'ERROR');

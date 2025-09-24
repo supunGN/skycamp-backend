@@ -24,7 +24,7 @@ class FileService
     public function saveUserImage(string $userId, array $file, string $logicalName): ?string
     {
         // Validate logical name
-        if (!in_array($logicalName, ['profile', 'nic_front', 'nic_back', 'equipment_condition'])) {
+        if (!in_array($logicalName, ['profile', 'nic_front', 'nic_back', 'equipment_condition', 'gallery'])) {
             return null;
         }
 
@@ -188,6 +188,53 @@ class FileService
                 'message' => 'Upload failed: ' . $e->getMessage()
             ];
         }
+    }
+
+    /**
+     * Save guide gallery photo
+     * Returns relative path or null if not provided/invalid
+     */
+    public function saveGuideGalleryPhoto(string $userId, array $file): ?string
+    {
+        // Check if file was uploaded
+        if (!isset($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+            return null;
+        }
+
+        // Validate file size (5MB max)
+        if ($file['size'] > (5 * 1024 * 1024)) {
+            return null;
+        }
+
+        // Validate MIME type using finfo_file
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!in_array($mimeType, $allowedMimes)) {
+            return null;
+        }
+
+        // Ensure directory exists
+        $storagePath = $this->getStoragePath();
+        $galleryDir = $storagePath . '/users/' . $userId . '/gallery';
+
+        if (!is_dir($galleryDir)) {
+            mkdir($galleryDir, 0755, true);
+        }
+
+        // Generate unique filename with timestamp
+        $filename = 'gallery_' . time() . '_' . uniqid() . '.jpg';
+        $fullPath = $galleryDir . '/' . $filename;
+
+        // Move uploaded file
+        if (move_uploaded_file($file['tmp_name'], $fullPath)) {
+            // Return relative path for database storage
+            return "users/{$userId}/gallery/{$filename}";
+        }
+
+        return null;
     }
 
     /**

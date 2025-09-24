@@ -121,7 +121,11 @@ class RenterController extends Controller
                 return;
             }
 
-            $renter = $this->renterRepository->findById($renterId);
+            // Simple direct database query to get renter data
+            $pdo = Database::getConnection();
+            $stmt = $pdo->prepare("SELECT * FROM renters WHERE renter_id = ?");
+            $stmt->execute([$renterId]);
+            $renter = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$renter) {
                 $response->json([
@@ -131,60 +135,54 @@ class RenterController extends Controller
                 return;
             }
 
-            // Get user information
-            $pdo = Database::getConnection();
-            $stmt = $pdo->prepare("SELECT email, role FROM users WHERE user_id = ?");
-            $stmt->execute([$renter->userId]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            // Get user email
+            $userStmt = $pdo->prepare("SELECT email FROM users WHERE user_id = ?");
+            $userStmt->execute([$renter['user_id']]);
+            $user = $userStmt->fetch(PDO::FETCH_ASSOC);
 
-            if (!$user || $user['role'] !== 'Renter') {
-                $response->json([
-                    'success' => false,
-                    'message' => 'Renter not found'
-                ], 404);
-                return;
-            }
-
-            // Format the data
-            $fullName = $renter->getFullName();
-            $phoneNumber = $renter->phoneNumber;
+            // Format phone number
+            $phoneNumber = $renter['phone_number'];
             if (strlen($phoneNumber) === 10 && $phoneNumber[0] === '0') {
                 $phoneNumber = '+94 ' . substr($phoneNumber, 1, 2) . ' ' . substr($phoneNumber, 3, 3) . ' ' . substr($phoneNumber, 6);
             }
 
+            // Format profile image
             $profileImage = null;
-            if ($renter->profilePicture) {
-                // Use same pattern as LocationController for consistency
-                $profileImage = 'http://localhost/skycamp/skycamp-backend/storage/uploads/' . $renter->profilePicture;
+            if ($renter['profile_picture']) {
+                $profileImage = 'http://localhost/skycamp/skycamp-backend/storage/uploads/' . $renter['profile_picture'];
             }
 
-            $formattedRenter = [
-                'id' => $renter->renterId,
-                'userId' => $renter->userId,
-                'name' => $fullName,
-                'location' => $renter->district ?? 'Unknown',
-                'phone' => $phoneNumber,
-                'email' => $user['email'],
-                'image' => $profileImage,
-                'rating' => 5.0,
-                'reviewCount' => 22,
-                'verificationStatus' => $renter->verificationStatus,
-                'createdAt' => $renter->createdAt,
-                'details' => [
-                    'dob' => $renter->dob,
-                    'gender' => $renter->gender,
-                    'homeAddress' => $renter->homeAddress,
-                    'nicNumber' => $renter->nicNumber,
-                    'campingDestinations' => $renter->campingDestinations,
-                    'stargazingSpots' => $renter->stargazingSpots,
-                    'latitude' => $renter->latitude,
-                    'longitude' => $renter->longitude
-                ]
-            ];
+            // Get equipment data
+            $equipmentData = $this->getRenterEquipment($pdo, $renterId);
 
+            // Simple response with basic data and equipment
             $response->json([
                 'success' => true,
-                'data' => $formattedRenter
+                'data' => [
+                    'id' => $renter['renter_id'],
+                    'userId' => $renter['user_id'],
+                    'name' => $renter['first_name'] . ' ' . $renter['last_name'],
+                    'location' => $renter['district'] ?? 'Unknown',
+                    'phone' => $phoneNumber,
+                    'email' => $user['email'] ?? '',
+                    'image' => $profileImage,
+                    'rating' => 0.0,
+                    'reviewCount' => 0,
+                    'verificationStatus' => $renter['verification_status'],
+                    'createdAt' => $renter['created_at'],
+                    'equipment' => $equipmentData,
+                    'reviews' => [],
+                    'details' => [
+                        'dob' => $renter['dob'],
+                        'gender' => $renter['gender'],
+                        'homeAddress' => $renter['home_address'],
+                        'nicNumber' => $renter['nic_number'],
+                        'campingDestinations' => $renter['camping_destinations'],
+                        'stargazingSpots' => $renter['stargazing_spots'],
+                        'latitude' => $renter['latitude'],
+                        'longitude' => $renter['longitude']
+                    ]
+                ]
             ], 200);
         } catch (Exception $e) {
             error_log("Error fetching renter: " . $e->getMessage());
@@ -281,6 +279,75 @@ class RenterController extends Controller
                 'success' => false,
                 'message' => 'Failed to fetch renters by district'
             ], 500);
+        }
+    }
+
+    /**
+     * Get renter equipment with primary images
+     */
+    private function getRenterEquipment(PDO $pdo, int $renterId): array
+    {
+        try {
+            $sql = "
+                SELECT 
+                    re.renter_equipment_id,
+                    re.equipment_id,
+                    re.item_condition,
+                    re.price_per_day,
+                    re.stock_quantity,
+                    re.status,
+                    e.name as equipment_name,
+                    e.description as equipment_description,
+                    ec.type as category_type,
+                    ec.name as category_name,
+                    rep.photo_path,
+                    rep.display_order
+                FROM renterequipment re
+                JOIN equipment e ON re.equipment_id = e.equipment_id
+                JOIN equipment_categories ec ON e.category_id = ec.category_id
+                LEFT JOIN renterequipmentphotos rep ON re.renter_equipment_id = rep.renter_equipment_id 
+                    AND rep.photo_id = (
+                        SELECT rep2.photo_id 
+                        FROM renterequipmentphotos rep2 
+                        WHERE rep2.renter_equipment_id = re.renter_equipment_id
+                        ORDER BY COALESCE(rep2.display_order, 999), rep2.photo_id
+                        LIMIT 1
+                    )
+                WHERE re.renter_id = ? AND re.status = 'Active'
+                ORDER BY ec.type, e.name
+            ";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$renterId]);
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $equipment = [];
+            foreach ($results as $row) {
+                // Use uploaded image or default equipment image
+                $equipmentImage = '/default-equipment.png'; // Default fallback
+                if (!empty($row['photo_path']) && $row['photo_path'] !== null) {
+                    $equipmentImage = 'http://localhost/skycamp/skycamp-backend/storage/uploads/' . $row['photo_path'];
+                }
+
+                $equipment[] = [
+                    'id' => (int)$row['renter_equipment_id'],
+                    'equipmentId' => (int)$row['equipment_id'],
+                    'name' => $row['equipment_name'],
+                    'description' => $row['equipment_description'],
+                    'condition' => $row['item_condition'],
+                    'pricePerDay' => (float)$row['price_per_day'],
+                    'stockQuantity' => (int)$row['stock_quantity'],
+                    'isAvailable' => (int)$row['stock_quantity'] > 0,
+                    'categoryType' => $row['category_type'],
+                    'categoryName' => $row['category_name'],
+                    'image' => $equipmentImage
+                ];
+            }
+
+            return $equipment;
+        } catch (Exception $e) {
+            error_log("Error fetching renter equipment: " . $e->getMessage());
+            return [];
         }
     }
 }

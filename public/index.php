@@ -74,6 +74,7 @@ require_once __DIR__ . '/../app/Controllers/AdminController.php';
 require_once __DIR__ . '/../app/Controllers/RenterController.php';
 require_once __DIR__ . '/../app/Controllers/RenterDashboardController.php';
 require_once __DIR__ . '/../app/Controllers/GuideController.php';
+require_once __DIR__ . '/../app/Controllers/GuideDashboardController.php';
 require_once __DIR__ . '/../app/Controllers/EquipmentController.php';
 
 require_once __DIR__ . '/../app/Controllers/TravelBuddyController.php';
@@ -176,15 +177,44 @@ try {
     // Travel Buddy endpoints
     $router->get('/api/travel-plans', [TravelBuddyController::class, 'listPlans']);
     $router->post('/api/travel-plans', [TravelBuddyController::class, 'createPlan']);
+    $router->get('/api/travel-plans/my', [TravelBuddyController::class, 'getMyPlans']);
+    $router->get('/api/travel-plans/:id', [TravelBuddyController::class, 'getPlan']);
+    $router->put('/api/travel-plans/:id', [TravelBuddyController::class, 'updatePlan']);
+    $router->delete('/api/travel-plans/:id', [TravelBuddyController::class, 'deletePlan']);
+
     $router->post('/api/travel-requests', [TravelBuddyController::class, 'requestJoin']);
+    $router->get('/api/travel-requests/my', [TravelBuddyController::class, 'getMyRequests']);
+    $router->post('/api/travel-requests/:id/accept', [TravelBuddyController::class, 'acceptRequest']);
+    $router->post('/api/travel-requests/:id/reject', [TravelBuddyController::class, 'rejectRequest']);
+
     $router->get('/api/travel-messages', [TravelBuddyController::class, 'listMessages']);
     $router->post('/api/travel-messages', [TravelBuddyController::class, 'sendMessage']);
+    $router->get('/api/travel-buddy/debug', [TravelBuddyController::class, 'debug']);
     $router->get('/api/travel-buddy/status', [TravelBuddyController::class, 'getStatus']);
 
     // Guide endpoints
     $router->get('/api/guides', [GuideController::class, 'list']);
     $router->get('/api/guides/by-district', [GuideController::class, 'getByDistrict']);
     $router->get('/api/guides/:id', [GuideController::class, 'show']);
+
+    // Guide Dashboard endpoints
+    $router->get('/api/guide/dashboard/stats', [GuideDashboardController::class, 'getDashboardStats']);
+    $router->get('/api/guide/profile', [GuideDashboardController::class, 'getProfile']);
+    $router->post('/api/guide/profile', [GuideDashboardController::class, 'updateProfile']);
+    $router->get('/api/guide/verification/docs', [GuideDashboardController::class, 'getVerificationDocs']);
+    $router->post('/api/guide/verification/submit', [GuideDashboardController::class, 'submitVerification']);
+    $router->get('/api/guide/availability', [GuideDashboardController::class, 'getAvailability']);
+    $router->post('/api/guide/availability', [GuideDashboardController::class, 'updateAvailability']);
+    $router->get('/api/guide/images', [GuideDashboardController::class, 'getImages']);
+    $router->post('/api/guide/images', [GuideDashboardController::class, 'uploadImages']);
+    $router->delete('/api/guide/images/:id', [GuideDashboardController::class, 'deleteImage']);
+    $router->get('/api/guide/locations/available', [GuideDashboardController::class, 'getAvailableLocations']);
+    $router->get('/api/guide/locations/coverage', [GuideDashboardController::class, 'getGuideLocations']);
+    $router->put('/api/guide/locations/update', [GuideDashboardController::class, 'updateGuideLocations']);
+    $router->get('/api/guide/locations/check-removal/:location_name', [GuideDashboardController::class, 'checkLocationRemoval']);
+    $router->get('/api/guide/bookings', [GuideDashboardController::class, 'getGuideBookings']);
+    $router->put('/api/guide/bookings/:booking_id/mark-finished', [GuideDashboardController::class, 'markBookingAsFinished']);
+    $router->post('/api/guide/test-notifications', [GuideDashboardController::class, 'createTestNotifications']);
 
     // Equipment endpoints
     $router->get('/api/equipment/categories', [EquipmentController::class, 'getCategories']);

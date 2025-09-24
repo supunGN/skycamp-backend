@@ -661,7 +661,7 @@ class RenterDashboardController extends Controller
                 return;
             }
 
-            // Get equipment categories with their items
+            // Get equipment categories with their items in specific order
             $stmt = $this->pdo->prepare("
                 SELECT 
                     ec.category_id,
@@ -673,7 +673,98 @@ class RenterDashboardController extends Controller
                     e.description as equipment_description
                 FROM equipment_categories ec
                 LEFT JOIN equipment e ON ec.category_id = e.category_id AND e.status = 'Active'
-                ORDER BY ec.type, ec.name, e.name
+                ORDER BY 
+                    CASE ec.type 
+                        WHEN 'Camping' THEN 1 
+                        WHEN 'Stargazing' THEN 2 
+                        ELSE 3 
+                    END,
+                    CASE ec.category_id
+                        -- Camping categories in order
+                        WHEN 1 THEN 1   -- Tents
+                        WHEN 2 THEN 2   -- Sleeping Gear
+                        WHEN 3 THEN 3   -- Cooking & Kitchen Items
+                        WHEN 4 THEN 4   -- Camping Furniture
+                        WHEN 5 THEN 5   -- Lights
+                        WHEN 6 THEN 6   -- Navigation & Safety Tools
+                        WHEN 7 THEN 7   -- Water & Hydration
+                        WHEN 8 THEN 8   -- Bags & Storage
+                        WHEN 9 THEN 9   -- Clothing
+                        WHEN 10 THEN 10 -- Fun & Extras
+                        WHEN 11 THEN 11 -- Power & Charging
+                        -- Stargazing categories in order
+                        WHEN 12 THEN 1  -- Binoculars
+                        WHEN 13 THEN 2  -- Telescopes
+                        WHEN 14 THEN 3  -- Tripods & Mounts
+                        WHEN 15 THEN 4  -- Accessories
+                        ELSE 99
+                    END,
+                    CASE e.equipment_id
+                        -- Tents (category 1)
+                        WHEN 1 THEN 1   -- 1-person tent
+                        WHEN 2 THEN 2   -- 2-person tent
+                        WHEN 3 THEN 3   -- 3 or more person tent
+                        WHEN 48 THEN 4  -- 4-person tent
+                        -- Sleeping Gear (category 2)
+                        WHEN 4 THEN 1   -- Sleeping bags
+                        WHEN 5 THEN 2   -- Air mattress
+                        WHEN 6 THEN 3   -- Camping pillow
+                        WHEN 7 THEN 4   -- Emergency blanket
+                        -- Cooking & Kitchen Items (category 3)
+                        WHEN 8 THEN 1   -- Single gas stove
+                        WHEN 9 THEN 2   -- Double gas stove
+                        WHEN 10 THEN 3  -- Gas BBQ grill
+                        WHEN 11 THEN 4  -- Cooking pot and pan set
+                        WHEN 12 THEN 5  -- Kettle for boiling water
+                        WHEN 13 THEN 6  -- Fork, spoon, knife set
+                        WHEN 14 THEN 7  -- Chopping board
+                        WHEN 15 THEN 8  -- Reusable plates and bowls
+                        WHEN 16 THEN 9  -- Food storage containers
+                        WHEN 17 THEN 10 -- Cooler box
+                        -- Camping Furniture (category 4)
+                        WHEN 18 THEN 1  -- Camping chair
+                        WHEN 19 THEN 2  -- Folding table
+                        WHEN 20 THEN 3  -- Hammock
+                        -- Lights (category 5)
+                        WHEN 21 THEN 1  -- Camping lanterns
+                        WHEN 22 THEN 2  -- Torch
+                        WHEN 23 THEN 3  -- Tent hanging light
+                        -- Navigation & Safety Tools (category 6)
+                        WHEN 24 THEN 1  -- Compass & Map
+                        WHEN 25 THEN 2  -- Emergency whistle
+                        WHEN 26 THEN 3  -- First-aid kit
+                        WHEN 27 THEN 4  -- Walkie-talkies
+                        -- Water & Hydration (category 7)
+                        WHEN 28 THEN 1  -- Water bottles
+                        WHEN 29 THEN 2  -- Water jugs
+                        -- Bags & Storage (category 8)
+                        WHEN 30 THEN 1  -- Hiking backpacks
+                        WHEN 31 THEN 2  -- Dry bags
+                        WHEN 32 THEN 3  -- Waterproof pouches
+                        WHEN 33 THEN 4  -- Gear organizer bag
+                        -- Clothing (category 9)
+                        WHEN 34 THEN 1  -- Raincoat
+                        WHEN 35 THEN 2  -- Warm jacket
+                        WHEN 36 THEN 3  -- Waterproof shoes
+                        -- Fun & Extras (category 10)
+                        WHEN 37 THEN 1  -- Card games / Board games
+                        WHEN 38 THEN 2  -- Travel guitar
+                        -- Power & Charging (category 11)
+                        WHEN 39 THEN 1  -- Power bank & Cables
+                        -- Stargazing Binoculars (category 12)
+                        WHEN 40 THEN 1  -- Small binoculars
+                        WHEN 41 THEN 2  -- Stargazing binoculars
+                        -- Stargazing Telescopes (category 13)
+                        WHEN 42 THEN 1  -- Beginner telescope
+                        WHEN 43 THEN 2  -- Big telescope
+                        -- Tripods & Mounts (category 14)
+                        WHEN 44 THEN 1  -- Tripod stands for telescope or binoculars
+                        -- Accessories (category 15)
+                        WHEN 45 THEN 1  -- Star maps or books
+                        WHEN 46 THEN 2  -- Power bank for telescope
+                        WHEN 47 THEN 3  -- Laser pointer for pointing at stars
+                        ELSE 99
+                    END
             ");
             $stmt->execute();
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -2041,10 +2132,19 @@ class RenterDashboardController extends Controller
                 ]);
             }
 
+            // Get updated unread count
+            $countStmt = $this->pdo->prepare("
+                SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = 0
+            ");
+            $countStmt->execute([$userId]);
+            $unreadCount = $countStmt->fetch(PDO::FETCH_ASSOC)['count'];
+
             $response->json([
                 'success' => true,
                 'message' => 'Test notifications created successfully',
-                'count' => count($notifications)
+                'data' => [
+                    'unread_count' => (int)$unreadCount
+                ]
             ]);
         } catch (Exception $e) {
             $this->log("Error creating test notifications: " . $e->getMessage(), 'ERROR');
