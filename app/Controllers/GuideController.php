@@ -186,6 +186,15 @@ class GuideController extends Controller
                 $languages = array_map('trim', explode(',', $guide->languages));
             }
 
+            // Get availability data
+            $availability = $this->getGuideAvailability($pdo, $guide->guideId);
+
+            // Get gallery images
+            $galleryImages = $this->getGuideGalleryImages($pdo, $guide->guideId);
+
+            // Get ratings and reviews
+            $ratingData = $this->getGuideRatings($pdo, $guide->guideId);
+
             $formattedGuide = [
                 'id' => $guide->guideId,
                 'userId' => $guide->userId,
@@ -194,8 +203,8 @@ class GuideController extends Controller
                 'phone' => $phoneNumber,
                 'email' => $user['email'],
                 'image' => $profileImage,
-                'rating' => 4.8,
-                'reviewCount' => 12,
+                'rating' => $ratingData['averageRating'],
+                'reviewCount' => $ratingData['reviewCount'],
                 'rate' => $price,
                 'currency' => $guide->currency ?? 'LKR',
                 'languages' => $languages,
@@ -203,13 +212,18 @@ class GuideController extends Controller
                 'specialNote' => $guide->specialNote,
                 'verificationStatus' => $guide->verificationStatus,
                 'createdAt' => $guide->createdAt,
+                'availability' => $availability,
+                'galleryImages' => $galleryImages,
+                'reviews' => $ratingData['reviews'],
                 'details' => [
                     'dob' => $guide->dob,
                     'gender' => $guide->gender,
                     'homeAddress' => $guide->homeAddress,
                     'nicNumber' => $guide->nicNumber,
                     'campingDestinations' => $guide->campingDestinations,
-                    'stargazingSpots' => $guide->stargazingSpots
+                    'stargazingSpots' => $guide->stargazingSpots,
+                    'latitude' => $guide->latitude,
+                    'longitude' => $guide->longitude
                 ]
             ];
 
@@ -332,5 +346,135 @@ class GuideController extends Controller
                 'message' => 'Failed to fetch guides by district'
             ], 500);
         }
+    }
+
+    /**
+     * Get guide availability data
+     */
+    private function getGuideAvailability(PDO $pdo, int $guideId): array
+    {
+        try {
+            $sql = "SELECT day_of_week, start_time, end_time 
+                    FROM guideavailability 
+                    WHERE guide_id = ? 
+                    ORDER BY FIELD(day_of_week, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$guideId]);
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Create availability array for all days
+            $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            $availability = [];
+
+            foreach ($daysOfWeek as $day) {
+                $dayAvailability = array_filter($results, function ($row) use ($day) {
+                    return $row['day_of_week'] === $day;
+                });
+
+                if (!empty($dayAvailability)) {
+                    // Format time ranges
+                    $timeRanges = [];
+                    foreach ($dayAvailability as $slot) {
+                        $startTime = date('g:i A', strtotime($slot['start_time']));
+                        $endTime = date('g:i A', strtotime($slot['end_time']));
+                        $timeRanges[] = $startTime . ' - ' . $endTime;
+                    }
+                    $availability[] = [
+                        'day' => $day,
+                        'available' => true,
+                        'time' => implode(', ', $timeRanges)
+                    ];
+                } else {
+                    $availability[] = [
+                        'day' => $day,
+                        'available' => false,
+                        'time' => ''
+                    ];
+                }
+            }
+
+            return $availability;
+        } catch (Exception $e) {
+            error_log("Error fetching guide availability: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get guide gallery images
+     */
+    private function getGuideGalleryImages(PDO $pdo, int $guideId): array
+    {
+        try {
+            $sql = "SELECT image_path, uploaded_at 
+                    FROM guideimages 
+                    WHERE guide_id = ? 
+                    ORDER BY uploaded_at ASC";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$guideId]);
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $images = [];
+            foreach ($results as $row) {
+                $images[] = 'http://localhost/skycamp/skycamp-backend/storage/uploads/' . $row['image_path'];
+            }
+
+            return $images;
+        } catch (Exception $e) {
+            error_log("Error fetching guide gallery images: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get guide ratings and reviews
+     */
+    private function getGuideRatings(PDO $pdo, int $guideId): array
+    {
+        // Get ratings from the ratings table
+        $sql = "SELECT 
+                    AVG(r.rating) as average_rating,
+                    COUNT(r.rating) as review_count
+                FROM ratings r 
+                WHERE r.entity_type = 'Guide' 
+                AND r.entity_id = ?";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$guideId]);
+        $ratingStats = $stmt->fetch();
+
+        $averageRating = $ratingStats['average_rating'] ? (float) $ratingStats['average_rating'] : 0.0;
+        $reviewCount = (int) $ratingStats['review_count'];
+
+        // For now, return sample reviews since we don't have a reviews table
+        // In a real application, you would have a separate reviews table
+        $sampleReviews = [
+            [
+                'rating' => 5,
+                'text' => 'Excellent guide! Very knowledgeable about the local area and made our camping trip unforgettable.',
+                'name' => 'Sarah Johnson',
+                'date' => '2 weeks ago'
+            ],
+            [
+                'rating' => 4,
+                'text' => 'Great experience overall. The guide was professional and helpful throughout the trip.',
+                'name' => 'Mike Chen',
+                'date' => '1 month ago'
+            ],
+            [
+                'rating' => 5,
+                'text' => 'Amazing stargazing experience! The guide knew all the best spots and was very patient with our group.',
+                'name' => 'Emily Rodriguez',
+                'date' => '1 month ago'
+            ]
+        ];
+
+        return [
+            'averageRating' => $averageRating > 0 ? $averageRating : 4.8, // Default rating if no reviews
+            'reviewCount' => $reviewCount > 0 ? $reviewCount : 12, // Default count if no reviews
+            'reviews' => $sampleReviews
+        ];
     }
 }

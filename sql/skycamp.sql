@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 24, 2025 at 02:19 PM
+-- Generation Time: Sep 25, 2025 at 01:52 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -123,6 +123,16 @@ CREATE TABLE `cartitems` (
   `is_reserved` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `cartitems`
+--
+
+INSERT INTO `cartitems` (`cart_item_id`, `cart_id`, `renter_equipment_id`, `quantity`, `price_per_day`, `is_reserved`) VALUES
+(10, 9, 13, 1, 2000.00, 1),
+(11, 9, 6, 3, 550.00, 1),
+(12, 10, 25, 1, 100.00, 1),
+(13, 10, 23, 1, 1000.00, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -131,7 +141,10 @@ CREATE TABLE `cartitems` (
 
 CREATE TABLE `carts` (
   `cart_id` int(11) NOT NULL,
+  `order_id` varchar(100) DEFAULT NULL,
   `customer_id` int(11) NOT NULL,
+  `renter_id` int(11) DEFAULT NULL,
+  `renter_name` varchar(200) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `expires_at` timestamp NULL DEFAULT NULL,
   `status` enum('Active','CheckedOut','Abandoned','Expired') DEFAULT 'Active',
@@ -143,9 +156,14 @@ CREATE TABLE `carts` (
 -- Dumping data for table `carts`
 --
 
-INSERT INTO `carts` (`cart_id`, `customer_id`, `created_at`, `expires_at`, `status`, `start_date`, `end_date`) VALUES
-(1, 1, '2025-09-20 23:13:47', NULL, 'Active', NULL, NULL),
-(2, 2, '2025-09-20 23:13:47', NULL, 'Active', NULL, NULL);
+INSERT INTO `carts` (`cart_id`, `order_id`, `customer_id`, `renter_id`, `renter_name`, `created_at`, `expires_at`, `status`, `start_date`, `end_date`) VALUES
+(3, NULL, 1, 4, 'Sanduni Jayawardena', '2025-09-24 21:06:12', '2025-09-24 21:36:12', 'Expired', '0000-00-00', '0000-00-00'),
+(4, NULL, 1, 4, 'Sanduni Jayawardena', '2025-09-24 21:21:21', '2025-09-24 21:51:21', 'Expired', '0000-00-00', '0000-00-00'),
+(5, NULL, 1, 3, 'Ruwan Hettiarachchi', '2025-09-24 21:21:43', '2025-09-24 21:51:43', 'Expired', '0000-00-00', '0000-00-00'),
+(6, NULL, 1, 3, 'Ruwan Hettiarachchi', '2025-09-24 21:35:27', '2025-09-24 22:05:27', 'Expired', '0000-00-00', '0000-00-00'),
+(7, NULL, 1, 3, 'Ruwan Hettiarachchi', '2025-09-24 21:35:57', '2025-09-24 22:05:57', 'Expired', '0000-00-00', '0000-00-00'),
+(9, NULL, 2, 3, 'Ruwan Hettiarachchi', '2025-09-24 23:17:14', '2025-09-24 23:47:14', 'Active', '0000-00-00', '0000-00-00'),
+(10, NULL, 23, 5, 'Mohamed Fazil', '2025-09-24 23:43:28', '2025-09-25 00:13:28', 'Active', '0000-00-00', '0000-00-00');
 
 -- --------------------------------------------------------
 
@@ -419,7 +437,125 @@ INSERT INTO `guideavailability` (`availability_id`, `guide_id`, `day_of_week`, `
 (34, 1, 'Wednesday', '04:55:00', '18:55:00'),
 (35, 1, 'Thursday', '09:00:00', '17:00:00'),
 (36, 1, 'Friday', '15:00:00', '17:00:00'),
-(37, 1, 'Sunday', '09:00:00', '15:00:00');
+(37, 1, 'Sunday', '09:00:00', '15:00:00'),
+(38, 2, 'Monday', '09:00:00', '17:00:00'),
+(39, 2, 'Wednesday', '09:00:00', '17:00:00'),
+(40, 2, 'Friday', '09:00:00', '17:00:00'),
+(41, 3, 'Monday', '09:00:00', '17:00:00'),
+(42, 3, 'Wednesday', '09:00:00', '17:00:00'),
+(43, 3, 'Saturday', '09:00:00', '17:00:00'),
+(44, 4, 'Monday', '08:00:00', '18:00:00'),
+(45, 4, 'Wednesday', '09:00:00', '17:00:00'),
+(46, 4, 'Friday', '09:00:00', '17:00:00'),
+(47, 4, 'Tuesday', '09:00:00', '17:00:00'),
+(48, 5, 'Monday', '10:00:00', '17:00:00'),
+(49, 5, 'Tuesday', '04:00:00', '17:00:00'),
+(50, 5, 'Wednesday', '03:00:00', '17:00:00'),
+(51, 5, 'Thursday', '00:00:00', '15:00:00'),
+(52, 5, 'Saturday', '00:00:00', '12:00:00'),
+(53, 5, 'Sunday', '04:00:00', '17:00:00'),
+(54, 6, 'Monday', '01:00:00', '17:00:00'),
+(55, 6, 'Tuesday', '09:00:00', '17:00:00'),
+(56, 6, 'Wednesday', '05:00:00', '17:00:00'),
+(57, 6, 'Thursday', '04:00:00', '17:00:00'),
+(58, 6, 'Friday', '06:00:00', '17:00:00'),
+(59, 7, 'Monday', '09:00:00', '17:00:00'),
+(60, 7, 'Tuesday', '01:00:00', '17:00:00'),
+(61, 7, 'Wednesday', '03:00:00', '17:00:00'),
+(62, 7, 'Thursday', '08:00:00', '17:00:00'),
+(63, 7, 'Friday', '09:00:00', '17:00:00'),
+(64, 7, 'Saturday', '01:00:00', '18:00:00'),
+(65, 8, 'Monday', '09:00:00', '17:01:00'),
+(66, 8, 'Tuesday', '01:00:00', '16:00:00'),
+(67, 8, 'Thursday', '03:00:00', '17:00:00'),
+(68, 8, 'Friday', '04:00:00', '17:00:00'),
+(69, 8, 'Saturday', '03:06:00', '17:00:00'),
+(70, 8, 'Sunday', '09:00:00', '17:00:00'),
+(71, 9, 'Monday', '09:00:00', '17:00:00'),
+(72, 9, 'Tuesday', '01:00:00', '17:00:00'),
+(73, 9, 'Wednesday', '02:00:00', '17:00:00'),
+(74, 9, 'Thursday', '06:00:00', '17:00:00'),
+(75, 9, 'Friday', '09:00:00', '18:00:00'),
+(76, 9, 'Saturday', '09:00:00', '17:00:00'),
+(77, 9, 'Sunday', '04:00:00', '17:00:00'),
+(78, 10, 'Monday', '09:00:00', '17:00:00'),
+(79, 10, 'Tuesday', '01:00:00', '21:00:00'),
+(80, 10, 'Wednesday', '09:00:00', '19:00:00'),
+(81, 10, 'Thursday', '09:00:00', '18:00:00'),
+(82, 10, 'Friday', '09:00:00', '17:00:00'),
+(83, 10, 'Saturday', '06:00:00', '17:00:00'),
+(84, 10, 'Sunday', '09:06:00', '17:00:00'),
+(85, 11, 'Monday', '01:00:00', '17:00:00'),
+(86, 11, 'Wednesday', '09:00:00', '17:00:00'),
+(87, 11, 'Thursday', '09:55:00', '17:00:00'),
+(88, 11, 'Friday', '01:01:00', '15:00:00'),
+(89, 11, 'Saturday', '03:00:00', '19:00:00'),
+(90, 12, 'Monday', '04:00:00', '17:00:00'),
+(91, 12, 'Tuesday', '09:00:00', '17:00:00'),
+(92, 12, 'Wednesday', '07:00:00', '17:00:00'),
+(93, 12, 'Thursday', '09:08:00', '17:00:00'),
+(94, 12, 'Friday', '06:00:00', '17:00:00'),
+(95, 12, 'Saturday', '03:00:00', '17:00:00'),
+(96, 12, 'Sunday', '00:07:00', '17:00:00'),
+(97, 13, 'Monday', '09:00:00', '17:00:00'),
+(98, 13, 'Tuesday', '05:00:00', '17:00:00'),
+(99, 13, 'Wednesday', '04:00:00', '17:00:00'),
+(100, 13, 'Thursday', '09:00:00', '18:00:00'),
+(101, 13, 'Friday', '09:00:00', '17:00:00'),
+(102, 13, 'Saturday', '07:00:00', '17:00:00'),
+(103, 13, 'Sunday', '08:00:00', '17:00:00'),
+(104, 14, 'Monday', '08:00:00', '17:00:00'),
+(105, 14, 'Tuesday', '09:00:00', '17:00:00'),
+(106, 14, 'Wednesday', '04:00:00', '17:00:00'),
+(107, 14, 'Thursday', '09:00:00', '16:00:00'),
+(108, 14, 'Friday', '09:00:00', '18:00:00'),
+(109, 14, 'Saturday', '07:00:00', '17:00:00'),
+(110, 14, 'Sunday', '05:00:00', '17:00:00'),
+(111, 15, 'Monday', '09:00:00', '17:00:00'),
+(112, 15, 'Tuesday', '09:00:00', '17:00:00'),
+(113, 15, 'Wednesday', '04:00:00', '17:00:00'),
+(114, 15, 'Thursday', '06:00:00', '17:00:00'),
+(115, 15, 'Friday', '04:00:00', '17:00:00'),
+(116, 16, 'Monday', '01:00:00', '17:00:00'),
+(117, 16, 'Tuesday', '04:00:00', '17:00:00'),
+(118, 16, 'Wednesday', '06:00:00', '17:00:00'),
+(119, 16, 'Thursday', '07:00:00', '17:00:00'),
+(120, 16, 'Friday', '06:00:00', '17:00:00'),
+(121, 16, 'Saturday', '02:10:00', '13:00:00'),
+(122, 17, 'Monday', '01:00:00', '17:00:00'),
+(123, 17, 'Tuesday', '02:00:00', '18:00:00'),
+(124, 17, 'Wednesday', '01:00:00', '17:00:00'),
+(125, 17, 'Thursday', '03:00:00', '20:00:00'),
+(126, 17, 'Friday', '09:00:00', '17:00:00'),
+(127, 17, 'Saturday', '04:00:00', '17:00:00'),
+(128, 17, 'Sunday', '06:00:00', '19:00:00'),
+(129, 18, 'Monday', '06:00:00', '17:00:00'),
+(130, 18, 'Tuesday', '07:00:00', '17:00:00'),
+(131, 18, 'Wednesday', '06:00:00', '17:00:00'),
+(132, 18, 'Thursday', '00:06:00', '17:00:00'),
+(133, 18, 'Friday', '06:00:00', '17:00:00'),
+(134, 19, 'Monday', '06:00:00', '17:00:00'),
+(135, 19, 'Tuesday', '07:00:00', '17:00:00'),
+(136, 19, 'Wednesday', '08:00:00', '17:00:00'),
+(137, 19, 'Thursday', '00:04:00', '17:00:00'),
+(138, 19, 'Friday', '06:00:00', '17:00:00'),
+(139, 19, 'Saturday', '07:00:00', '17:00:00'),
+(140, 21, 'Monday', '01:00:00', '17:00:00'),
+(141, 21, 'Tuesday', '09:00:00', '17:00:00'),
+(142, 21, 'Wednesday', '09:00:00', '17:00:00'),
+(143, 21, 'Thursday', '00:00:00', '17:00:00'),
+(144, 25, 'Monday', '04:00:00', '17:00:00'),
+(145, 25, 'Tuesday', '00:00:00', '16:00:00'),
+(146, 25, 'Wednesday', '07:07:00', '17:00:00'),
+(147, 25, 'Sunday', '06:06:00', '17:00:00'),
+(148, 25, 'Saturday', '04:04:00', '17:00:00'),
+(149, 29, 'Monday', '09:00:00', '17:00:00'),
+(150, 29, 'Tuesday', '09:00:00', '17:00:00'),
+(151, 29, 'Wednesday', '09:00:00', '17:00:00'),
+(152, 29, 'Thursday', '09:00:00', '17:00:00'),
+(153, 29, 'Friday', '09:00:00', '17:00:00'),
+(154, 29, 'Saturday', '09:00:00', '17:00:00'),
+(155, 29, 'Sunday', '09:00:00', '17:00:00');
 
 -- --------------------------------------------------------
 
@@ -439,9 +575,84 @@ CREATE TABLE `guideimages` (
 --
 
 INSERT INTO `guideimages` (`image_id`, `guide_id`, `image_path`, `uploaded_at`) VALUES
-(1, 1, 'users/201/gallery/gallery_1758638804_68d2b2d4890c4.jpg', '2025-09-23 14:46:44'),
-(2, 1, 'users/201/gallery/gallery_1758639032_68d2b3b86315e.jpg', '2025-09-23 14:50:32'),
-(3, 1, 'users/201/gallery/gallery_1758683390_68d360fe68bc1.jpg', '2025-09-24 03:09:50');
+(4, 1, 'users/201/gallery/gallery_1758725025_68d403a1c736b.jpg', '2025-09-24 14:43:45'),
+(5, 1, 'users/201/gallery/gallery_1758725036_68d403aca5a2a.jpg', '2025-09-24 14:43:56'),
+(6, 2, 'users/202/gallery/gallery_1758725377_68d40501ab002.jpg', '2025-09-24 14:49:37'),
+(7, 2, 'users/202/gallery/gallery_1758725386_68d4050a115f2.jpg', '2025-09-24 14:49:46'),
+(8, 3, 'users/203/gallery/gallery_1758725568_68d405c0cca50.jpg', '2025-09-24 14:52:48'),
+(9, 3, 'users/203/gallery/gallery_1758725575_68d405c7564f8.jpg', '2025-09-24 14:52:55'),
+(10, 4, 'users/204/gallery/gallery_1758725725_68d4065da86ec.jpg', '2025-09-24 14:55:25'),
+(11, 4, 'users/204/gallery/gallery_1758725733_68d40665a73ae.jpg', '2025-09-24 14:55:33'),
+(12, 5, 'users/205/gallery/gallery_1758725988_68d4076474ab7.jpg', '2025-09-24 14:59:48'),
+(13, 5, 'users/205/gallery/gallery_1758725995_68d4076b30598.jpg', '2025-09-24 14:59:55'),
+(14, 5, 'users/205/gallery/gallery_1758726000_68d4077031f6c.jpg', '2025-09-24 15:00:00'),
+(15, 6, 'users/206/gallery/gallery_1758726060_68d407ac1ad89.jpg', '2025-09-24 15:01:00'),
+(16, 6, 'users/206/gallery/gallery_1758726066_68d407b27fca0.jpg', '2025-09-24 15:01:06'),
+(17, 6, 'users/206/gallery/gallery_1758726070_68d407b6cbe2c.jpg', '2025-09-24 15:01:10'),
+(18, 7, 'users/207/gallery/gallery_1758726212_68d408447ba31.jpg', '2025-09-24 15:03:32'),
+(19, 7, 'users/207/gallery/gallery_1758726216_68d4084816207.jpg', '2025-09-24 15:03:36'),
+(20, 7, 'users/207/gallery/gallery_1758726219_68d4084b6a893.jpg', '2025-09-24 15:03:39'),
+(21, 8, 'users/208/gallery/gallery_1758726275_68d408830be28.jpg', '2025-09-24 15:04:35'),
+(22, 8, 'users/208/gallery/gallery_1758726278_68d4088660fef.jpg', '2025-09-24 15:04:38'),
+(23, 8, 'users/208/gallery/gallery_1758726281_68d40889e97d9.jpg', '2025-09-24 15:04:41'),
+(24, 9, 'users/209/gallery/gallery_1758726337_68d408c1f0c53.jpg', '2025-09-24 15:05:37'),
+(25, 9, 'users/209/gallery/gallery_1758726343_68d408c77e345.jpg', '2025-09-24 15:05:43'),
+(26, 9, 'users/209/gallery/gallery_1758726347_68d408cb228f8.jpg', '2025-09-24 15:05:47'),
+(27, 10, 'users/210/gallery/gallery_1758726402_68d40902ddb6f.jpg', '2025-09-24 15:06:42'),
+(28, 1, 'users/201/gallery/gallery_1758726432_68d40920ac923.jpg', '2025-09-24 15:07:12'),
+(29, 11, 'users/211/gallery/gallery_1758726491_68d4095b49276.jpg', '2025-09-24 15:08:11'),
+(30, 11, 'users/211/gallery/gallery_1758726495_68d4095f7ef71.jpg', '2025-09-24 15:08:15'),
+(31, 11, 'users/211/gallery/gallery_1758726499_68d4096301c9c.jpg', '2025-09-24 15:08:19'),
+(32, 12, 'users/212/gallery/gallery_1758726561_68d409a1dcf9a.jpg', '2025-09-24 15:09:21'),
+(33, 12, 'users/212/gallery/gallery_1758726565_68d409a59799c.jpg', '2025-09-24 15:09:25'),
+(34, 12, 'users/212/gallery/gallery_1758726569_68d409a92a0ea.jpg', '2025-09-24 15:09:29'),
+(35, 13, 'users/213/gallery/gallery_1758726616_68d409d847612.jpg', '2025-09-24 15:10:16'),
+(36, 13, 'users/213/gallery/gallery_1758726620_68d409dc31fac.jpg', '2025-09-24 15:10:20'),
+(37, 13, 'users/213/gallery/gallery_1758726623_68d409df55426.jpg', '2025-09-24 15:10:23'),
+(38, 14, 'users/214/gallery/gallery_1758726679_68d40a1735cea.jpg', '2025-09-24 15:11:19'),
+(39, 14, 'users/214/gallery/gallery_1758726685_68d40a1d2b404.jpg', '2025-09-24 15:11:25'),
+(40, 14, 'users/214/gallery/gallery_1758726689_68d40a2103dbc.jpg', '2025-09-24 15:11:29'),
+(41, 15, 'users/215/gallery/gallery_1758726735_68d40a4f0b8de.jpg', '2025-09-24 15:12:15'),
+(42, 15, 'users/215/gallery/gallery_1758726742_68d40a5649d5f.jpg', '2025-09-24 15:12:22'),
+(43, 15, 'users/215/gallery/gallery_1758726745_68d40a596c650.jpg', '2025-09-24 15:12:25'),
+(44, 16, 'users/216/gallery/gallery_1758726794_68d40a8acae3c.jpg', '2025-09-24 15:13:14'),
+(45, 16, 'users/216/gallery/gallery_1758726798_68d40a8e029a7.jpg', '2025-09-24 15:13:18'),
+(46, 17, 'users/217/gallery/gallery_1758726889_68d40ae990165.jpg', '2025-09-24 15:14:49'),
+(47, 17, 'users/217/gallery/gallery_1758726892_68d40aec65181.jpg', '2025-09-24 15:14:52'),
+(48, 17, 'users/217/gallery/gallery_1758726916_68d40b0473c6f.jpg', '2025-09-24 15:15:16'),
+(49, 18, 'users/218/gallery/gallery_1758727046_68d40b866c9c0.jpg', '2025-09-24 15:17:26'),
+(50, 18, 'users/218/gallery/gallery_1758727069_68d40b9d30977.jpg', '2025-09-24 15:17:49'),
+(51, 19, 'users/219/gallery/gallery_1758727160_68d40bf8a5850.jpg', '2025-09-24 15:19:20'),
+(52, 19, 'users/219/gallery/gallery_1758727171_68d40c0359414.jpg', '2025-09-24 15:19:31'),
+(53, 19, 'users/219/gallery/gallery_1758727176_68d40c080cbdc.jpg', '2025-09-24 15:19:36'),
+(54, 21, 'users/221/gallery/gallery_1758727239_68d40c47eef3c.jpg', '2025-09-24 15:20:39'),
+(55, 21, 'users/221/gallery/gallery_1758727243_68d40c4b330f1.jpg', '2025-09-24 15:20:43'),
+(56, 21, 'users/221/gallery/gallery_1758727245_68d40c4ddbcf4.jpg', '2025-09-24 15:20:45'),
+(57, 22, 'users/222/gallery/gallery_1758727273_68d40c696798b.jpg', '2025-09-24 15:21:13'),
+(58, 22, 'users/222/gallery/gallery_1758727276_68d40c6ceab91.jpg', '2025-09-24 15:21:16'),
+(59, 22, 'users/222/gallery/gallery_1758727279_68d40c6fb8844.jpg', '2025-09-24 15:21:19'),
+(60, 23, 'users/223/gallery/gallery_1758727307_68d40c8b055a6.jpg', '2025-09-24 15:21:47'),
+(61, 23, 'users/223/gallery/gallery_1758727310_68d40c8eb826b.jpg', '2025-09-24 15:21:50'),
+(62, 23, 'users/223/gallery/gallery_1758727314_68d40c92e0e90.jpg', '2025-09-24 15:21:54'),
+(63, 24, 'users/224/gallery/gallery_1758727350_68d40cb612575.jpg', '2025-09-24 15:22:30'),
+(64, 24, 'users/224/gallery/gallery_1758727352_68d40cb89c611.jpg', '2025-09-24 15:22:32'),
+(65, 24, 'users/224/gallery/gallery_1758727356_68d40cbc4941e.jpg', '2025-09-24 15:22:36'),
+(66, 25, 'users/225/gallery/gallery_1758727400_68d40ce86cf12.jpg', '2025-09-24 15:23:20'),
+(67, 25, 'users/225/gallery/gallery_1758727403_68d40cebcdde6.jpg', '2025-09-24 15:23:23'),
+(68, 25, 'users/225/gallery/gallery_1758727406_68d40ceedcb87.jpg', '2025-09-24 15:23:26'),
+(69, 26, 'users/226/gallery/gallery_1758727462_68d40d266c092.jpg', '2025-09-24 15:24:22'),
+(70, 26, 'users/226/gallery/gallery_1758727465_68d40d29b74b6.jpg', '2025-09-24 15:24:25'),
+(71, 27, 'users/227/gallery/gallery_1758727491_68d40d4335e9a.jpg', '2025-09-24 15:24:51'),
+(72, 27, 'users/227/gallery/gallery_1758727494_68d40d46e9992.jpg', '2025-09-24 15:24:54'),
+(73, 28, 'users/228/gallery/gallery_1758727539_68d40d7301087.jpg', '2025-09-24 15:25:39'),
+(74, 28, 'users/228/gallery/gallery_1758727542_68d40d763877d.jpg', '2025-09-24 15:25:42'),
+(75, 28, 'users/228/gallery/gallery_1758727546_68d40d7a38101.jpg', '2025-09-24 15:25:46'),
+(76, 29, 'users/229/gallery/gallery_1758727585_68d40da16d6be.jpg', '2025-09-24 15:26:25'),
+(77, 29, 'users/229/gallery/gallery_1758727588_68d40da485b8f.jpg', '2025-09-24 15:26:28'),
+(78, 29, 'users/229/gallery/gallery_1758727594_68d40daa2dd77.jpg', '2025-09-24 15:26:34'),
+(79, 30, 'users/230/gallery/gallery_1758727620_68d40dc4d874f.jpg', '2025-09-24 15:27:00'),
+(80, 30, 'users/230/gallery/gallery_1758727623_68d40dc79aee4.jpg', '2025-09-24 15:27:03'),
+(81, 30, 'users/230/gallery/gallery_1758727629_68d40dcdd11f1.jpg', '2025-09-24 15:27:09');
 
 -- --------------------------------------------------------
 
@@ -482,35 +693,35 @@ CREATE TABLE `guides` (
 
 INSERT INTO `guides` (`guide_id`, `user_id`, `first_name`, `last_name`, `dob`, `phone_number`, `home_address`, `gender`, `profile_picture`, `nic_number`, `nic_front_image`, `nic_back_image`, `camping_destinations`, `stargazing_spots`, `district`, `description`, `special_note`, `currency`, `languages`, `price_per_day`, `latitude`, `longitude`, `verification_status`, `created_at`) VALUES
 (1, 201, 'Nadeesha', 'Perera', '1993-07-12', '0711234567', 'No. 12, Baseline Rd, Borella', 'Female', 'users/201/profile.jpg', '731234561V', 'users/201/nic_front.jpg', 'users/201/nic_back.jpg', 'Diyasaru Park,Wilpattu Camping', 'Knuckles Mountains,Riverston', 'Colombo', 'Urban eco-guide for wetlands, boardwalks, and city-adjacent nature days.', 'Great for families & beginners; permits arranged on request.', 'LKR', 'Sinhala, English, Tamil', 7000.00, 6.91594660, 79.88030484, 'Yes', '2025-09-13 18:01:35'),
-(2, 202, 'Chamari', 'Silva', '1992-03-08', '0772345678', 'No. 8, Negombo Rd, Ja-Ela', 'Female', 'users/202/profile.jpeg', '731234562V', NULL, NULL, 'Muthurajawela Marsh', 'Minneriya Area', 'Gampaha', 'Birding & boat-trail specialist around Negombo lagoon and marshlands.', 'Crocodile safety briefing included for marsh tours.', 'LKR', 'Sinhala, English', 6800.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(3, 203, 'Ishara', 'Fernando', '1991-11-19', '0763456789', 'No. 21, Agalawatta Rd, Horana', 'Female', 'users/203/profile.jpeg', '731234563V', NULL, NULL, 'Thudugala Waterfall', 'Knuckles Mountains', 'Kalutara', 'Waterfall treks with safe swim spots and rainforest walks.', 'Avoid monsoon edges; I monitor rainfall and trail conditions.', 'LKR', 'Sinhala, English', 6500.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(4, 204, 'Sanduni', 'Jayasinghe', '1994-05-24', '0754567890', 'No. 56, Hantana Rd, Peradeniya', 'Female', 'users/204/profile.jpeg', '731234564V', NULL, NULL, 'Wewathenna Mountain', 'Knuckles Mountains', 'Kandy', 'Highland hikes with sunrise viewpoints and misty ridge walks.', 'Warm layers and rain shells provided on request.', 'LKR', 'Sinhala, English, Tamil', 9000.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(5, 205, 'Udari', 'Wickramasinghe', '1990-09-02', '0745678901', 'No. 10, Illukkumbura Rd, Rattota', 'Female', 'users/205/profile.jpeg', '731234565V', NULL, NULL, 'Riverston Peak', 'Riverston', 'Matale', 'Mini World’s End treks and windy plateau camping.', 'Tripod tie-downs and wind safety tips for exposed ridges.', 'LKR', 'Sinhala, English', 9500.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(6, 206, 'Tharushi', 'Gunasekara', '1995-12-14', '0786789012', 'No. 4, Station Rd, Nanu Oya', 'Female', 'users/206/profile.jpeg', '731234566V', NULL, NULL, 'Horton Plains', 'Horton Plains', 'Nuwara Eliya', 'Cloud-forest walks, World’s End loop, and cold-night camping near Ohiya.', 'Hot drinks and thermal layers checklist included.', 'LKR', 'Sinhala, Tamil, English', 12000.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(7, 207, 'Dilhani', 'Bandara', '1996-08-18', '0727890123', 'No. 5, Dewata Rd, Unawatuna', 'Female', 'users/207/profile.jpeg', '731234567V', NULL, NULL, 'Koggala Lake', 'Koggala Lake', 'Galle', 'Island-hopping, mangrove channels, and lakeside eco-camping.', 'Lifejackets provided for all water activities.', 'LKR', 'Sinhala, English', 7000.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(8, 208, 'Samadhi', 'Weerasinghe', '1993-10-07', '0708901234', 'No. 9, New Tangalle Rd, Weligama', 'Female', 'users/208/profile.jpeg', '731234568V', NULL, NULL, 'Madiha Beach', 'Koggala Lake', 'Matara', 'Coastal camps with reef-safe practices and surf-friendly itineraries.', 'Sun and reef-safety briefing before swims/snorkels.', 'LKR', 'Sinhala, English', 6000.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(9, 209, 'Shashini', 'Dissanayake', '1989-01-28', '0719012345', 'No. 3, Kirinda Rd, Tissamaharama', 'Female', 'users/209/profile.jpeg', '731234569V', NULL, NULL, 'Yala Buffer Zone', 'Yala Buffer Zone', 'Hambantota', 'Safari-style camps with strict wildlife protocols near Yala.', 'Authorized camps only; no off-trail night walks.', 'LKR', 'Sinhala, English', 14000.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(10, 210, 'Bimashi', 'Ranasinghe', '1994-02-12', '0779012234', 'No. 22, Temple Rd, Nallur', 'Female', 'users/210/profile.jpeg', '731234570V', NULL, NULL, 'Casuarina Beach', 'Casuarina Beach', 'Jaffna', 'North-coast beach camps and lagoon sunsets with local cuisine.', 'Respect cultural norms; modest beachwear guidance provided.', 'LKR', 'Tamil, English', 7500.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(11, 211, 'Hansani', 'Abeysekera', '1992-06-30', '0769023456', 'No. 14, A9 Hwy, Paranthan', 'Female', 'users/211/profile.jpeg', '731234571V', NULL, NULL, 'Iranamadu Tank', 'Casuarina Beach', 'Kilinochchi', 'Reservoir-side birding and dark-sky camping.', 'No swimming in deep areas; strong sun precautions.', 'LKR', 'Tamil, English', 7000.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(12, 212, 'Kavindya', 'Ekanayake', '1995-04-04', '0759034567', 'No. 7, Beach Rd, Pesalai', 'Female', 'users/212/profile.jpeg', '731234572V', NULL, NULL, 'Adam’s Bridge (Rama’s Bridge)', 'Casuarina Beach', 'Mannar', 'Mythic causeway vistas, salt flats, and lagoon birds.', 'Heat & tide-aware itineraries; ample water carried.', 'LKR', 'Tamil, English', 8000.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(13, 213, 'Sewwandi', 'Senanayake', '1991-09-09', '0749045678', 'No. 18, Kandy Rd, Thandikulam', 'Female', 'users/213/profile.jpeg', '731234573V', NULL, NULL, 'Madukanda Forest Edge', 'Minneriya Area', 'Vavuniya', 'Quiet forest camps blended with temple heritage.', 'Elephant-aware camping; stay in designated zones.', 'LKR', 'Tamil, Sinhala, English', 7000.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(14, 214, 'Nimesha', 'de Silva', '1993-01-20', '0789056789', 'No. 2, Coastal Rd, Puthukkudiyiruppu', 'Female', 'users/214/profile.jpeg', '731234574V', NULL, NULL, 'Nayaru Lagoon', 'Nilaveli Beach', 'Mullaitivu', 'Kayak-friendly lagoon and mangrove edges; remote eco-feel.', 'Mosquito protection and tide checks standard.', 'LKR', 'Tamil, English', 6800.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(15, 215, 'Pabasara', 'Karunaratne', '1997-07-01', '0729157890', 'No. 33, Uppuveli Rd, Trincomalee', 'Female', 'users/215/profile.jpeg', '731234575V', 'users/215/nic_front.jpg', 'users/215/nic_back.jpg', 'Marble Beach', 'Nilaveli Beach', 'Trincomalee', 'Snorkel-friendly bays and family beach camps on the east coast.', 'Work with Navy-managed zones; swim only in flagged areas.', 'LKR', 'Tamil, Sinhala, English', 8000.00, NULL, NULL, 'Yes', '2025-09-13 18:01:35'),
-(16, 216, 'Pasindu', 'Rathnayake', '1990-12-11', '0712234567', 'No. 40, Beach Rd, Kallady', 'Male', 'users/216/profile.jpeg', '731234576V', NULL, NULL, 'Pasikudah Beach', 'Nilaveli Beach', 'Batticaloa', 'Shallow-bay camps, safe swims, and coral-friendly practices.', 'Strong sun care and early-morning snorkel starts.', 'LKR', 'Tamil, English', 7000.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(17, 217, 'Kavindu', 'Herath', '1989-05-16', '0773345678', 'No. 6, Senanayake Mawatha, Uhana', 'Male', 'users/217/profile.jpeg', '731234577V', NULL, NULL, 'Gal Oya National Park', 'Minneriya Area', 'Ampara', 'Boat safaris and elephant crossings on the reservoir islands.', 'Always with rangers; crocodile-aware shoreline rules.', 'LKR', 'Sinhala, Tamil, English', 10500.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(18, 218, 'Sajith', 'Dasanayake', '1992-02-02', '0764456789', 'No. 15, Depot Rd, Kuliyapitiya', 'Male', 'users/218/profile.jpeg', '731234578V', NULL, NULL, 'Dolukanda Sacred Rock', 'Knuckles Mountains', 'Kurunegala', 'Legend-filled rock hikes with sunrise panoramas.', 'Steep sections managed with rest points and hydration.', 'LKR', 'Sinhala, English', 7500.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(19, 219, 'Nuwan', 'Peiris', '1991-04-21', '0755567890', 'No. 88, Lagoon Rd, Kalpitiya', 'Male', 'users/219/profile.jpeg', '731234579V', NULL, NULL, 'Kalpitiya Beach', 'Casuarina Beach', 'Puttalam', 'Kite-surf seasons, dolphin watching, and beach camps.', 'High-wind tie-downs provided for tents and gear.', 'LKR', 'Sinhala, Tamil, English', 8500.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(20, 220, 'Tharindu', 'Suraweera', '1993-03-05', '0746678901', 'No. 12, Temple Rd, Mihintale', 'Male', 'users/220/profile.jpeg', '731234580V', NULL, NULL, 'Wilpattu Camping', 'Ritigala Reserve', 'Anuradhapura', 'Jungle tracks, villus, and heritage-adjacent campouts.', 'Permits & park rules strictly followed; no night walks.', 'LKR', 'Sinhala, English', 12000.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(21, 221, 'Lahiru', 'Jayawardena', '1994-06-11', '0787789012', 'No. 27, Main St, Hingurakgoda', 'Male', 'users/221/profile.jpeg', '731234581V', NULL, NULL, 'Habarana Jungle', 'Minneriya Area', 'Polonnaruwa', 'Elephant corridor awareness and safari-style camping.', 'Camp only with trained teams; waterholes kept clear.', 'LKR', 'Sinhala, English', 11000.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(22, 222, 'Supun', 'Jayasuriya', '1992-08-08', '0728890123', 'No. 19, Welimada Rd, Bandarawela', 'Male', 'users/222/profile.jpeg', '731234582V', NULL, NULL, 'Madolsima', 'Namunukula Range', 'Badulla', 'Cliff-edge sunrise hikes and cloud-sea views.', 'Cold-night prep and cliff-edge safety emphasized.', 'LKR', 'Sinhala, Tamil, English', 9500.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(23, 223, 'Sahan', 'Wijesinghe', '1990-10-10', '0709901234', 'No. 6, Kataragama Rd, Buttala', 'Male', 'users/223/profile.jpeg', '731234583V', NULL, NULL, 'Udawalawe Border', 'Yala Buffer Zone', 'Monaragala', 'Elephant-rich borderlands with ranger-led camps.', 'Food storage protocols for wildlife safety.', 'LKR', 'Sinhala, English', 9000.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(24, 224, 'Sanjeewa', 'Alwis', '1988-12-22', '0716677889', 'No. 3, Pambahinna Rd, Eheliyagoda', 'Male', 'users/224/profile.jpeg', '731234584V', NULL, NULL, 'Belihuloya', 'Horton Plains', 'Ratnapura', 'Streams, natural pools, and short hikes near Sabaragamuwa.', 'Leech-season prep and river safety covered.', 'LKR', 'Sinhala, English', 8000.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(25, 225, 'Chathura', 'Priyankara', '1995-09-23', '0777788990', 'No. 44, Kandy Rd, Mawanella', 'Male', 'users/225/profile.jpeg', '731234585V', NULL, NULL, 'Knuckles Foothills', 'Knuckles Mountains', 'Kegalle', 'Foothill waterfalls, rare species, and cool misty camps.', 'Slippery-trail management and biodiversity etiquette.', 'LKR', 'Sinhala, English', 10000.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(26, 226, 'Isuru', 'Peris', '1991-01-17', '0765566778', 'No. 7, Kandapola Rd, Nuwara Eliya', 'Male', 'users/226/profile.jpeg', '731234586V', NULL, NULL, 'Horton Plains', 'Horton Plains', 'Nuwara Eliya', 'High-country loops and cold-weather camping best-practices.', 'Thermal wear checklist shared pre-trip.', 'LKR', 'Sinhala, Tamil, English', 12500.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(27, 227, 'Malith', 'Kulatunga', '1992-02-14', '0754455667', 'No. 61, Katugastota Rd, Kandy', 'Male', 'users/227/profile.jpeg', '731234587V', NULL, NULL, 'Wewathenna Mountain', 'Knuckles Mountains', 'Kandy', 'Ridge hikes, tea-estate connectors, and viewpoint camps.', 'Weather shifts fast; I carry spare rain shells.', 'LKR', 'Sinhala, English, Tamil', 9800.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(28, 228, 'Chamika', 'Withanage', '1993-03-13', '0743344556', 'No. 22, Beliatta Rd, Dikwella', 'Male', 'users/228/profile.jpeg', '731234588V', NULL, NULL, 'Madiha Beach', 'Koggala Lake', 'Matara', 'Chilled surf-culture camps with reef-safe plans.', 'Earliest water sessions scheduled for calm seas.', 'LKR', 'Sinhala, English', 6500.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(29, 229, 'Madushan', 'Abeynayake', '1990-06-06', '0782233445', 'No. 28, Nochchiyagama Rd, Anuradhapura', 'Male', 'users/229/profile.jpeg', '731234589V', NULL, NULL, 'Wilpattu Camping', 'Ritigala Reserve', 'Anuradhapura', 'Villus, jungle tracks, and ancient-ruin adjacency.', 'Strict no-litter and guided-only night routines.', 'LKR', 'Sinhala, English', 11800.00, NULL, NULL, 'No', '2025-09-13 18:01:35'),
-(30, 230, 'Pradeep', 'Wanniarachchi', '1989-08-29', '0721122334', 'No. 5, Hali Ela Rd, Badulla', 'Male', 'users/230/profile.jpeg', '731234590V', NULL, NULL, 'Narangala Peak', 'Namunukula Range', 'Badulla', '360° mountain views and starry night camps in Uva.', 'Steep trails; fitness and warm-gear checks beforehand.', 'LKR', 'Sinhala, Tamil, English', 9800.00, NULL, NULL, 'No', '2025-09-13 18:01:35');
+(2, 202, 'Chamari', 'Silva', '1992-03-08', '0772345678', 'No. 8, Negombo Rd, Ja-Ela', 'Female', 'users/202/profile.jpeg', '731234562V', NULL, NULL, 'Muthurajawela Marsh', 'Minneriya Area', 'Gampaha', 'Birding & boat-trail specialist around Negombo lagoon and marshlands.', 'Crocodile safety briefing included for marsh tours.', 'LKR', 'Sinhala, English', 6800.00, 7.07126190, 80.00877460, 'Yes', '2025-09-13 18:01:35'),
+(3, 203, 'Ishara', 'Fernando', '1991-11-19', '0763456789', 'No. 21, Agalawatta Rd, Horana', 'Female', 'users/203/profile.jpeg', '731234563V', NULL, NULL, 'Thudugala Waterfall', 'Knuckles Mountains', 'Kalutara', 'Waterfall treks with safe swim spots and rainforest walks.', 'Avoid monsoon edges; I monitor rainfall and trail conditions.', 'LKR', 'Sinhala, English', 6500.00, 6.60846860, 80.14285840, 'Yes', '2025-09-13 18:01:35'),
+(4, 204, 'Sanduni', 'Jayasinghe', '1994-05-24', '0754567890', 'No. 56, Hantana Rd, Peradeniya', 'Female', 'users/204/profile.jpeg', '731234564V', NULL, NULL, 'Wewathenna Mountain', 'Knuckles Mountains', 'Kandy', 'Highland hikes with sunrise viewpoints and misty ridge walks.', 'Warm layers and rain shells provided on request.', 'LKR', 'Sinhala, English, Tamil', 9000.00, 7.29315880, 80.63501070, 'Yes', '2025-09-13 18:01:35'),
+(5, 205, 'Udari', 'Wickramasinghe', '1990-09-02', '0745678901', 'No. 10, Illukkumbura Rd, Rattota', 'Female', 'users/205/profile.jpeg', '731234565V', NULL, NULL, 'Riverston Peak', 'Riverston', 'Matale', 'Mini World’s End treks and windy plateau camping.', 'Tripod tie-downs and wind safety tips for exposed ridges.', 'LKR', 'Sinhala, English', 9500.00, 7.46596460, 80.62342590, 'Yes', '2025-09-13 18:01:35'),
+(6, 206, 'Tharushi', 'Gunasekara', '1995-12-14', '0786789012', 'No. 4, Station Rd, Nanu Oya', 'Female', 'users/206/profile.jpeg', '731234566V', NULL, NULL, 'Horton Plains', 'Horton Plains', 'Nuwara Eliya', 'Cloud-forest walks, World’s End loop, and cold-night camping near Ohiya.', 'Hot drinks and thermal layers checklist included.', 'LKR', 'Sinhala, Tamil, English', 12000.00, 6.96065320, 80.76927580, 'Yes', '2025-09-13 18:01:35'),
+(7, 207, 'Dilhani', 'Bandara', '1996-08-18', '0727890123', 'No. 5, Dewata Rd, Unawatuna', 'Female', 'users/207/profile.jpeg', '731234567V', NULL, NULL, 'Koggala Lake', 'Koggala Lake', 'Galle', 'Island-hopping, mangrove channels, and lakeside eco-camping.', 'Lifejackets provided for all water activities.', 'LKR', 'Sinhala, English', 7000.00, 6.05774900, 80.21755720, 'Yes', '2025-09-13 18:01:35'),
+(8, 208, 'Samadhi', 'Weerasinghe', '1993-10-07', '0708901234', 'No. 9, New Tangalle Rd, Weligama', 'Female', 'users/208/profile.jpeg', '731234568V', NULL, NULL, 'Madiha Beach', 'Koggala Lake', 'Matara', 'Coastal camps with reef-safe practices and surf-friendly itineraries.', 'Sun and reef-safety briefing before swims/snorkels.', 'LKR', 'Sinhala, English', 6000.00, 5.94493480, 80.54879970, 'Yes', '2025-09-13 18:01:35'),
+(9, 209, 'Shashini', 'Dissanayake', '1989-01-28', '0719012345', 'No. 3, Kirinda Rd, Tissamaharama', 'Female', 'users/209/profile.jpeg', '731234569V', NULL, NULL, 'Yala Buffer Zone', 'Yala Buffer Zone', 'Hambantota', 'Safari-style camps with strict wildlife protocols near Yala.', 'Authorized camps only; no off-trail night walks.', 'LKR', 'Sinhala, English', 14000.00, 6.15358160, 81.12714900, 'Yes', '2025-09-13 18:01:35'),
+(10, 210, 'Bimashi', 'Ranasinghe', '1994-02-12', '0779012234', 'No. 22, Temple Rd, Nallur', 'Female', 'users/210/profile.jpeg', '731234570V', NULL, NULL, 'Casuarina Beach', 'Casuarina Beach', 'Jaffna', 'North-coast beach camps and lagoon sunsets with local cuisine.', 'Respect cultural norms; modest beachwear guidance provided.', 'LKR', 'Tamil, English', 7500.00, 9.69304680, 80.16518540, 'Yes', '2025-09-13 18:01:35'),
+(11, 211, 'Hansani', 'Abeysekera', '1992-06-30', '0769023456', 'No. 14, A9 Hwy, Paranthan', 'Female', 'users/211/profile.jpeg', '731234571V', NULL, NULL, 'Iranamadu Tank', 'Casuarina Beach', 'Kilinochchi', 'Reservoir-side birding and dark-sky camping.', 'No swimming in deep areas; strong sun precautions.', 'LKR', 'Tamil, English', 7000.00, 9.36779710, 80.32131060, 'Yes', '2025-09-13 18:01:35'),
+(12, 212, 'Kavindya', 'Ekanayake', '1995-04-04', '0759034567', 'No. 7, Beach Rd, Pesalai', 'Female', 'users/212/profile.jpeg', '731234572V', NULL, NULL, 'Adam’s Bridge (Rama’s Bridge)', 'Casuarina Beach', 'Mannar', 'Mythic causeway vistas, salt flats, and lagoon birds.', 'Heat & tide-aware itineraries; ample water carried.', 'LKR', 'Tamil, English', 8000.00, 8.98095310, 79.90439750, 'Yes', '2025-09-13 18:01:35'),
+(13, 213, 'Sewwandi', 'Senanayake', '1991-09-09', '0749045678', 'No. 18, Kandy Rd, Thandikulam', 'Female', 'users/213/profile.jpeg', '731234573V', NULL, NULL, 'Madukanda Forest Edge', 'Minneriya Area', 'Vavuniya', 'Quiet forest camps blended with temple heritage.', 'Elephant-aware camping; stay in designated zones.', 'LKR', 'Tamil, Sinhala, English', 7000.00, 8.75947390, 80.50003340, 'Yes', '2025-09-13 18:01:35'),
+(14, 214, 'Nimesha', 'de Silva', '1993-01-20', '0789056789', 'No. 2, Coastal Rd, Puthukkudiyiruppu', 'Female', 'users/214/profile.jpeg', '731234574V', NULL, NULL, 'Nayaru Lagoon', 'Nilaveli Beach', 'Mullaitivu', 'Kayak-friendly lagoon and mangrove edges; remote eco-feel.', 'Mosquito protection and tide checks standard.', 'LKR', 'Tamil, English', 6800.00, 9.26753880, 80.81282540, 'Yes', '2025-09-13 18:01:35'),
+(15, 215, 'Pabasara', 'Karunaratne', '1997-07-01', '0729157890', 'No. 33, Uppuveli Rd, Trincomalee', 'Female', 'users/215/profile.jpeg', '731234575V', 'users/215/nic_front.jpg', 'users/215/nic_back.jpg', 'Marble Beach', 'Nilaveli Beach', 'Trincomalee', 'Snorkel-friendly bays and family beach camps on the east coast.', 'Work with Navy-managed zones; swim only in flagged areas.', 'LKR', 'Tamil, Sinhala, English', 8000.00, 8.57197000, 81.23340000, 'Yes', '2025-09-13 18:01:35'),
+(16, 216, 'Pasindu', 'Rathnayake', '1990-12-11', '0712234567', 'No. 40, Beach Rd, Kallady', 'Male', 'users/216/profile.jpeg', '731234576V', NULL, NULL, 'Pasikudah Beach', 'Nilaveli Beach', 'Batticaloa', 'Shallow-bay camps, safe swims, and coral-friendly practices.', 'Strong sun care and early-morning snorkel starts.', 'LKR', 'Tamil, English', 7000.00, 7.82927810, 81.47183870, 'Yes', '2025-09-13 18:01:35'),
+(17, 217, 'Kavindu', 'Herath', '1989-05-16', '0773345678', 'No. 6, Senanayake Mawatha, Uhana', 'Male', 'users/217/profile.jpeg', '731234577V', NULL, NULL, 'Gal Oya National Park', 'Minneriya Area', 'Ampara', 'Boat safaris and elephant crossings on the reservoir islands.', 'Always with rangers; crocodile-aware shoreline rules.', 'LKR', 'Sinhala, Tamil, English', 10500.00, 7.29116850, 81.67237610, 'Yes', '2025-09-13 18:01:35'),
+(18, 218, 'Sajith', 'Dasanayake', '1992-02-02', '0764456789', 'No. 15, Depot Rd, Kuliyapitiya', 'Male', 'users/218/profile.jpeg', '731234578V', NULL, NULL, 'Dolukanda Sacred Rock', 'Knuckles Mountains', 'Kurunegala', 'Legend-filled rock hikes with sunrise panoramas.', 'Steep sections managed with rest points and hydration.', 'LKR', 'Sinhala, English', 7500.00, 7.48640000, 80.36230000, 'Yes', '2025-09-13 18:01:35'),
+(19, 219, 'Nuwan', 'Peiris', '1991-04-21', '0755567890', 'No. 88, Lagoon Rd, Kalpitiya', 'Male', 'users/219/profile.jpeg', '731234579V', NULL, NULL, 'Kalpitiya Beach', 'Casuarina Beach', 'Puttalam', 'Kite-surf seasons, dolphin watching, and beach camps.', 'High-wind tie-downs provided for tents and gear.', 'LKR', 'Sinhala, Tamil, English', 8500.00, 8.02599150, 79.84712720, 'Yes', '2025-09-13 18:01:35'),
+(20, 220, 'Tharindu', 'Suraweera', '1993-03-05', '0746678901', 'No. 12, Temple Rd, Mihintale', 'Male', 'users/220/profile.jpeg', '731234580V', NULL, NULL, 'Wilpattu Camping', 'Ritigala Reserve', 'Anuradhapura', 'Jungle tracks, villus, and heritage-adjacent campouts.', 'Permits & park rules strictly followed; no night walks.', 'LKR', 'Sinhala, English', 12000.00, 8.33183050, 80.40290170, 'Yes', '2025-09-13 18:01:35'),
+(21, 221, 'Lahiru', 'Jayawardena', '1994-06-11', '0787789012', 'No. 27, Main St, Hingurakgoda', 'Male', 'users/221/profile.jpeg', '731234581V', NULL, NULL, 'Habarana Jungle', 'Minneriya Area', 'Polonnaruwa', 'Elephant corridor awareness and safari-style camping.', 'Camp only with trained teams; waterholes kept clear.', 'LKR', 'Sinhala, English', 11000.00, 7.93955670, 81.00034030, 'Yes', '2025-09-13 18:01:35'),
+(22, 222, 'Supun', 'Jayasuriya', '1992-08-08', '0728890123', 'No. 19, Welimada Rd, Bandarawela', 'Male', 'users/222/profile.jpeg', '731234582V', NULL, NULL, 'Madolsima', 'Namunukula Range', 'Badulla', 'Cliff-edge sunrise hikes and cloud-sea views.', 'Cold-night prep and cliff-edge safety emphasized.', 'LKR', 'Sinhala, Tamil, English', 9500.00, 6.99340090, 81.05498150, 'Yes', '2025-09-13 18:01:35'),
+(23, 223, 'Sahan', 'Wijesinghe', '1990-10-10', '0709901234', 'No. 6, Kataragama Rd, Buttala', 'Male', 'users/223/profile.jpeg', '731234583V', NULL, NULL, 'Udawalawe Border', 'Yala Buffer Zone', 'Monaragala', 'Elephant-rich borderlands with ranger-led camps.', 'Food storage protocols for wildlife safety.', 'LKR', 'Sinhala, English', 9000.00, 6.87277810, 81.35068320, 'Yes', '2025-09-13 18:01:35'),
+(24, 224, 'Sanjeewa', 'Alwis', '1988-12-22', '0716677889', 'No. 3, Pambahinna Rd, Eheliyagoda', 'Male', 'users/224/profile.jpeg', '731234584V', NULL, NULL, 'Belihuloya', 'Horton Plains', 'Ratnapura', 'Streams, natural pools, and short hikes near Sabaragamuwa.', 'Leech-season prep and river safety covered.', 'LKR', 'Sinhala, English', 8000.00, 6.70551680, 80.38483890, 'Yes', '2025-09-13 18:01:35'),
+(25, 225, 'Chathura', 'Priyankara', '1995-09-23', '0777788990', 'No. 44, Kandy Rd, Mawanella', 'Male', 'users/225/profile.jpeg', '731234585V', NULL, NULL, 'Knuckles Foothills', 'Knuckles Mountains', 'Kegalle', 'Foothill waterfalls, rare species, and cool misty camps.', 'Slippery-trail management and biodiversity etiquette.', 'LKR', 'Sinhala, English', 10000.00, 7.12040530, 80.32131060, 'Yes', '2025-09-13 18:01:35'),
+(26, 226, 'Isuru', 'Peris', '1991-01-17', '0765566778', 'No. 7, Kandapola Rd, Nuwara Eliya', 'Male', 'users/226/profile.jpeg', '731234586V', NULL, NULL, 'Horton Plains', 'Horton Plains', 'Nuwara Eliya', 'High-country loops and cold-weather camping best-practices.', 'Thermal wear checklist shared pre-trip.', 'LKR', 'Sinhala, Tamil, English', 12500.00, 6.96065320, 80.76927580, 'Yes', '2025-09-13 18:01:35'),
+(27, 227, 'Malith', 'Kulatunga', '1992-02-14', '0754455667', 'No. 61, Katugastota Rd, Kandy', 'Male', 'users/227/profile.jpeg', '731234587V', NULL, NULL, 'Wewathenna Mountain', 'Knuckles Mountains', 'Kandy', 'Ridge hikes, tea-estate connectors, and viewpoint camps.', 'Weather shifts fast; I carry spare rain shells.', 'LKR', 'Sinhala, English, Tamil', 9800.00, 7.29315880, 80.63501070, 'Yes', '2025-09-13 18:01:35'),
+(28, 228, 'Chamika', 'Withanage', '1993-03-13', '0743344556', 'No. 22, Beliatta Rd, Dikwella', 'Male', 'users/228/profile.jpeg', '731234588V', NULL, NULL, 'Madiha Beach', 'Koggala Lake', 'Matara', 'Chilled surf-culture camps with reef-safe plans.', 'Earliest water sessions scheduled for calm seas.', 'LKR', 'Sinhala, English', 6500.00, 5.94493480, 80.54879970, 'Yes', '2025-09-13 18:01:35'),
+(29, 229, 'Madushan', 'Abeynayake', '1990-06-06', '0782233445', 'No. 28, Nochchiyagama Rd, Anuradhapura', 'Male', 'users/229/profile.jpeg', '731234589V', NULL, NULL, 'Wilpattu Camping', 'Ritigala Reserve', 'Anuradhapura', 'Villus, jungle tracks, and ancient-ruin adjacency.', 'Strict no-litter and guided-only night routines.', 'LKR', 'Sinhala, English', 11800.00, 8.33183050, 80.40290170, 'Yes', '2025-09-13 18:01:35'),
+(30, 230, 'Pradeep', 'Wanniarachchi', '1989-08-29', '0721122334', 'No. 5, Hali Ela Rd, Badulla', 'Male', 'users/230/profile.jpeg', '731234590V', NULL, NULL, 'Narangala Peak', 'Namunukula Range', 'Badulla', '360° mountain views and starry night camps in Uva.', 'Steep trails; fitness and warm-gear checks beforehand.', 'LKR', 'Sinhala, Tamil, English', 9800.00, 6.99340090, 81.05498150, 'Yes', '2025-09-13 18:01:35');
 
 -- --------------------------------------------------------
 
@@ -916,6 +1127,23 @@ CREATE TABLE `pages` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `password_reset_tokens`
+--
+
+CREATE TABLE `password_reset_tokens` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `otp_code` varchar(6) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `expires_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `is_used` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `payments`
 --
 
@@ -1256,7 +1484,8 @@ CREATE TABLE `travel_chats` (
 --
 
 INSERT INTO `travel_chats` (`chat_id`, `plan_id`, `created_at`) VALUES
-(1, 1, '2025-09-23 17:01:57');
+(1, 1, '2025-09-23 17:01:57'),
+(2, 2, '2025-09-24 19:54:45');
 
 -- --------------------------------------------------------
 
@@ -1278,7 +1507,8 @@ CREATE TABLE `travel_chat_members` (
 --
 
 INSERT INTO `travel_chat_members` (`chat_member_id`, `chat_id`, `customer_id`, `status`, `joined_at`, `left_at`) VALUES
-(1, 1, 1, 'Active', '2025-09-23 17:01:57', NULL);
+(1, 1, 1, 'Active', '2025-09-23 17:01:57', NULL),
+(2, 2, 1, 'Active', '2025-09-24 19:54:45', NULL);
 
 -- --------------------------------------------------------
 
@@ -1324,7 +1554,8 @@ CREATE TABLE `travel_plans` (
 --
 
 INSERT INTO `travel_plans` (`plan_id`, `customer_id`, `title`, `destination`, `adventure_type`, `location_id`, `visibility`, `travel_date`, `end_date`, `status`, `ended_at`, `notes`, `companions_needed`, `companions_joined`, `created_at`, `updated_at`) VALUES
-(1, 1, NULL, 'Adam’s Bridge (Rama’s Bridge)', 'Hiking', NULL, 'Public', '2025-09-30', NULL, 'Upcoming', NULL, 'hi wanna go trip with me!', 2, 0, '2025-09-23 17:01:57', '2025-09-24 05:49:10');
+(1, 1, NULL, 'Adam’s Bridge (Rama’s Bridge)', 'Hiking', NULL, 'Public', '2025-09-30', NULL, 'Upcoming', NULL, 'hi wanna go trip with me!', 2, 0, '2025-09-23 17:01:57', '2025-09-24 05:49:10'),
+(2, 1, NULL, 'Adam’s Bridge (Rama’s Bridge)', 'Hiking', NULL, 'Public', '2025-11-11', NULL, 'Upcoming', NULL, 'hi', 2, 0, '2025-09-24 19:54:45', '2025-09-24 19:54:45');
 
 -- --------------------------------------------------------
 
@@ -1391,7 +1622,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `email`, `password_hash`, `role`, `is_active`, `created_at`) VALUES
-(1, 'supungunathilaka123@gmail.com', '$argon2id$v=19$m=65536,t=4,p=3$akFLVE9Ic3l2S0VvQk5qVQ$qhJt7NqQVvBuzRUoOlBYvAS3q6q3Ov193yKf0skiYx4', 'Customer', 1, '2025-09-12 11:34:55'),
+(1, 'supungunathilaka123@gmail.com', '$argon2id$v=19$m=65536,t=4,p=3$Tk9kYU9Ec3VEVHNsUnZMMw$n+x54AyiddODG/RudXoCuaJeqlcZkdzarJrrLwIzSG8', 'Customer', 1, '2025-09-12 11:34:55'),
 (51, 'amal@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
 (52, 'nadeesha@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
 (53, 'ruwan@customer.sky.com', '$argon2id$v=19$m=65536,t=4,p=3$YWlVeEdtb3dZMkVWSGtOWA$WPrk7mkASDUntuIhgmAdp6QbonNJ0GZbZmFjjL6axkU', 'Customer', 1, '2025-09-20 12:18:39'),
@@ -1612,7 +1843,11 @@ CREATE TABLE `wishlist_items` (
 INSERT INTO `wishlist_items` (`wishlist_item_id`, `wishlist_id`, `item_type`, `item_id`, `name`, `description`, `image_url`, `price`, `created_at`) VALUES
 (67, 1, 'location', 39, 'Belihuloya', 'A forested riverside destination famous for cool streams, natural pools, and biodiversity.', 'http://localhost/skycamp/skycamp-backend/storage/uploads/locations/camping_destinations/belihuloya1.jpg', NULL, '2025-09-20 07:49:42'),
 (68, 1, 'location', 35, 'Bogahakumbura Forest', 'A hidden forest camping site popular with birdwatchers and eco-tourists.', 'http://localhost/skycamp/skycamp-backend/storage/uploads/locations/camping_destinations/bogahakumbura_forest1.jpg', NULL, '2025-09-20 07:49:44'),
-(82, 9, 'equipment', 3, 'Ruwantha Hettiarachchi', 'Equipment rental in Colombo', 'http://localhost/skycamp/skycamp-backend/storage/uploads/users/101/profile.jpeg', NULL, '2025-09-20 14:48:06');
+(82, 9, 'equipment', 3, 'Ruwantha Hettiarachchi', 'Equipment rental in Colombo', 'http://localhost/skycamp/skycamp-backend/storage/uploads/users/101/profile.jpeg', NULL, '2025-09-20 14:48:06'),
+(84, 1, 'equipment', 3, 'Ruwan Hettiarachchi', 'Equipment rental in Colombo', 'http://localhost/skycamp/skycamp-backend/storage/uploads/users/101/profile.jpg', NULL, '2025-09-24 16:59:04'),
+(86, 1, 'guide', 2, 'Chamari Silva', 'Guide in Gampaha', 'http://localhost/skycamp/skycamp-backend/storage/uploads/users/202/profile.jpeg', 6.00, '2025-09-24 17:16:23'),
+(87, 1, 'location', 69, 'Bentota Beach', 'Bentota Beach offers stargazers a mix of gentle ocean breezes and wide-open skies. After sunset, stars begin to sparkle above the western horizon, creating dreamy views with the waves below. Its accessibility makes it popular for casual observers as well as night photographers.', 'http://localhost/skycamp/skycamp-backend/storage/uploads/locations/stargazing_spots/bentota_beach1.jpg', NULL, '2025-09-24 17:23:17'),
+(88, 5, 'guide', 1, 'Nadeesha Perera', 'Guide in Colombo', 'http://localhost/skycamp/skycamp-backend/storage/uploads/users/201/profile.jpg', 7.00, '2025-09-24 23:05:32');
 
 --
 -- Indexes for dumped tables
@@ -1671,7 +1906,8 @@ ALTER TABLE `cartitems`
 --
 ALTER TABLE `carts`
   ADD PRIMARY KEY (`cart_id`),
-  ADD KEY `carts_ibfk_1` (`customer_id`);
+  ADD KEY `carts_ibfk_1` (`customer_id`),
+  ADD KEY `idx_carts_order_id` (`order_id`);
 
 --
 -- Indexes for table `contact_messages`
@@ -1788,6 +2024,16 @@ ALTER TABLE `notifications`
 ALTER TABLE `pages`
   ADD PRIMARY KEY (`page_id`),
   ADD UNIQUE KEY `slug` (`slug`);
+
+--
+-- Indexes for table `password_reset_tokens`
+--
+ALTER TABLE `password_reset_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `email` (`email`),
+  ADD KEY `token` (`token`),
+  ADD KEY `expires_at` (`expires_at`);
 
 --
 -- Indexes for table `payments`
@@ -1998,13 +2244,13 @@ ALTER TABLE `bookings`
 -- AUTO_INCREMENT for table `cartitems`
 --
 ALTER TABLE `cartitems`
-  MODIFY `cart_item_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cart_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `contact_messages`
@@ -2058,13 +2304,13 @@ ALTER TABLE `faqs`
 -- AUTO_INCREMENT for table `guideavailability`
 --
 ALTER TABLE `guideavailability`
-  MODIFY `availability_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `availability_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=156;
 
 --
 -- AUTO_INCREMENT for table `guideimages`
 --
 ALTER TABLE `guideimages`
-  MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT for table `guides`
@@ -2101,6 +2347,12 @@ ALTER TABLE `notifications`
 --
 ALTER TABLE `pages`
   MODIFY `page_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `password_reset_tokens`
+--
+ALTER TABLE `password_reset_tokens`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `payments`
@@ -2160,13 +2412,13 @@ ALTER TABLE `suspended_users`
 -- AUTO_INCREMENT for table `travel_chats`
 --
 ALTER TABLE `travel_chats`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `travel_chat_members`
 --
 ALTER TABLE `travel_chat_members`
-  MODIFY `chat_member_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `chat_member_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `travel_messages`
@@ -2178,7 +2430,7 @@ ALTER TABLE `travel_messages`
 -- AUTO_INCREMENT for table `travel_plans`
 --
 ALTER TABLE `travel_plans`
-  MODIFY `plan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `plan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `travel_plan_feedback`
@@ -2232,7 +2484,7 @@ ALTER TABLE `wishlists`
 -- AUTO_INCREMENT for table `wishlist_items`
 --
 ALTER TABLE `wishlist_items`
-  MODIFY `wishlist_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY `wishlist_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
 
 --
 -- Constraints for dumped tables
@@ -2354,6 +2606,12 @@ ALTER TABLE `location_images`
 --
 ALTER TABLE `notifications`
   ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `password_reset_tokens`
+--
+ALTER TABLE `password_reset_tokens`
+  ADD CONSTRAINT `password_reset_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `payments`

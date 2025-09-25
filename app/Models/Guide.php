@@ -26,6 +26,8 @@ class Guide
     public ?string $currency;
     public ?string $languages;
     public ?float $pricePerDay;
+    public ?float $latitude;
+    public ?float $longitude;
     public string $verificationStatus;
     public string $createdAt;
 
@@ -50,6 +52,8 @@ class Guide
         $this->currency = $data['currency'] ?? null;
         $this->languages = $data['languages'] ?? null;
         $this->pricePerDay = $data['price_per_day'] ? (float) $data['price_per_day'] : null;
+        $this->latitude = $data['latitude'] ? (float) $data['latitude'] : null;
+        $this->longitude = $data['longitude'] ? (float) $data['longitude'] : null;
         $this->verificationStatus = $data['verification_status'] ?? 'No';
         $this->createdAt = $data['created_at'] ?? date('Y-m-d H:i:s');
     }
@@ -79,6 +83,8 @@ class Guide
             'currency' => $this->currency,
             'languages' => $this->languages,
             'price_per_day' => $this->pricePerDay,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
             'verification_status' => $this->verificationStatus,
             'created_at' => $this->createdAt
         ];

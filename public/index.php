@@ -24,6 +24,9 @@ ob_start();
 
 // Include autoloader (simple require_once for each class)
 require_once __DIR__ . '/../app/Config/database.php';
+
+// Initialize database connection
+Database::init();
 require_once __DIR__ . '/../app/Core/Router.php';
 require_once __DIR__ . '/../app/Core/Request.php';
 require_once __DIR__ . '/../app/Core/Response.php';
@@ -80,6 +83,8 @@ require_once __DIR__ . '/../app/Controllers/EquipmentController.php';
 require_once __DIR__ . '/../app/Controllers/TravelBuddyController.php';
 require_once __DIR__ . '/../app/Controllers/NotificationController.php';
 require_once __DIR__ . '/../app/Controllers/WishlistController.php';
+require_once __DIR__ . '/../app/Controllers/CartController.php';
+require_once __DIR__ . '/../app/Controllers/BookingController.php';
 
 // Include middlewares
 require_once __DIR__ . '/../app/Middlewares/Cors.php';
@@ -141,6 +146,7 @@ try {
     // Renter endpoints
     $router->get('/api/renters', [RenterController::class, 'list']);
     $router->get('/api/renters/by-district', [RenterController::class, 'getByDistrict']);
+    $router->get('/api/renters/by-equipment', [RenterController::class, 'getByEquipment']);
     $router->get('/api/renters/:id', [RenterController::class, 'show']);
 
     // Renter Dashboard endpoints
@@ -258,6 +264,20 @@ try {
     $router->get('/api/wishlist/count', [WishlistController::class, 'getItemCount']);
     $router->post('/api/wishlist/clear', [WishlistController::class, 'clearWishlist']);
 
+    // Cart endpoints
+    $router->get('/api/cart', [CartController::class, 'getOrCreateCart']);
+    $router->post('/api/cart', [CartController::class, 'createCart']);
+    $router->put('/api/cart/item/quantity', [CartController::class, 'updateItemQuantity']);
+    $router->delete('/api/cart/item', [CartController::class, 'removeItem']);
+
+    // Booking endpoints
+    $router->get('/api/bookings/:id', [BookingController::class, 'show']);
+    $router->post('/api/bookings', [BookingController::class, 'create']);
+    $router->post('/api/bookings/confirm-payment', [BookingController::class, 'confirmPayment']);
+    $router->post('/api/bookings/cancel-payment', [BookingController::class, 'cancelPayment']);
+    $router->get('/api/bookings/payment-status/:orderId', [BookingController::class, 'getPaymentStatus']);
+    $router->get('/api/bookings/payment-details/:id', [BookingController::class, 'getPaymentDetails']);
+    $router->post('/api/payment/notify', [BookingController::class, 'handleWebhook']);
 
     // Debug endpoint to check session status
     $router->get('/api/debug/session', function (Request $request, Response $response) {

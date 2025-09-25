@@ -283,6 +283,118 @@ class RenterController extends Controller
     }
 
     /**
+     * Get renters who have ALL of the selected equipment items
+     * Query param: equipment_ids (comma-separated list of equipment_id)
+     * Only considers active renter equipment (renterequipment.status = 'Active')
+     */
+    public function getByEquipment(Request $request, Response $response): void
+    {
+        try {
+            // Parse equipment_ids from query string
+            $raw = $request->get('equipment_ids');
+            if (!$raw) {
+                // No selection -> return all renters (same as default behavior)
+                $renters = $this->getAllRenters();
+                $response->json([
+                    'success' => true,
+                    'data' => $renters
+                ], 200);
+                return;
+            }
+
+            // Normalize into array of unique integer IDs
+            $ids = array_filter(array_unique(array_map(function ($v) {
+                return (int)preg_replace('/[^0-9]/', '', trim($v));
+            }, explode(',', (string)$raw))), function ($v) {
+                return $v > 0;
+            });
+
+            if (empty($ids)) {
+                $renters = $this->getAllRenters();
+                $response->json([
+                    'success' => true,
+                    'data' => $renters
+                ], 200);
+                return;
+            }
+
+            $pdo = Database::getConnection();
+
+            // Build placeholders for IN clause
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+            // Select renters who have ALL of the selected equipment items (active only)
+            // Using GROUP BY and HAVING COUNT to ensure renter has all selected items
+            $sql = "SELECT 
+                        r.renter_id,
+                        r.user_id,
+                        r.first_name,
+                        r.last_name,
+                        r.phone_number,
+                        r.profile_picture,
+                        r.district,
+                        r.verification_status,
+                        r.created_at,
+                        u.email,
+                        u.role
+                    FROM renters r
+                    JOIN users u ON r.user_id = u.user_id
+                    JOIN renterequipment re ON re.renter_id = r.renter_id AND re.status = 'Active'
+                    WHERE u.role = 'Renter' AND re.equipment_id IN ($placeholders)
+                    GROUP BY r.renter_id
+                    HAVING COUNT(DISTINCT re.equipment_id) = ?
+                    ORDER BY r.created_at DESC";
+
+            $stmt = $pdo->prepare($sql);
+            $params = array_values($ids);
+            $params[] = count($ids); // Add count for HAVING clause
+            $stmt->execute($params);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Format like other list endpoints
+            $formattedRenters = [];
+            foreach ($rows as $renter) {
+                $fullName = trim($renter['first_name'] . ' ' . $renter['last_name']);
+
+                $phoneNumber = $renter['phone_number'];
+                if (strlen($phoneNumber) === 10 && $phoneNumber[0] === '0') {
+                    $phoneNumber = '+94 ' . substr($phoneNumber, 1, 2) . ' ' . substr($phoneNumber, 3, 3) . ' ' . substr($phoneNumber, 6);
+                }
+
+                $profileImage = null;
+                if ($renter['profile_picture']) {
+                    $profileImage = 'http://localhost/skycamp/skycamp-backend/storage/uploads/' . $renter['profile_picture'];
+                }
+
+                $formattedRenters[] = [
+                    'id' => $renter['renter_id'],
+                    'userId' => $renter['user_id'],
+                    'name' => $fullName,
+                    'location' => $renter['district'] ?? 'Unknown',
+                    'phone' => $phoneNumber,
+                    'email' => $renter['email'],
+                    'image' => $profileImage,
+                    'rating' => 5.0,
+                    'reviewCount' => 22,
+                    'verificationStatus' => $renter['verification_status'],
+                    'createdAt' => $renter['created_at']
+                ];
+            }
+
+            $response->json([
+                'success' => true,
+                'data' => $formattedRenters
+            ], 200);
+        } catch (Exception $e) {
+            error_log("Error fetching renters by equipment: " . $e->getMessage());
+            $response->json([
+                'success' => false,
+                'message' => 'Failed to fetch renters by equipment'
+            ], 500);
+        }
+    }
+
+    /**
      * Get renter equipment with primary images
      */
     private function getRenterEquipment(PDO $pdo, int $renterId): array
@@ -323,6 +435,9 @@ class RenterController extends Controller
 
             $equipment = [];
             foreach ($results as $row) {
+                // Calculate available stock (total - reserved - booked)
+                $availableStock = $this->calculateAvailableStock($pdo, $row['renter_equipment_id']);
+
                 // Use uploaded image or default equipment image
                 $equipmentImage = '/default-equipment.png'; // Default fallback
                 if (!empty($row['photo_path']) && $row['photo_path'] !== null) {
@@ -336,8 +451,8 @@ class RenterController extends Controller
                     'description' => $row['equipment_description'],
                     'condition' => $row['item_condition'],
                     'pricePerDay' => (float)$row['price_per_day'],
-                    'stockQuantity' => (int)$row['stock_quantity'],
-                    'isAvailable' => (int)$row['stock_quantity'] > 0,
+                    'stockQuantity' => $availableStock, // Use calculated available stock
+                    'isAvailable' => $availableStock > 0,
                     'categoryType' => $row['category_type'],
                     'categoryName' => $row['category_name'],
                     'image' => $equipmentImage
@@ -348,6 +463,44 @@ class RenterController extends Controller
         } catch (Exception $e) {
             error_log("Error fetching renter equipment: " . $e->getMessage());
             return [];
+        }
+    }
+
+    /**
+     * Calculate available stock (total - reserved - booked)
+     */
+    private function calculateAvailableStock(PDO $pdo, int $renterEquipmentId): int
+    {
+        try {
+            // Get total stock
+            $stmt = $pdo->prepare("SELECT stock_quantity FROM renterequipment WHERE renter_equipment_id = ?");
+            $stmt->execute([$renterEquipmentId]);
+            $totalStock = $stmt->fetch(PDO::FETCH_ASSOC)['stock_quantity'];
+
+            // Get reserved quantity (from active carts)
+            $stmt = $pdo->prepare("
+                SELECT COALESCE(SUM(ci.quantity), 0) as reserved
+                FROM cartitems ci
+                JOIN carts c ON ci.cart_id = c.cart_id
+                WHERE ci.renter_equipment_id = ? AND c.status = 'Active'
+                AND (c.expires_at IS NULL OR c.expires_at > NOW())
+            ");
+            $stmt->execute([$renterEquipmentId]);
+            $reserved = $stmt->fetch(PDO::FETCH_ASSOC)['reserved'];
+
+            // Get booked quantity (from confirmed bookings)
+            $stmt = $pdo->prepare("
+                SELECT COALESCE(SUM(er.quantity), 0) as booked
+                FROM equipment_reservations er
+                WHERE er.renter_equipment_id = ? AND er.status = 'Booked'
+            ");
+            $stmt->execute([$renterEquipmentId]);
+            $booked = $stmt->fetch(PDO::FETCH_ASSOC)['booked'];
+
+            return max(0, $totalStock - $reserved - $booked);
+        } catch (Exception $e) {
+            error_log("Error calculating available stock: " . $e->getMessage());
+            return 0;
         }
     }
 }
